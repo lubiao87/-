@@ -1,5 +1,6 @@
 <template>
   <div style="width: 100%;height:100%;">
+    <!-- <input type="flies" src="/assets/GKG.FBX" ref="mapID" alt="" /> -->
     <!-- <div id="mainGZ" style="width: 100%;height:100%;" @click="autofocu"></div> -->
     <!-- <div v-show="stops" ref="reference" class="stip-box" :style="{ top:stipY-120 + 'px',left:stipX + 20 + 'px' }">123123</div> -->
   </div>
@@ -16,9 +17,10 @@ import { api2 } from "../../api/api"; //api配置请求的路径
 import { listSearchMixin } from "../../mixin"; //混淆请求
 import * as THREE from "three";
 require("three-fbxloader-offical");
-import { OrbitControls } from "../../util/OrbitControls";
-// import GKGs from "@/assets/fbx/GKG.GBX";
-
+import { OrbitControls } from "../../utils/OrbitControls";
+// import GKGs from "/static/GKG.GBX";
+// import GKGs from "/assets/fbx/GKG.GBX";
+// const GKG = require("../../assets/fbx/GKG.GBX");
 // import './guangdon.js'
 export default {
   name: "olmap",
@@ -51,25 +53,23 @@ export default {
   created() {
     // console.log(echarts);
     let self = this;
-    console.log(THREE, "THREE");
-    console.log(OrbitControls, "OrbitControls");
-    console.log(THREE.FBXLoader, "FBXLoader");
-    console.log(echarts);
+    // console.log(GKG);
     this.scene = null;
     this.scene = new THREE.Scene(); // 场景
     this.FBXloader = new THREE.FBXLoader(); // fbx加载器
-    // $this.FBXloader.load(LSG, $this.JiXiangLoad) // 加载机箱
-    // this.setPoint(4400, 2000, 2000);
-    // $this.setPoint(4400, 2000, 2000)
     this.ambient = new THREE.AmbientLight(0xffffff); // 环境光
     this.renderer = new THREE.WebGLRenderer(); // 渲染器
     this.scene.add(this.ambient);
-    this.FBXloader.load("/assets/fbx/GKG.GBX", function(param) {
-      console.log(param);
-    });
   },
   mounted() {
     this.buildingcount();
+    const self = this;
+    this.$nextTick(() => {
+      self.FBXloader.load("./assets/GKG.FBX", function(param) {
+        alert("dg");
+        console.log(param);
+      });
+    });
     //  this.$parent.restaurants = this.$parent.loadAll();
   },
   methods: {

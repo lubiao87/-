@@ -1,17 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title>new1</title>
-  </head>
-  <body>
-    <noscript>
-      <strong>We're sorry but new1 doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
-    </noscript>
-    <div id="app"></div>
-    <!-- built files will be auto injected -->
-  </body>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>广州微模块</title>
+  <!--<link rel="stylesheet" href="">-->
+  <link rel ="shortcut icon" type="image/x-icon" href="/favicon.ico">
+  <script type="text/javascript">
+    (function () {
+      var browser = navigator.appName
+  var b_version = navigator.appVersion
+  var version = b_version.split(';')
+  var trim_Version = version[1].replace(/[ ]/g, '')
+  if (browser === 'Microsoft Internet Explorer' && trim_Version === 'MSIE6.0') {
+//    alert("IE 6.0");
+        window.location.href = './browser/unsupported.html'
+  } else if (browser === 'Microsoft Internet Explorer' && trim_Version === 'MSIE7.0') {
+//    alert("IE 7.0");
+        window.location.href = './browser/unsupported.html'
+  } else if (browser === 'Microsoft Internet Explorer' && trim_Version === 'MSIE8.0') {
+//    alert("IE 8.0");
+        window.location.href = './browser/unsupported.html'
+  } else if (browser === 'Microsoft Internet Explorer' && trim_Version === 'MSIE9.0') {
+//    alert("IE 9.0");
+        window.location.href = './browser/unsupported.html'
+  }
+    })()
+  </script>
+  <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=PfpX2crdNNOGUBaK9kWpCiaFjHaSiVSg"></script>
+</head>
+<body>
+<div id="app"></div>
+<!-- built files will be auto injected -->
+</body>
 </html>

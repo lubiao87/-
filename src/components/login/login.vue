@@ -156,7 +156,7 @@ export default {
           contentType: "application/x-www-form-urlencoded"
         };
         self.sendReq(param, res => {
-          console.log("---------登陆-----------");
+          // console.log("---------登陆-----------");
           // console.log(res);
           if (res.respHeader.resultCode == 0) {
             //登陆成功
@@ -170,7 +170,7 @@ export default {
             sessionStorage.setItem("headers", JSON.stringify(headers));
             sessionStorage.setItem("logined", true);
             let referrer = this.$router.currentRoute.query.referrer;
-            console.log(referrer);
+            // console.log(referrer);
             if (referrer) {
               this.$router.push(referrer);
             } else {

@@ -1,0 +1,165 @@
+[
+    {
+              "featureType": "land",
+              "elementType": "geometry",
+              "stylers": {
+                        "color": "#153a6bff",
+                        "lightness": -38,
+                        "saturation": -46
+              }
+    },
+    {
+              "featureType": "building",
+              "elementType": "geometry",
+              "stylers": {
+                        "color": "#2b323aff"
+              }
+    },
+    {
+              "featureType": "highway",
+              "elementType": "labels.icon",
+              "stylers": {
+                        "color": "#cfe2f3ff",
+                        "lightness": -80,
+                        "saturation": -47,
+                        "visibility": "off"
+              }
+    },
+    {
+              "featureType": "arterial",
+              "elementType": "geometry",
+              "stylers": {
+                        "color": "#243240ff"
+              }
+    },
+    {
+              "featureType": "green",
+              "elementType": "geometry",
+              "stylers": {
+                        "color": "#274e13ff",
+                        "lightness": -51
+              }
+    },
+    {
+              "featureType": "water",
+              "elementType": "geometry",
+              "stylers": {
+                        "color": "#153a6bff",
+                        "lightness": -71,
+                        "saturation": -13
+              }
+    },
+    {
+              "featureType": "railway",
+              "elementType": "geometry",
+              "stylers": {
+                        "lightness": -77,
+                        "saturation": -41
+              }
+    },
+    {
+              "featureType": "highway",
+              "elementType": "geometry",
+              "stylers": {
+                        "color": "#2c3843ff"
+              }
+    },
+    {
+              "featureType": "manmade",
+              "elementType": "geometry",
+              "stylers": {
+                        "color": "#0c1b30ff"
+              }
+    },
+    {
+              "featureType": "local",
+              "elementType": "geometry",
+              "stylers": {
+                        "color": "#232d37ff"
+              }
+    },
+    {
+              "featureType": "subway",
+              "elementType": "geometry",
+              "stylers": {
+                        "lightness": -65
+              }
+    },
+    {
+              "featureType": "boundary",
+              "elementType": "geometry",
+              "stylers": {
+                        "color": "#8b8787",
+                        "weight": "1",
+                        "lightness": -29
+              }
+    },
+    {
+              "featureType": "districtlabel",
+              "elementType": "all",
+              "stylers": {
+                        "color": "#ffffff6e",
+                        "visibility": "on"
+              }
+    },
+    {
+              "featureType": "poilabel",
+              "elementType": "labels.icon",
+              "stylers": {
+                        "color": "#ffffff00",
+                        "visibility": "off"
+              }
+    },
+    {
+              "featureType": "districtlabel",
+              "elementType": "labels.text.stroke",
+              "stylers": {
+                        "color": "#2b2d3a00",
+                        "visibility": "on"
+              }
+    },
+    {
+              "featureType": "district",
+              "elementType": "labels.text.fill",
+              "stylers": {
+                        "color": "#ffffffff"
+              }
+    },
+    {
+              "featureType": "road",
+              "elementType": "labels.text.stroke",
+              "stylers": {
+                        "color": "#ffffff00"
+              }
+    },
+    {
+              "featureType": "road",
+              "elementType": "labels.text.fill",
+              "stylers": {
+                        "color": "#6a5f3eff"
+              }
+    },
+    {
+              "featureType": "manmade",
+              "elementType": "labels.text.stroke",
+              "stylers": {
+                        "color": "#6a5f3e00"
+              }
+    },
+    {
+              "featureType": "poilabel",
+              "elementType": "labels.text.stroke",
+              "stylers": {
+                        "color": "#ffffff00",
+                        "visibility": "on"
+              }
+    },
+    {
+              "featureType": "poilabel",
+              "elementType": "labels.text.fill",
+              "stylers": {
+                        "color": "#615d4fff",
+                        "visibility": "on"
+              }
+    }
+]

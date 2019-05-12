@@ -18,7 +18,7 @@
               :class="{
                 iscur:
                   [
-                    '/populationDistribution',
+                    '/index',
                     '/populationTrends',
                     '/populationPortrait',
                     '/populationFlow'
@@ -117,8 +117,8 @@ export default {
     }
     let menuList = JSON.parse(headers.menuList);
     let buttonList = JSON.parse(headers.buttonList);
-    this.menuList = menuList;
-    console.log(menuList);
+    // this.menuList = menuList;
+    // console.log(menuList);
     // console.log(buttonList);
     for (var i = 0; i < menuList.length; i++) {
       if (menuList[i] == null || menuList[i].menuUrl == null) {

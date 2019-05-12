@@ -1,6 +1,7 @@
 module.exports = {
   lintOnSave: false,
-  baseUrl: "/",
+  // baseUrl: "/",
+  publicPath: "/",
   devServer: {
     proxy: {
       "/microModule": {

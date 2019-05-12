@@ -21,20 +21,21 @@ const routes = [
     path: "/index",
     name: "index",
     component: () => import("./components/index.vue"),
-    // redirect: "/home",
+    // redirect: () => import("./views/map/mapView.vue"),
+    redirect: "/mapView",
     meta: {
       auth: true // 这里设置，当前路由需要校验
     },
     children: [
       //机构管理
-      // {
-      //   path: '/orgManagement',
-      //   name: 'orgManagement',
-      //   component: orgManagement,
-      //   meta: {
-      //     keepAlive: true,
-      //   }
-      // }
+      {
+        path: "/mapView",
+        name: "mapView",
+        component: () => import("./views/map/mapView.vue"),
+        meta: {
+          keepAlive: true
+        }
+      }
     ]
   },
   //登录
@@ -48,6 +49,7 @@ const router = new Router({
   routes
 });
 router.beforeResolve((to, from, next) => {
+  // console.log(to.matched, "to.matched");
   if (to.matched.some(m => m.meta.auth)) {
     if (sessionStorage.getItem("logined")) {
       //已经登陆
@@ -68,6 +70,10 @@ router.beforeResolve((to, from, next) => {
         }
       }
       if (to.fullPath.indexOf("/index") >= 0) {
+        //主页权限
+        isAccess = true;
+      }
+      if (to.fullPath.indexOf("/mapView") >= 0) {
         //主页权限
         isAccess = true;
       }

@@ -7,6 +7,7 @@ module.exports = {
   // baseUrl: "/",
   publicPath: "./",
   devServer: {
+    port: 8888,
     proxy: {
       "/microModule": {
         target: "http://192.168.1.141:8090/microModule",
@@ -18,6 +19,7 @@ module.exports = {
       }
     }
   },
+
   //允许对内部的 webpack 配置进行更细粒度的修改。
   chainWebpack: config => {
     //命名

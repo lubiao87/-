@@ -50,7 +50,7 @@ export default {
     #0b192c;
 }
 .router-view {
-  position: relative;
+  position: absolute;
   top: 0;
   left: 0;
   /*width: 100%;*/

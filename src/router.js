@@ -24,15 +24,25 @@ const routes = [
     // redirect: () => import("./views/map/mapView.vue"),
     redirect: "/mapView",
     meta: {
-      auth: false // 这里设置，当前路由需要校验
+      auth: true // 这里设置，当前路由需要校验
     },
     children: [
-      //机构管理
+      //地图页面
       {
         path: "/mapView",
         name: "mapView",
         component: () => import("./views/map/mapView.vue"),
         meta: {
+          auth: true, // 这里设置，当前路由需要校验
+          keepAlive: true // 缓存
+        }
+      },
+      {
+        path: "/buildModel",
+        name: "buildModel",
+        component: () => import("./views/webGL/build-model.vue"),
+        meta: {
+          auth: false,
           keepAlive: true
         }
       }
@@ -74,6 +84,10 @@ router.beforeResolve((to, from, next) => {
         isAccess = true;
       }
       if (to.fullPath.indexOf("/mapView") >= 0) {
+        //主页权限
+        isAccess = true;
+      }
+      if (to.fullPath.indexOf("/buildModel") >= 0) {
         //主页权限
         isAccess = true;
       }

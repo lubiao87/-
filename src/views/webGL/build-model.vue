@@ -155,9 +155,6 @@ export default {
     setCamera () {
         let width = document.body.clientWidth // 窗口宽度
         let height = document.body.clientHeight // 窗口高度
-        // let k = width / height // 窗口宽高比
-        // let s = 50500 // 三维场景显示范围控制系数，系数越大，显示的范围越大
-        // this.camera = new THREE.OrthographicCamera(-s * k, s * k, s, -s, 1000, 1500000)
         this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 1000000);
         this.camera.position.set(-80000, 20800, 20000)
         this.camera.lookAt(this.scene.position)

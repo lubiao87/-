@@ -13,20 +13,18 @@
           </div>
         </div>
         <div style="margin-top: 30px;">
-          <h5 class="ui-city-title ui-height48"><span class="ui-linebg"></span>moduleTitle</h5>
+          <h5 class="ui-city-title ui-height48"><span class="ui-linebg"></span>模房列表</h5>
           <div class="clearfix module-statis" style="padding-left: 0;">
               <div class="lb-module-list">
                 <ul>
-                  <li >
+                  <li @click="rountGo(item)">
                       <span>index + 1</span>
-                      <span>item.name</span>
-                      <!--<span class="lb-icon" :class="{'danger_icon': item.Situation == '严重警告','warning_icon': item.Situation == '一般警告'}"></span>-->
+                      <span>天河何光路</span>
                       <span class="lb-icon"></span>
                   </li>
                   <li>
-                      <span>index + 1</span>
-                      <span>item.name</span>
-                      <!--<span class="lb-icon" :class="{'danger_icon': item.Situation == '严重警告','warning_icon': item.Situation == '一般警告'}"></span>-->
+                      <span>index + 2</span>
+                      <span>‘’‘’‘’</span>
                       <span class="lb-icon"></span>
                   </li>
                 </ul>
@@ -67,7 +65,6 @@ export default {
       bmapGPS: [113.324321, 23.132146],
       myChart: null,
       coordinates: GZ_DMQ,
-      myChart: null,
       panelShow: true,
       lines: [
         {
@@ -101,7 +98,13 @@ export default {
             [113.324321, 23.132146]
           ]
         }
-      ]
+      ],
+      item: {
+        path: "/buildModel",
+        query: {
+          id: 123
+        }
+      }
       // stops: false
     };
   },
@@ -171,6 +174,9 @@ export default {
         ]
       };
       return option;
+    },
+    rountGo (item) {
+      this.$router.push({path: item.path, query: item.query})
     }
     // loaderObj(obj) {
     //   console.log(obj);

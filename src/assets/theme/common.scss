@@ -458,6 +458,7 @@ body >div:nth-child(1) {
   z-index: 1;
   transition: right 0.5s;
   right: -300px;
+  padding: 15px;
 }
 
 .ui-shrinkBar-close {
@@ -531,7 +532,7 @@ body >div:nth-child(1) {
 }
 
 .ui-citytol {
-  padding: 0 15px;
+  // padding: 0 15px;
   box-sizing: border-box;
 }
 
@@ -549,11 +550,16 @@ body >div:nth-child(1) {
 
 .scroll-wrap {
   /*  width: 34px; */
-  height: 50px;
+  height: 30px;
+  line-height: 30px;
+  padding-left: 10px;
   /*  border: 1px solid blue; */
   overflow: hidden;
+  cursor: pointer;
 }
-
+.scroll-wrap:hover {
+  background-color: #7187F0;
+}
 .ui-city-datali {
   background: $lessBgColor_2;
   margin-right: 2px;
@@ -579,8 +585,11 @@ body >div:nth-child(1) {
 .ui-height48 {
   height: 48px;
   line-height: 48px;
+  cursor: pointer;
 }
-
+.ui-height48:hover {
+  background-color: $cornflowerBlueColor;
+}
 .ui-area {
   font-size: 14px;
   margin-top: 15px;
@@ -1522,6 +1531,11 @@ body {
 .lb-module-list li:hover {
   background: $modelBtnBorder;
   cursor: pointer;
+}
+.lb-module-list {
+  li {
+    padding: 10px;
+  }
 }
 .lb-climate {
   .lb-left {

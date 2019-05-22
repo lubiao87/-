@@ -536,9 +536,7 @@ export default {
           {type: 14, position: [11210, 14110]},
           {type: 14, position: [11810, 14110]},
           {type: 15, position: [12262, 14110]},
-      ],
-      pointLightX: -30000,
-      pointFlog: true
+      ]
 
     };
   },
@@ -595,20 +593,6 @@ export default {
         planeMesh.position.y = -17800; //设置网格模型y坐标
         planeMesh.receiveShadow = true;
 
-         // 聚光光源
-        this.spotLight = new THREE.SpotLight('#fff');
-        //设置点光源的位置
-        this.spotLight.position.set(this.pointLightX,0,0);
-        // this.spotLight.castShadow = true;
-        this.spotLight.angle = Math.PI /6
-        this.scene.add(this.spotLight); //光对象添加到scene场景中
-        // 设置计算阴影的区域，最好刚好紧密包围在对象周围
-        this.spotLight.shadow.camera.near = 1;
-        this.spotLight.shadow.camera.far = 300;
-        this.spotLight.shadow.camera.fov = 20;
-        // 聚光光源辅助显示
-        let spotLightHelper = new THREE.SpotLightHelper(this.spotLight);
-        this.scene.add(spotLightHelper);
         this.axisHelper = new THREE.AxisHelper(8000)   // 辅助线
         this.scene.add(this.axisHelper)
         //声明raycaster和mouse变量
@@ -782,25 +766,6 @@ export default {
 
           this.camera.position.set(this.cameraX, this.cameraY, this.cameraZ)
         }
-        // 太阳运动
-        if (this.pointFlog) {
-          if (this.pointLightX < 30000) {
-            this.pointLightX += 50
-          } else {
-            this.pointFlog = false
-            this.pointLightX = 30000
-          }
-        } else {
-          if (this.pointLightX > -30000) {
-            this.pointLightX -= 50
-          } else {
-            this.pointFlog = true
-            this.pointLightX = -30000
-          }
-        }
-        // console.log(this.pointLightX)
-        this.spotLight.position.set(this.pointLightX,0,0);
-      // }
     },
     lookFloor (index) { // 查看楼层
       if (!this.lookAround) {

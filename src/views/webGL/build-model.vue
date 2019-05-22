@@ -536,7 +536,9 @@ export default {
           {type: 14, position: [11210, 14110]},
           {type: 14, position: [11810, 14110]},
           {type: 15, position: [12262, 14110]},
-      ]
+      ],
+      pointLightX: -30000,
+      pointFlog: true
 
     };
   },
@@ -560,11 +562,16 @@ export default {
         this.scene = new THREE.Scene(); // 场景
         this.FBXloader = new THREE.FBXLoader(); // fbx加载器
         this.FBXloader.load("./assets/fbx/building.FBX", self.loaderObj);
-        this.FBXloader.load("./assets/fbx/SambaDancing.fbx", self.loaderMan)
-        this.FBXloader.load("./assets/fbx/floorOne.fbx", self.loaderFloor1)
-        this.FBXloader.load("./assets/fbx/floorTwo.fbx", self.loaderFloor2)
-        this.FBXloader.load("./assets/fbx/floorThree.fbx", self.loaderFloor3)
-        this.FBXloader.load("./assets/fbx/floorFour.fbx", self.loaderFloor4)
+        this.FBXloader.load("./assets/fbx/SambaDancing.FBX", self.loaderMan)
+        this.FBXloader.load("./assets/fbx/floorOne.FBX", self.loaderFloor1)
+        this.FBXloader.load("./assets/fbx/floorTwo.FBX", self.loaderFloor2)
+        this.FBXloader.load("./assets/fbx/floorThree.FBX", self.loaderFloor3)
+        this.FBXloader.load("./assets/fbx/floorFour.FBX", self.loaderFloor4)
+        this.FBXloader.load("./assets/fbx/air.FBX", self.loaderAir)
+        this.FBXloader.load("./assets/fbx/device1.FBX", self.loaderDevice1)
+        this.FBXloader.load("./assets/fbx/device2.FBX", self.loaderDevice2)
+        this.FBXloader.load("./assets/fbx/device3.FBX", self.loaderDevice3)
+        this.FBXloader.load("./assets/fbx/device4.FBX", self.loaderDevice4)
         this.ambient = new THREE.AmbientLight(0xffffff); // 环境光
         this.renderer = new THREE.WebGLRenderer(); // 渲染器
         this.scene.add(this.ambient);
@@ -574,16 +581,36 @@ export default {
         this.controls.target = new THREE.Vector3(0, 0, 0)
         this.controls.type = 'orbit'
         this.controls.staticMoving = false;
-        //再建一个点光源 颜色 强度 照射距离
-        this.pointLight = new THREE.PointLight( '#fff', 0.8, 100000 );
+
+        //创建一个平面几何体作为投影面
+        let planeGeometry = new THREE.PlaneGeometry(80000, 100000);
+        let planeMaterial = new THREE.MeshLambertMaterial({
+          color: 0x999999
+        }); //材质对象Material
+        // 平面网格模型作为投影面
+        let planeMesh = new THREE.Mesh(planeGeometry, planeMaterial); //网格模型对象Mesh
+        this.scene.add(planeMesh); //网格模型添加到场景中
+        // 设置接收阴影的投影面
+        planeMesh.rotateX(-Math.PI / 2); //旋转网格模型
+        planeMesh.position.y = -17800; //设置网格模型y坐标
+        planeMesh.receiveShadow = true;
+
+         // 聚光光源
+        this.spotLight = new THREE.SpotLight('#fff');
         //设置点光源的位置
-        this.pointLight.position.set(30000,0,0);
-        //把点光源加入到场景中
-        this.scene.add( this.pointLight );
-        // this.camera.position.x = this.timer;
-        // this.camera.lookAt( this.scene.position );
+        this.spotLight.position.set(this.pointLightX,0,0);
+        // this.spotLight.castShadow = true;
+        this.spotLight.angle = Math.PI /6
+        this.scene.add(this.spotLight); //光对象添加到scene场景中
+        // 设置计算阴影的区域，最好刚好紧密包围在对象周围
+        this.spotLight.shadow.camera.near = 1;
+        this.spotLight.shadow.camera.far = 300;
+        this.spotLight.shadow.camera.fov = 20;
+        // 聚光光源辅助显示
+        let spotLightHelper = new THREE.SpotLightHelper(this.spotLight);
+        this.scene.add(spotLightHelper);
         this.axisHelper = new THREE.AxisHelper(8000)   // 辅助线
-        // this.scene.add(this.axisHelper)
+        this.scene.add(this.axisHelper)
         //声明raycaster和mouse变量
         this.raycaster = new THREE.Raycaster()
         this.mouse = new THREE.Vector2()
@@ -648,6 +675,31 @@ export default {
       obj.name = "我家四楼"
       obj.translateY(-4000);
     },
+    loaderAir (obj) {
+      this.Air = obj
+      // console.log(obj)
+      this.Air.name = "空调柜"
+    },
+    loaderDevice1 (obj) {
+      this.device1 = obj
+      this.device1.name = "配电柜呢1"
+      this.device1.translateY(-3900)
+    },
+    loaderDevice2 (obj) {
+      this.device2 = obj
+      this.device2.name = "配电柜呢2"
+      this.device2.translateY(-3900)
+    },
+    loaderDevice3 (obj) {
+      this.device3 = obj
+      this.device3.name = "配电柜呢3"
+      this.device3.translateY(-3900)
+    },
+    loaderDevice4 (obj) {
+      this.device4 = obj
+      this.device4.name = "配电柜呢4"
+      this.device4.translateY(-3900)
+    },
     setCamera () {
         let width = document.body.clientWidth // 窗口宽度
         let height = document.body.clientHeight // 窗口高度
@@ -658,6 +710,7 @@ export default {
         this.renderer.setClearColor('#16244a', 1) // 设置背景颜色
         // document.getElementById('pos').removeChild(this.renderer.domElement)
         document.getElementById('buildModel').appendChild(this.renderer.domElement)  // body元素中插入canvas对象
+        this.renderer.shadowMap.enabled = true;
     },
     onWindowResize () {
       this.camera.aspect = window.innerWidth / window.innerHeight;
@@ -729,7 +782,24 @@ export default {
 
           this.camera.position.set(this.cameraX, this.cameraY, this.cameraZ)
         }
-
+        // 太阳运动
+        if (this.pointFlog) {
+          if (this.pointLightX < 30000) {
+            this.pointLightX += 50
+          } else {
+            this.pointFlog = false
+            this.pointLightX = 30000
+          }
+        } else {
+          if (this.pointLightX > -30000) {
+            this.pointLightX -= 50
+          } else {
+            this.pointFlog = true
+            this.pointLightX = -30000
+          }
+        }
+        // console.log(this.pointLightX)
+        this.spotLight.position.set(this.pointLightX,0,0);
       // }
     },
     lookFloor (index) { // 查看楼层
@@ -760,7 +830,7 @@ export default {
       self.scene.remove(this.FloorFour)
     },
     removeMan () { // 删除人物
-    if (this.scene.getObjectByName ( "跳舞人" )) {
+      if (this.scene.getObjectByName ( "跳舞人" )) {
         this.scene.remove(this.personPre)
       }
     },
@@ -793,12 +863,16 @@ export default {
       let material = new THREE.MeshLambertMaterial({
         color: "#9fc1dd",
         transparent:true,//开启透明度
-        opacity:0.6,//设置透明度具体值
+        opacity:0.8,//设置透明度具体值
       }); //材质对象Material
       let mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
-      mesh.position.set(-item.position[1] + 11200, -2700, item.position[0] + 2300)
+      // let positionY = -2700
+      // if (this.cabinetType[item.type].size[2] < 2500) {
+      let positionY = -2700 +( (this.cabinetType[item.type].size[2] - 2500 ) / 2)
+      // }
+      mesh.position.set(-item.position[1] + 11200, positionY, item.position[0] + 2300)
       // mesh.position.z = item.position[1]
-      mesh.name ="机柜" + index
+      mesh.name ="机柜呢" + index
       return mesh
     },
     setCabinet () {
@@ -812,8 +886,59 @@ export default {
           let mesh = self.addMeth(item, index)
           self.listGroup.add(mesh)
         })
+        for (let index = 0; index < 4; index++) {
+          let air = self.Air.clone();
+              air.name = "空调柜呢" + index
+          switch (index) {
+            case 0:
+              // air.translateZ(-17200); //沿着z轴平移
+              air.translateX(-600); //沿着x轴平移
+              air.translateY(-3900); //沿着y轴平移
+              break;
+            case 1:
+              // air.translateZ(-17200); //沿着z轴平移
+              air.translateX(2500); //沿着x轴平移
+              air.translateY(-3900); //沿着y轴平移
+              break;
+            case 2:
+              // air.translateZ(-17200); //沿着z轴平移
+              air.translateX(5500); //沿着x轴平移
+              air.translateY(-3900); //沿着y轴平移
+              break;
+            case 3:
+              air.translateZ(17000); //沿着z轴平移
+              air.translateX(9000); //沿着x轴平移
+              air.translateY(-3900); //沿着y轴平移
+              air.rotateY(Math.PI);//每次绕y轴旋转180弧度
+              break;
+
+            default:
+              break;
+          }
+          self.listGroup.add(air)
+        }
+        self.listGroup.add(self.device1)
+        self.listGroup.add(self.device2)
+        let device22 = self.device2.clone()
+        device22.translateX(1700)
+        let device222 = self.device2.clone()
+        device222.translateX(2550)
+        self.listGroup.add(device22)
+        self.listGroup.add(device222)
+        self.listGroup.add(self.device3)
+        self.listGroup.add(self.device4)
+        let geometry = new THREE.BoxGeometry(700, 4000, 740); //创建一个立方体几何对象Geometry
+        let material = new THREE.MeshLambertMaterial({
+          color: "#ccc"
+        }); //材质对象Material
+        let mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
+        mesh.name = "擎天柱"
+        mesh.translateX(10000)
+        mesh.translateZ(7800)
+        mesh.translateY(-2000)
+        this.listGroup.add(mesh); //网格模型添加到场景中
         this.scene.add(this.listGroup)
-        console.log(this.listGroup)
+        // console.log(this.listGroup)
       // }
     }
   },

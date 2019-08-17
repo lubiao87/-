@@ -790,7 +790,7 @@ export default {
           if (this.cameraY < 20000) {
             this.cameraY += 500;
           }
-          let number = 1 - (Date.now() - self.animationTime) / 2000;
+          let number = 1 - (Date.now() - self.animationTime) / 4000;
           // console.log(this.cameraX)
           this.moderBuild.material.forEach((item, index) => {
             if (number < 0) {

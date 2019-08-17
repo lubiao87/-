@@ -22,9 +22,9 @@ const routes = [
     name: "index",
     component: () => import("./components/index.vue"),
     // redirect: () => import("./views/map/mapView.vue"),
-    redirect: "/mapView",
+    redirect: "/buildModel",
     meta: {
-      auth: true // 这里设置，当前路由需要校验
+      auth: false // 这里设置，当前路由需要校验
     },
     children: [
       //地图页面
@@ -33,7 +33,7 @@ const routes = [
         name: "mapView",
         component: () => import("./views/map/mapView.vue"),
         meta: {
-          auth: true, // 这里设置，当前路由需要校验
+          auth: false, // 这里设置，当前路由需要校验
           keepAlive: true // 缓存
         }
       },

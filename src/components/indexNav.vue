@@ -115,6 +115,9 @@ export default {
       this.logined = true;
       this.userName = headers.userName;
     }
+    if (!headers) {
+      return;
+    }
     let menuList = JSON.parse(headers.menuList);
     let buttonList = JSON.parse(headers.buttonList);
     // this.menuList = menuList;

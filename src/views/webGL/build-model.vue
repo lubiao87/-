@@ -33,7 +33,7 @@
           </div> -->
       </div>
       <div style="margin-top: 30px;">
-        <h5 class="ui-city-title ui-height48" @click="showBuilding()">
+        <h5 class="ui-city-title ui-height48" @click="showBuilding">
           <span class="ui-linebg"></span>商务大厦楼
         </h5>
         <div class="clearfix module-statis" style="padding-left: 0;">
@@ -55,6 +55,25 @@
       </div>
     </div>
     <div class="yhui-real-timeimg"></div>
+    <el-select
+      v-model="selectValue"
+      multiple
+      filterable
+      allow-create
+      default-first-option
+      placeholder="请选择机柜类型"
+      class="model-select"
+      size="large"
+      v-show="floorIndex > -1"
+    >
+      <el-option
+        v-for="item in cabinetType"
+        :key="item.type"
+        :label="item.name"
+        :value="item.name"
+      >
+      </el-option>
+    </el-select>
   </div>
   <!-- 右边收缩栏结束 -->
 </template>
@@ -75,6 +94,7 @@ export default {
   mixins: [listSearchMixin],
   data() {
     return {
+      selectValue: [],
       scene: null, // 场景
       FBXloader: null, // fbx加载器
       ambient: null, // 环境光
@@ -585,6 +605,8 @@ export default {
       this.FBXloader.load("./assets/fbx/device2.FBX", self.loaderDevice2);
       this.FBXloader.load("./assets/fbx/device3.FBX", self.loaderDevice3);
       this.FBXloader.load("./assets/fbx/device4.FBX", self.loaderDevice4);
+      this.FBXloader.load("./assets/fbx/jigui.FBX", self.loaderJIGUI);
+      this.FBXloader.load("./assets/fbx/guankonggui.FBX", self.loaderGKG);
       this.ambient = new THREE.AmbientLight(0xffffff); // 环境光
       this.renderer = new THREE.WebGLRenderer(); // 渲染器
       this.scene.add(this.ambient);
@@ -725,6 +747,18 @@ export default {
       this.device4.name = "配电柜呢4";
       this.device4.translateY(-3900);
     },
+    loaderJIGUI(obj) {
+      // obj.children[0].material[0].color.set("#1e222b"); // 设置材质颜色
+      this.JIGUI = obj;
+      this.JIGUI.name = "机柜类型all";
+      // this.scene.add(this.JIGUI);
+    },
+    loaderGKG(obj) {
+      // obj.children[0].material[0].color.set("#1e222b"); // 设置材质颜色
+      this.GKGModel = obj;
+      this.GKGModel.name = "机柜类型j";
+      // this.scene.add(this.GKGModel);
+    },
     setCamera() {
       let width = document.body.clientWidth; // 窗口宽度
       let height = document.body.clientHeight; // 窗口高度
@@ -837,6 +871,7 @@ export default {
         this.floorIndex = index;
         this.animationFlag = true;
         // this.setCabinet()
+        this.selectValue = [];
       }
     },
     removeObjAll() {
@@ -856,6 +891,7 @@ export default {
       self.scene.remove(this.FloorOne);
       self.scene.remove(this.FloorThree);
       self.scene.remove(this.FloorFour);
+      self.scene.remove(this.GKGModel);
     },
     removeMan() {
       // 删除人物
@@ -872,6 +908,7 @@ export default {
         this.animationTime = Date.now();
         this.lookAround = true; // 开启动画
         // console.log(this.scene)
+        this.selectValue = [];
       }
     },
     addBuilding() {
@@ -988,14 +1025,14 @@ export default {
       this.raycaster = new THREE.Raycaster();
       //加入鼠标拖动对象的一系列监听事件
       self.renderer.domElement.removeEventListener("mousemove", null);
-      self.renderer.domElement.removeEventListener("mousedown", null);
+      self.renderer.domElement.removeEventListener("dblclick", null);
       self.renderer.domElement.addEventListener(
         "mousemove",
         self.onDocumentMouseMove,
         false
       );
       self.renderer.domElement.addEventListener(
-        "mousedown",
+        "dblclick",
         self.onDocumentClick,
         false
       );
@@ -1185,22 +1222,39 @@ export default {
             worldPosition.y,
             worldPosition.z
           );
-          this.scene.add(this.meshborder); //网格模型添加到场景中
+          // this.scene.add(this.meshborder); //网格模型添加到场景中
           this.cameraPosition2 = this.camera.position;
           // this.camera.position.set(worldPosition.x - 3000, 10000, worldPosition.z)
-          this.controls.target = new THREE.Vector3().addVectors(
-            intersects[0].object.position,
-            intersects[0].object.getWorldDirection()
-          );
-          this.camera.lookAt(intersects[0].object.position);
+          // this.controls.target = new THREE.Vector3().addVectors(
+          //   intersects[0].object.position,
+          //   intersects[0].object.getWorldDirection()
+          // );
+          // this.camera.lookAt(intersects[0].object.position);
+          this.removeObjAll();
+          console.log(intersects[0].object.name);
+          if (intersects[0].object.name === "机柜类型j") {
+            this.scene.add(this.GKGModel);
+            this.GKGModel.position.set(
+              worldPosition.x,
+              worldPosition.y - 2000,
+              worldPosition.z
+            );
+          } else {
+            this.scene.add(this.JIGUI);
+            this.JIGUI.position.set(
+              worldPosition.x,
+              worldPosition.y - 2000,
+              worldPosition.z
+            );
+          }
 
           // 创建精灵图标2
-          this.newCSS3DSprite2(
-            intersects,
-            worldPosition.x,
-            worldPosition.y + 2000,
-            worldPosition.z
-          );
+          // this.newCSS3DSprite2(
+          //   intersects,
+          //   worldPosition.x,
+          //   worldPosition.y + 2000,
+          //   worldPosition.z
+          // );
         } else {
           intersects[0].object.flag = false;
           if (this.meshborder) {
@@ -1209,11 +1263,13 @@ export default {
           if (this.sprite2) {
             this.scene.remove(this.sprite2);
           }
+          this.scene.remove(this.GKGModel);
+          this.scene.remove(this.JIGUI);
           // this.camera.position.set(this.cameraX, this.cameraY, this.cameraZ)
           this.controls.target = new THREE.Vector3(0, 0, 0);
           this.camera.lookAt(this.scene.position);
         }
-        this.selectBorder = intersects[0].object.flag;
+        // this.selectBorder = intersects[0].object.flag;
       }
     },
     lookCabinetfn() {
@@ -1313,6 +1369,17 @@ export default {
           break;
       }
       // console.log(this.scene)
+    },
+    selectValue(val) {
+      this.listGroup.traverse(function(child) {
+        if (child.isMesh && child.name) {
+          const length = val.filter(v => child.name.indexOf(v) > -1).length;
+          child.material.color.set("#9fc1dd"); // 设置材质颜色
+          if (length) {
+            child.material.color.set("#243665"); // 设置材质颜色
+          }
+        }
+      });
     }
   }
 };
@@ -1354,6 +1421,9 @@ export default {
   float: left;
   width: 60%;
 }
+.el-select__tags {
+  max-width: 440px !important;
+}
 </style>
 <style scoped>
 .map {
@@ -1369,5 +1439,11 @@ export default {
   border-radius: 5px;
   color: #ddd;
   text-align: right;
+}
+.model-select {
+  position: absolute;
+  top: 100px;
+  left: 50px;
+  min-width: 240px;
 }
 </style>

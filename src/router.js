@@ -56,7 +56,10 @@ const routes = [
   }
 ];
 const router = new Router({
-  routes
+  routes,
+  mode: "history",
+  base:
+    process.env.NODE_ENV === "development" ? process.env.BASE_URL : "/transWeb" //transWeb是生产环境放代码的目录
 });
 router.beforeResolve((to, from, next) => {
   // console.log(to.matched, "to.matched");

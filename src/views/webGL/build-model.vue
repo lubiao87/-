@@ -891,7 +891,7 @@ export default {
       self.scene.remove(this.FloorOne);
       self.scene.remove(this.FloorThree);
       self.scene.remove(this.FloorFour);
-      self.scene.remove(this.GKGModel);
+      self.scene.remove(this.JIGUI);
     },
     removeMan() {
       // 删除人物

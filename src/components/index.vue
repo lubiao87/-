@@ -78,4 +78,7 @@ export default {
 </style>
 <style lang="scss" rel="stylesheet/scss">
 @import "../assets/theme/common.scss";
+.top0 {
+  top: -70px;
+}
 </style>

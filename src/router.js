@@ -22,16 +22,26 @@ const routes = [
     name: "index",
     component: () => import("./components/index.vue"),
     // redirect: () => import("./views/map/mapView.vue"),
-    redirect: "/buildModel",
+    redirect: "/lbsMapView",
     meta: {
-      auth: false // 这里设置，当前路由需要校验
+      auth: true // 这里设置，当前路由需要校验
     },
     children: [
-      //地图页面
+      //百度地图页面
       {
         path: "/mapView",
         name: "mapView",
         component: () => import("./views/map/mapView.vue"),
+        meta: {
+          auth: false, // 这里设置，当前路由需要校验
+          keepAlive: true // 缓存
+        }
+      },
+      //高德地图页面
+      {
+        path: "/lbsMapView",
+        name: "lbsMapView",
+        component: () => import("./views/map/lbsMapView.vue"),
         meta: {
           auth: false, // 这里设置，当前路由需要校验
           keepAlive: true // 缓存
@@ -57,7 +67,7 @@ const routes = [
 ];
 const router = new Router({
   routes,
-  mode: "history",
+  // mode: "history",
   base:
     process.env.NODE_ENV === "development" ? process.env.BASE_URL : "/transWeb" //transWeb是生产环境放代码的目录
 });
@@ -91,6 +101,10 @@ router.beforeResolve((to, from, next) => {
         isAccess = true;
       }
       if (to.fullPath.indexOf("/buildModel") >= 0) {
+        //主页权限
+        isAccess = true;
+      }
+      if (to.fullPath.indexOf("/lbsMapView") >= 0) {
         //主页权限
         isAccess = true;
       }

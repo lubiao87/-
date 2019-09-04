@@ -1,4 +1,9 @@
 const path = require("path");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
+const webpack = require("webpack");
+const debug = process.env.NODE_ENV !== "production";
+let cesiumSource = "./node_modules/cesium/Source";
+let cesiumWorkers = "../Build/Cesium/Workers";
 function resolve(dir) {
   return path.join(__dirname, dir);
 }
@@ -19,7 +24,49 @@ module.exports = {
       }
     }
   },
-
+  configureWebpack: {
+    output: {
+      sourcePrefix: " " // 1
+    },
+    amd: {
+      // 2
+      toUrlUndefined: true
+    },
+    resolve: {
+      alias: {
+        vue$: "vue/dist/vue.esm.js",
+        "@": path.resolve("src"),
+        cesium: path.resolve(__dirname, cesiumSource) // 3
+      }
+    },
+    plugins: [
+      // 4
+      new CopyWebpackPlugin([
+        { from: path.join(cesiumSource, cesiumWorkers), to: "Workers" }
+      ]),
+      new CopyWebpackPlugin([
+        { from: path.join(cesiumSource, "Assets"), to: "Assets" }
+      ]),
+      new CopyWebpackPlugin([
+        { from: path.join(cesiumSource, "Widgets"), to: "Widgets" }
+      ]),
+      new CopyWebpackPlugin([
+        {
+          from: path.join(cesiumSource, "ThirdParty/Workers"),
+          to: "ThirdParty/Workers"
+        }
+      ]),
+      new webpack.DefinePlugin({
+        // 5
+        CESIUM_BASE_URL: JSON.stringify("./")
+      })
+    ],
+    module: {
+      unknownContextCritical: /^.\/.*$/,
+      unknownContextCritical: false // 6
+    }
+  },
+  //blog.csdn.net/weixin_44402694/article/details/88028155
   //允许对内部的 webpack 配置进行更细粒度的修改。
   chainWebpack: config => {
     //命名

@@ -83,7 +83,7 @@ export default {
       var viewer = new Cesium.Viewer('cesiumContainer',
         {
             imageryProvider: new Cesium.SingleTileImageryProvider({
-               url: './assets/img/worldimage.jpg'
+               url: './assets/img/worldimage.png'
             }),
 
             homeButton: false,
@@ -99,12 +99,12 @@ export default {
         var height = 50000000;
 
         viewer.camera.setView({
-            destination: Cesium.Cartesian3.fromDegrees(-50.0, 5.0, height)
+            destination: Cesium.Cartesian3.fromDegrees(-100.0, 5.0, height)
         });
 
         setTimeout(function() {
             viewer.camera.flyTo({
-                destination: Cesium.Cartesian3.fromDegrees(113.377078, 23.128803, 100000),
+                destination: Cesium.Cartesian3.fromDegrees(113.377078, 23.128803, 500000),
                 maximumHeight: height,
                 pitchAdjustHeight: 20000000,
                 complete: function () {
@@ -114,7 +114,7 @@ export default {
                   that.$emit('getNavShow', false)
                 }
             });
-        }, 1000);
+        }, 2000);
     },
     mapInit() {
       const that = this;
@@ -123,7 +123,7 @@ export default {
             viewMode: '3D',
             pitch: 30,
             rotation: 25,
-            zoom: 14,
+            zoom: 13,
             center: [113.371402,23.124971],
             mapStyle: 'amap://styles/macaron',
             showIndoorMap: false
@@ -165,6 +165,10 @@ export default {
             that.map.on('click', that.clickHandler);
             // prism 拾取
             that.map.on('mousemove', that.mapMousemove);
+            // 缩放事件
+            // that.map.on('zoomstart', that.mapZoomstart);
+            that.map.on('zoomchange', that.mapZoom);
+            // that.map.on('zoomend', that.mapZoomend);
         });
 
 
@@ -228,6 +232,15 @@ export default {
 
             mesh.needUpdate = true;
             mesh.reDraw();
+    },
+    // 缩放开始
+    mapZoomstart() {
+      console.log("缩放开始")
+    },
+    mapZoom() {
+      const that = this;
+      var zoom = that.map.getZoom(); //获取当前地图级别
+      console.log("正在缩放", zoom);
     }
   }
 };

@@ -1,7 +1,7 @@
 const path = require("path");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const webpack = require("webpack");
-const debug = process.env.NODE_ENV !== "production";
+// const debug = process.env.NODE_ENV !== "production";
 let cesiumSource = "./node_modules/cesium/Source";
 let cesiumWorkers = "../Build/Cesium/Workers";
 function resolve(dir) {
@@ -62,7 +62,7 @@ module.exports = {
       })
     ],
     module: {
-      unknownContextCritical: /^.\/.*$/,
+      // unknownContextCritical: /^.\/.*$/
       unknownContextCritical: false // 6
     }
   },

@@ -2,6 +2,20 @@
   <div style="width: 100%;height:100%;">
     <!-- <input type="flies" src="/assets/GKG.FBX" ref="mapID" alt="" /> -->
     <div id="cesiumContainer" style="width: 100%;height:100%;"></div>
+    <el-select
+      class="model-select"
+      v-model="selectValue"
+      placeholder="请选择"
+       v-show="panelFlag"
+      >
+      <el-option
+        v-for="item in areas"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value"
+      >
+      </el-option>
+    </el-select>
     <!-- 右边收缩栏开始 -->
     <div class="ui-shrinkBar" v-bind:class="{'ui-shrinkBar-right':panelShow}" v-show="panelFlag">
       <div @click="panelShow = !panelShow" class="ui-shrinkBar-close"
@@ -33,21 +47,21 @@
         </div>
       </div>
       <div class="yhui-real-timeimg"></div>
-
     </div>
     <!-- 右边收缩栏结束 -->
-    <!-- <div v-show="stops" ref="reference" class="stip-box" :style="{ top:stipY-120 + 'px',left:stipX + 20 + 'px' }">123123</div> -->
   </div>
 </template>
 
 <script>
+  // import { listSearchMixin } from "../../mixin"; //混淆请求
  // 局部组件引用
   import Cesium from 'cesium/Cesium'
   // noinspection ES6UnusedImports
   import widget from 'cesium/Widgets/widgets.css'
 export default {
-  name: "olmap",
+  name: "olmap2",
   props: ["coordinate"],
+  // mixins: [listSearchMixin],
   data() {
     return {
       panelShow: true,
@@ -57,7 +71,57 @@ export default {
           id: 123
         }
       },
-      panelFlag: false
+      panelFlag: false,
+      district: null,
+      polygons: [],
+      selectValue: "深圳市",
+      areas: [{
+          value: '440300',
+          label: '深圳市',
+          // name: 'jiangmen'
+          coordinate: [114.054778,22.583432]
+        }, {
+          value: '440303',
+          label: '罗湖区',
+          coordinate: [114.123885, 22.555341]
+          // name: 'pengjiang'
+        }, {
+          value: '440304',
+          label: '福田区',
+          coordinate: [114.05096, 22.541009]
+          // name: 'jianghai'
+        }, {
+          value: '440305',
+          label: '南山区',
+          coordinate: [113.92943, 22.531221]
+          // name: 'xinhui'
+        }, {
+          value: '440306',
+          label: '宝安区',
+          coordinate: [113.828671, 22.754741]
+          // name: 'taishan'
+        }, {
+          value: '440307',
+          label: '龙岗区',
+          // name: 'kaiping'
+          coordinate: [114.251372, 22.721511]
+        }, {
+          value: '440308',
+          label: '盐田区',
+          coordinate: [114.235366, 22.555069]
+          // name: 'heshan'
+        }, {
+          value: '440309',
+          label: '龙华区',
+          coordinate: [114.044346, 22.691963]
+          // name: 'enping'
+        }, {
+          value: '440310',
+          label: '坪山区',
+          coordinate: [114.338441, 22.69423]
+          // name: 'enping'
+        }
+        ],
       // stops: false
     };
   },
@@ -96,7 +160,7 @@ export default {
             vrButton: false
         });
         // var scene = viewer.scene;
-        var height = 50000000;
+        var height = 40000000;
 
         viewer.camera.setView({
             destination: Cesium.Cartesian3.fromDegrees(-100.0, 5.0, height)
@@ -109,9 +173,11 @@ export default {
                 pitchAdjustHeight: 20000000,
                 complete: function () {
                   // console.log("完成飞行");
+
                   that.mapInit();
                   that.panelFlag = true;
-                  that.$emit('getNavShow', false)
+                  that.$emit('getNavShow', false);
+
                 }
             });
         }, 2000);
@@ -124,7 +190,7 @@ export default {
             pitch: 30,
             rotation: 25,
             zoom: 13,
-            center: [113.371402,23.124971],
+            center: [113.951103, 22.553026],
             mapStyle: 'amap://styles/macaron',
             showIndoorMap: false
         });
@@ -138,7 +204,7 @@ export default {
 			      var urlDuck2 = './assets/gltf/dianxin.gltf';
 
             var paramDuck = {
-                position: new AMap.LngLat(113.371402, 23.124971), // 必须
+                position: new AMap.LngLat(113.951103,22.553026), // 必须
                 scale: 0.1, // 非必须，默认1
                 height: -100,  // 非必须，默认0
                 scene: 0, // 非必须，默认0
@@ -170,8 +236,7 @@ export default {
             that.map.on('zoomchange', that.mapZoom);
             // that.map.on('zoomend', that.mapZoomend);
         });
-
-
+        that.drawBounds();
 
     },
     clickHandler(e) {
@@ -241,6 +306,48 @@ export default {
       const that = this;
       var zoom = that.map.getZoom(); //获取当前地图级别
       console.log("正在缩放", zoom);
+    },
+    drawBounds() {
+      const that = this;
+      //加载行政区划插件
+        if(!that.district){
+            //实例化DistrictSearch
+            var opts = {
+                subdistrict: 0,   //获取边界不需要返回下级行政区
+                extensions: 'all',  //返回行政区边界坐标组等具体信息
+                level: 'district'  //查询行政级别为 市
+            };
+            that.district = new AMap.DistrictSearch(opts);
+        }
+        //行政区查询
+        that.district.setLevel("city");
+        that.district.setExtensions('all');
+        that.district.search(that.selectValue, function(status, result) {
+            that.map.remove(that.polygons)//清除上次结果
+            that.polygons = [];
+            var bounds = result.districtList[0].boundaries;
+            if (bounds) {
+                for (var i = 0, l = bounds.length; i < l; i++) {
+                    //生成行政区划polygon
+                    var polygon = new AMap.Polygon({
+                        strokeWeight: 2,
+                        path: bounds[i],
+                        fillOpacity: 0.4,
+                        fillColor: '#80d8ff',
+                        strokeColor: '#0091ea'
+                    });
+                    that.polygons.push(polygon);
+                }
+            }
+            that.map.add(that.polygons)
+            that.map.setFitView(that.polygons);//视口自适应
+        });
+    }
+  },
+  watch: {
+    selectValue(val) {
+      console.log(val);
+      this.drawBounds()
     }
   }
 };
@@ -297,5 +404,11 @@ export default {
   border-radius: 5px;
   color: #ddd;
   text-align: right;
+}
+.model-select {
+  position: absolute;
+  top: 100px;
+  left: 50px;
+  min-width: 240px;
 }
 </style>

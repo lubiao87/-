@@ -1,7 +1,8 @@
 <template>
   <div style="width: 100%;height:100%;">
     <!-- <input type="flies" src="/assets/GKG.FBX" ref="mapID" alt="" /> -->
-    <div id="cesiumContainer" style="width: 100%;height:100%;"></div>
+    <div id="cesiumContainer" style="position:absolute; top: 0; width: 100%;height:100%;" v-show="!panelFlag"></div>
+    <div id="cesiumContainer2" style="position:absolute; top: 0; width: 100%;height:100%;" v-show="panelFlag"></div>
     <el-select
       class="model-select"
       v-model="selectValue"
@@ -165,7 +166,7 @@ export default {
         viewer.camera.setView({
             destination: Cesium.Cartesian3.fromDegrees(-100.0, 5.0, height)
         });
-
+        that.mapInit();
         setTimeout(function() {
             viewer.camera.flyTo({
                 destination: Cesium.Cartesian3.fromDegrees(113.377078, 23.128803, 500000),
@@ -174,7 +175,7 @@ export default {
                 complete: function () {
                   // console.log("完成飞行");
 
-                  that.mapInit();
+                  // that.mapInit();
                   that.panelFlag = true;
                   that.$emit('getNavShow', false);
 
@@ -185,12 +186,12 @@ export default {
     mapInit() {
       const that = this;
               // 创建地图实例
-        that.map = new AMap.Map("cesiumContainer", {
+        that.map = new AMap.Map("cesiumContainer2", {
             viewMode: '3D',
             pitch: 30,
             rotation: 25,
-            zoom: 13,
-            center: [113.951103, 22.553026],
+            zoom: 12,
+            center: [113.932784,22.540646],
             mapStyle: 'amap://styles/macaron',
             showIndoorMap: false
         });
@@ -204,7 +205,7 @@ export default {
 			      var urlDuck2 = './assets/gltf/dianxin.gltf';
 
             var paramDuck = {
-                position: new AMap.LngLat(113.951103,22.553026), // 必须
+                position: new AMap.LngLat(113.932784,22.540646), // 必须
                 scale: 0.1, // 非必须，默认1
                 height: -100,  // 非必须，默认0
                 scene: 0, // 非必须，默认0

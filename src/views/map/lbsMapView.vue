@@ -200,14 +200,14 @@ export default {
         // 创建Object3DLayer图层
         that.object3Dlayer = new AMap.Object3DLayer();
         that.map.add(that.object3Dlayer);
-
+        that.drawBounds();
         that.map.plugin(["AMap.GltfLoader"], function () {
 			      var urlDuck2 = './assets/gltf/dianxin.gltf';
 
             var paramDuck = {
                 position: new AMap.LngLat(113.932784,22.540646), // 必须
                 scale: 0.1, // 非必须，默认1
-                height: -100,  // 非必须，默认0
+                height: 100,  // 非必须，默认0
                 scene: 0, // 非必须，默认0
             };
 
@@ -217,7 +217,7 @@ export default {
                 gltfDuck.setOption(paramDuck);
                 gltfDuck.rotateX(90);
                 gltfDuck.rotateZ(10);
-
+                gltfDuck.setName = "设置的名称"
                 that.object3Dlayer.add(gltfDuck);
 
                 console.log("加载出来的模型", gltfDuck)
@@ -229,7 +229,7 @@ export default {
             });
 
             // 绑定事件
-            that.map.on('click', that.clickHandler);
+            // that.map.on('click', that.clickHandler);
             // prism 拾取
             that.map.on('mousemove', that.mapMousemove);
             // 缩放事件
@@ -237,7 +237,7 @@ export default {
             that.map.on('zoomchange', that.mapZoom);
             // that.map.on('zoomend', that.mapZoomend);
         });
-        that.drawBounds();
+
 
     },
     clickHandler(e) {
@@ -337,6 +337,7 @@ export default {
                         fillColor: '#80d8ff',
                         strokeColor: '#0091ea'
                     });
+                    polygon.on('click', that.clickHandler);
                     that.polygons.push(polygon);
                 }
             }

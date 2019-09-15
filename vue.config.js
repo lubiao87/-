@@ -45,7 +45,7 @@ module.exports = {
         { from: path.join(cesiumSource, cesiumWorkers), to: "Workers" }
       ]),
       new CopyWebpackPlugin([
-        { from: path.join(cesiumSource, "Assets"), to: "Assets" }
+        { from: path.join(cesiumSource, "assets"), to: "Assets" }
       ]),
       new CopyWebpackPlugin([
         { from: path.join(cesiumSource, "Widgets"), to: "Widgets" }

@@ -24,7 +24,7 @@
         <div class="ui-citytol">
           <h5 class="ui-city-title"><span class="icon-location"></span> 当前区域</h5>
           <div class="scroll-wrap fn-mt10 regionName">
-            {{selectValue}}
+            {{selectValueName}}
           </div>
         </div>
         <div style="margin-top: 30px;">
@@ -70,51 +70,47 @@ export default {
       panelFlag: false,
       district: null,
       polygons: [],
-      selectValue: "深圳市",
+      selectValue: "440700",
+      selectValueName: "江门市",
       areas: [{
-          value: '440300',
-          label: '深圳市',
+          value: '440700',
+          label: '江门市',
           // name: 'jiangmen'
-          coordinate: [114.054778,22.583432]
+          coordinate: [113.094942, 22.590431]
         }, {
-          value: '440303',
-          label: '罗湖区',
-          coordinate: [114.123885, 22.555341]
+          value: '440784',
+          label: '鹤山市',
+          coordinate: [1112.961795, 22.768104]
           // name: 'pengjiang'
         }, {
-          value: '440304',
-          label: '福田区',
-          coordinate: [114.05096, 22.541009]
+          value: '440783',
+          label: '开平市',
+          coordinate: [112.692262, 22.366286]
           // name: 'jianghai'
         }, {
-          value: '440305',
-          label: '南山区',
-          coordinate: [113.92943, 22.531221]
+          value: '440704',
+          label: '江海区',
+          coordinate: [113.120601, 22.572211]
           // name: 'xinhui'
         }, {
-          value: '440306',
-          label: '宝安区',
-          coordinate: [113.828671, 22.754741]
+          value: '440781',
+          label: '台山市',
+          coordinate: [112.793414, 22.250713]
           // name: 'taishan'
         }, {
-          value: '440307',
-          label: '龙岗区',
+          value: '440785',
+          label: '恩平市',
           // name: 'kaiping'
-          coordinate: [114.251372, 22.721511]
+          coordinate: [112.314051, 22.182956]
         }, {
-          value: '440308',
-          label: '盐田区',
-          coordinate: [114.235366, 22.555069]
+          value: '440703',
+          label: '蓬江区',
+          coordinate: [113.07859, 22.59677]
           // name: 'heshan'
         }, {
-          value: '440309',
-          label: '龙华区',
-          coordinate: [114.044346, 22.691963]
-          // name: 'enping'
-        }, {
-          value: '440310',
-          label: '坪山区',
-          coordinate: [114.338441, 22.69423]
+          value: '440705',
+          label: '新会区',
+          coordinate: [113.038584, 22.520247]
           // name: 'enping'
         }
         ],
@@ -185,8 +181,8 @@ export default {
             viewMode: '3D',
             pitch: 30,
             rotation: 25,
-            zoom: 12,
-            center: [113.932784,22.540646],
+            zoom: 10,
+            center: [113.094942, 22.590431],
             mapStyle: 'amap://styles/macaron',
             showIndoorMap: false
         });
@@ -200,7 +196,7 @@ export default {
 			      var urlDuck2 = './assets/gltf/dianxin.gltf';
 
             var paramDuck = {
-                position: new AMap.LngLat(113.932784,22.540646), // 必须
+                position: new AMap.LngLat(113.094942, 22.590431), // 必须
                 scale: 0.1, // 非必须，默认1
                 height: 100,  // 非必须，默认0
                 scene: 0, // 非必须，默认0
@@ -343,8 +339,14 @@ export default {
   },
   watch: {
     selectValue(val) {
-      console.log(val);
+
       this.drawBounds()
+      const data = this.areas.filter(function(item) {
+        return item.value === val
+      });
+      // console.log("data ",data);
+      this.selectValueName = data[0].label
+      // console.log(this.selectValueName);
     }
   }
 };

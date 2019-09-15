@@ -146,7 +146,7 @@ export default {
       animationFlag: true,
       cabinetType: [
         {
-          name: "空位",
+          name: "机柜类型x",
           size: [600, 800, 600],
           type: 0
         },

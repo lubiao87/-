@@ -34,7 +34,7 @@
       </div>
       <div style="margin-top: 30px;">
         <h5 class="ui-city-title ui-height48" @click="showBuilding">
-          <span class="ui-linebg"></span>商务大厦楼
+          <span class="ui-linebg"></span>台山台城机房
         </h5>
         <div class="clearfix module-statis" style="padding-left: 0;">
           <div class="lb-module-list">
@@ -44,7 +44,7 @@
                 :key="index"
                 @click="lookFloor(index)"
               >
-                <span>天河别墅:</span>
+                <span>机房:</span>
                 <span>{{ item.name }}</span>
                 <!--<span class="lb-icon" :class="{'danger_icon': item.Situation == '严重警告','warning_icon': item.Situation == '一般警告'}"></span>-->
                 <span class="lb-icon"></span>
@@ -653,7 +653,7 @@ export default {
       // planeMesh.receiveShadow = true;
 
       this.axisHelper = new THREE.AxisHelper(8000); // 辅助线
-      this.scene.add(this.axisHelper);
+      // this.scene.add(this.axisHelper);
 
       // this.pushLineBox()  // 虚线框
       window.onresize = this.onWindowResize;
@@ -1198,6 +1198,9 @@ export default {
       );
       if (intersects.length > 0) {
         console.log(intersects);
+        window.open(
+          "http://www.yijushch.com/jmrv/www_wmk/#/device-module-details"
+        );
         this.scene.updateMatrixWorld(true);
         const worldPosition = new THREE.Vector3();
         intersects[0].object.getWorldPosition(worldPosition);
@@ -1222,7 +1225,7 @@ export default {
             worldPosition.y,
             worldPosition.z
           );
-          // this.scene.add(this.meshborder); //网格模型添加到场景中
+          this.scene.add(this.meshborder); //网格模型添加到场景中
           this.cameraPosition2 = this.camera.position;
           // this.camera.position.set(worldPosition.x - 3000, 10000, worldPosition.z)
           // this.controls.target = new THREE.Vector3().addVectors(
@@ -1230,23 +1233,23 @@ export default {
           //   intersects[0].object.getWorldDirection()
           // );
           // this.camera.lookAt(intersects[0].object.position);
-          this.removeObjAll();
-          console.log(intersects[0].object.name);
-          if (intersects[0].object.name === "机柜类型j") {
-            this.scene.add(this.GKGModel);
-            this.GKGModel.position.set(
-              worldPosition.x,
-              worldPosition.y - 2000,
-              worldPosition.z
-            );
-          } else {
-            this.scene.add(this.JIGUI);
-            this.JIGUI.position.set(
-              worldPosition.x,
-              worldPosition.y - 2000,
-              worldPosition.z
-            );
-          }
+          // this.removeObjAll();
+          // console.log(intersects[0].object.name);
+          // if (intersects[0].object.name === "机柜类型j") {
+          //   this.scene.add(this.GKGModel);
+          //   this.GKGModel.position.set(
+          //     worldPosition.x,
+          //     worldPosition.y - 2000,
+          //     worldPosition.z
+          //   );
+          // } else {
+          //   this.scene.add(this.JIGUI);
+          //   this.JIGUI.position.set(
+          //     worldPosition.x,
+          //     worldPosition.y - 2000,
+          //     worldPosition.z
+          //   );
+          // }
 
           // 创建精灵图标2
           // this.newCSS3DSprite2(
@@ -1260,11 +1263,11 @@ export default {
           if (this.meshborder) {
             self.scene.remove(this.meshborder);
           }
-          if (this.sprite2) {
-            this.scene.remove(this.sprite2);
-          }
-          this.scene.remove(this.GKGModel);
-          this.scene.remove(this.JIGUI);
+          // if (this.sprite2) {
+          //   this.scene.remove(this.sprite2);
+          // }
+          // this.scene.remove(this.GKGModel);
+          // this.scene.remove(this.JIGUI);
           // this.camera.position.set(this.cameraX, this.cameraY, this.cameraZ)
           this.controls.target = new THREE.Vector3(0, 0, 0);
           this.camera.lookAt(this.scene.position);

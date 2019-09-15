@@ -100,7 +100,7 @@ export default {
       logined: false,
       userName: "",
       isShowPlanManagement: false, //是否展示规划使用管理
-      isShowPopulationDistribution: false
+      isShowPopulationDistribution: true
     };
   },
   mounted() {

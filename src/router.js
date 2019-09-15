@@ -22,9 +22,9 @@ const routes = [
     name: "index",
     component: () => import("./components/index.vue"),
     // redirect: () => import("./views/map/mapView.vue"),
-    redirect: "/lbsMapView",
+    redirect: "/login",
     meta: {
-      auth: true // 这里设置，当前路由需要校验
+      auth: false // 这里设置，当前路由需要校验
     },
     children: [
       //百度地图页面

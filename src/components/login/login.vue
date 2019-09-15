@@ -137,59 +137,62 @@ export default {
         this.loginName = "登录";
         return;
       }
-      if (!this.validVcode()) {
-        this.$message.error("验证码错误！");
-        this.createCode();
-        this.isDisabled = false;
-        this.loginName = "登录";
-        return;
-      }
-      try {
-        let self = this;
-        let obj = {
-          userId: this.user.username,
-          password: this.user.password
-        };
-        let param = {
-          url: api.login, //获取request_url.js文件的请求路径
-          data: qs.stringify(obj),
-          contentType: "application/x-www-form-urlencoded"
-        };
-        self.sendReq(param, res => {
-          // console.log("---------登陆-----------");
-          // console.log(res);
-          if (res.respHeader.resultCode == 0) {
-            //登陆成功
-            var headers = {
-              userId: res.respBody.data.userId,
-              userName: res.respBody.data.userName,
-              userOrgid: res.respBody.data.userOrgid,
-              menuList: JSON.stringify(res.respBody.data.menuList),
-              buttonList: JSON.stringify(res.respBody.data.buttonList)
-            };
-            sessionStorage.setItem("headers", JSON.stringify(headers));
-            sessionStorage.setItem("logined", true);
-            let referrer = this.$router.currentRoute.query.referrer;
-            console.log(referrer);
-            if (referrer) {
-              // this.$router.push(referrer);
-              this.$router.push({ path: referrer });
-            } else {
-              this.$router.push("/");
-            }
-          } else {
-            this.$message.error(res.respHeader.message);
-            this.createCode();
-          }
-          this.isDisabled = false;
-          this.loginName = "登录";
-        });
-      } catch (e) {
-        // console.error(e);
-        this.isDisabled = false;
-        this.loginName = "登录";
-        this.$message.error(e.message);
-      }
+      // if (!this.validVcode()) {
+      //   this.$message.error("验证码错误！");
+      //   this.createCode();
+      //   this.isDisabled = false;
+      //   this.loginName = "登录";
+      //   return;
+      // }
+      this.$router.push({ path: "/lbsMapView" });
+      console.log("登录");
+      // try {
+      //   let self = this;
+      //   let obj = {
+      //     userId: this.user.username,
+      //     password: this.user.password
+      //   };
+
+      //   let param = {
+      //     url: api.login, //获取request_url.js文件的请求路径
+      //     data: qs.stringify(obj),
+      //     contentType: "application/x-www-form-urlencoded"
+      //   };
+      //   self.sendReq(param, res => {
+      //     // console.log("---------登陆-----------");
+      //     // console.log(res);
+      //     if (res.respHeader.resultCode == 0) {
+      //       //登陆成功
+      //       var headers = {
+      //         userId: res.respBody.data.userId,
+      //         userName: res.respBody.data.userName,
+      //         userOrgid: res.respBody.data.userOrgid,
+      //         menuList: JSON.stringify(res.respBody.data.menuList),
+      //         buttonList: JSON.stringify(res.respBody.data.buttonList)
+      //       };
+      //       sessionStorage.setItem("headers", JSON.stringify(headers));
+      //       sessionStorage.setItem("logined", true);
+      //       let referrer = this.$router.currentRoute.query.referrer;
+      //       console.log(referrer);
+      //       if (referrer) {
+      //         // this.$router.push(referrer);
+      //         this.$router.push({ path: referrer });
+      //       } else {
+      //         this.$router.push("/");
+      //       }
+      //     } else {
+      //       this.$message.error(res.respHeader.message);
+      //       this.createCode();
+      //     }
+      //     this.isDisabled = false;
+      //     this.loginName = "登录";
+      //   });
+      // } catch (e) {
+      //   // console.error(e);
+      //   this.isDisabled = false;
+      //   this.loginName = "登录";
+      //   this.$message.error(e.message);
+      // }
     },
     initBackground() {
       particlesJS("particles-js", {

@@ -24,7 +24,7 @@
         <div class="ui-citytol">
           <h5 class="ui-city-title"><span class="icon-location"></span> 当前区域</h5>
           <div class="scroll-wrap fn-mt10 regionName">
-            areaName[0].label
+            {{selectValue}}
           </div>
         </div>
         <div style="margin-top: 30px;">
@@ -33,13 +33,8 @@
               <div class="lb-module-list">
                 <ul>
                   <li @click="rountGo(item)">
-                      <span>index + 1</span>
-                      <span>天河何光路</span>
-                      <span class="lb-icon"></span>
-                  </li>
-                  <li>
-                      <span>index + 2</span>
-                      <span>‘’‘’‘’</span>
+                      <span>1. </span>
+                      <span>台山台城机房</span>
                       <span class="lb-icon"></span>
                   </li>
                 </ul>
@@ -181,7 +176,7 @@ export default {
 
                 }
             });
-        }, 2000);
+        }, 3000);
     },
     mapInit() {
       const that = this;

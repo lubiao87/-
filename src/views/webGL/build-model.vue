@@ -6,7 +6,7 @@
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.8)"
   >
-    <!-- <input type="flies" src="/assets/GKG.FBX" ref="mapID" alt="" /> -->
+    <!-- <input type="flies" src="/Assets/GKG.FBX" ref="mapID" alt="" /> -->
     <!-- 右边收缩栏开始 -->
     <div style="width: 100%;height:100%;" id="buildModel"></div>
     <div
@@ -594,19 +594,19 @@ export default {
       this.scene = null;
       this.scene = new THREE.Scene(); // 场景
       this.FBXloader = new THREE.FBXLoader(); // fbx加载器
-      this.FBXloader.load("./assets/fbx/building.FBX", self.loaderObj);
-      this.FBXloader.load("./assets/fbx/SambaDancing.FBX", self.loaderMan);
-      this.FBXloader.load("./assets/fbx/floorOne.FBX", self.loaderFloor1);
-      this.FBXloader.load("./assets/fbx/floorTwo.FBX", self.loaderFloor2);
-      this.FBXloader.load("./assets/fbx/floorThree.FBX", self.loaderFloor3);
-      this.FBXloader.load("./assets/fbx/floorFour.FBX", self.loaderFloor4);
-      this.FBXloader.load("./assets/fbx/air.FBX", self.loaderAir);
-      this.FBXloader.load("./assets/fbx/device1.FBX", self.loaderDevice1);
-      this.FBXloader.load("./assets/fbx/device2.FBX", self.loaderDevice2);
-      this.FBXloader.load("./assets/fbx/device3.FBX", self.loaderDevice3);
-      this.FBXloader.load("./assets/fbx/device4.FBX", self.loaderDevice4);
-      this.FBXloader.load("./assets/fbx/jigui.FBX", self.loaderJIGUI);
-      this.FBXloader.load("./assets/fbx/guankonggui.FBX", self.loaderGKG);
+      this.FBXloader.load("./Assets/fbx/building.FBX", self.loaderObj);
+      this.FBXloader.load("./Assets/fbx/SambaDancing.FBX", self.loaderMan);
+      this.FBXloader.load("./Assets/fbx/floorOne.FBX", self.loaderFloor1);
+      this.FBXloader.load("./Assets/fbx/floorTwo.FBX", self.loaderFloor2);
+      this.FBXloader.load("./Assets/fbx/floorThree.FBX", self.loaderFloor3);
+      this.FBXloader.load("./Assets/fbx/floorFour.FBX", self.loaderFloor4);
+      this.FBXloader.load("./Assets/fbx/air.FBX", self.loaderAir);
+      this.FBXloader.load("./Assets/fbx/device1.FBX", self.loaderDevice1);
+      this.FBXloader.load("./Assets/fbx/device2.FBX", self.loaderDevice2);
+      this.FBXloader.load("./Assets/fbx/device3.FBX", self.loaderDevice3);
+      this.FBXloader.load("./Assets/fbx/device4.FBX", self.loaderDevice4);
+      this.FBXloader.load("./Assets/fbx/jigui.FBX", self.loaderJIGUI);
+      this.FBXloader.load("./Assets/fbx/guankonggui.FBX", self.loaderGKG);
       this.ambient = new THREE.AmbientLight(0xffffff); // 环境光
       this.renderer = new THREE.WebGLRenderer(); // 渲染器
       this.scene.add(this.ambient);

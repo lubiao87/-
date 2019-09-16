@@ -139,7 +139,7 @@ export default {
       var viewer = new Cesium.Viewer('cesiumContainer',
         {
             imageryProvider: new Cesium.SingleTileImageryProvider({
-               url: './assets/img/worldimage.png'
+               url: './Assets/img/worldimage.png'
             }),
 
             homeButton: false,
@@ -193,7 +193,7 @@ export default {
         that.map.add(that.object3Dlayer);
         that.drawBounds();
         that.map.plugin(["AMap.GltfLoader"], function () {
-			      var urlDuck2 = './assets/gltf/dianxin.gltf';
+			      var urlDuck2 = './Assets/gltf/dianxin.gltf';
 
             var paramDuck = {
                 position: new AMap.LngLat(113.094942, 22.590431), // 必须

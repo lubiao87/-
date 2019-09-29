@@ -60,6 +60,25 @@ export default {
   // mixins: [listSearchMixin],
   data() {
     return {
+      modelData: [
+        {
+          modeLocation: [113.370565, 23.122751],
+          iconLocation: [
+            {
+              location: [113.323624, 23.15266],
+              name: "广州恒通通讯"
+            },
+            {
+              location: [113.383838, 23.096195],
+              name: "广州江北兴创专营店"
+            },
+            {
+              location: [113.442897, 23.182298],
+              name: "天河吉隆科讯手机店"
+            }
+          ]
+        }
+      ],
       panelShow: true,
       item: {
         path: "/buildModel",
@@ -67,50 +86,71 @@ export default {
           id: 123
         }
       },
+
       panelFlag: false,
       district: null,
       polygons: [],
-      selectValue: "440700",
-      selectValueName: "江门市",
+      selectValue: "440100",
+      selectValueName: "广州市",
       areas: [{
-          value: '440700',
-          label: '江门市',
+          value: '440100',
+          label: '广州市',
           // name: 'jiangmen'
-          coordinate: [113.094942, 22.590431]
+          coordinate: [113.280637, 23.125178]
         }, {
-          value: '440784',
-          label: '鹤山市',
-          coordinate: [1112.961795, 22.768104]
+          value: '440117',
+          label: '从化区',
+          coordinate: [113.587386, 23.545283]
           // name: 'pengjiang'
         }, {
-          value: '440783',
-          label: '开平市',
-          coordinate: [112.692262, 22.366286]
+          value: '440115',
+          label: '南沙区',
+          coordinate: [113.53738, 22.794531]
           // name: 'jianghai'
         }, {
-          value: '440704',
-          label: '江海区',
-          coordinate: [113.120601, 22.572211]
+          value: '440114',
+          label: '花都区',
+          coordinate: [113.211184, 23.39205]
           // name: 'xinhui'
         }, {
-          value: '440781',
-          label: '台山市',
-          coordinate: [112.793414, 22.250713]
+          value: '440113',
+          label: '番禺区',
+          coordinate: [113.364619, 22.938582]
           // name: 'taishan'
         }, {
-          value: '440785',
-          label: '恩平市',
-          // name: 'kaiping'
-          coordinate: [112.314051, 22.182956]
-        }, {
-          value: '440703',
-          label: '蓬江区',
-          coordinate: [113.07859, 22.59677]
+          value: '440103',
+          label: '荔湾区',
+          coordinate: [113.243038, 23.124943]
           // name: 'heshan'
         }, {
-          value: '440705',
-          label: '新会区',
-          coordinate: [113.038584, 22.520247]
+          value: '440111',
+          label: '白云区',
+          coordinate: [113.262831, 23.162281]
+          // name: 'enping'
+        }, {
+          value: '440105',
+          label: '海珠区',
+          coordinate: [113.262008, 23.103131]
+          // name: 'enping'
+        }, {
+          value: '440112',
+          label: '黄埔区',
+          coordinate: [113.450761, 23.103239]
+          // name: 'enping'
+        }, {
+          value: '440118',
+          label: '增城区',
+          coordinate: [113.829579, 23.290497]
+          // name: 'enping'
+        }, {
+          value: '440106',
+          label: '天河区',
+          coordinate: [113.335367, 23.13559]
+          // name: 'enping'
+        }, {
+          value: '440104',
+          label: '越秀区',
+          coordinate: [113.280714, 23.125624]
           // name: 'enping'
         }
         ],
@@ -160,7 +200,7 @@ export default {
         that.mapInit();
         setTimeout(function() {
             viewer.camera.flyTo({
-                destination: Cesium.Cartesian3.fromDegrees(113.377078, 23.128803, 500000),
+                destination: Cesium.Cartesian3.fromDegrees(113.370565, 23.122751, 500000),
                 maximumHeight: height,
                 pitchAdjustHeight: 20000000,
                 complete: function () {
@@ -181,30 +221,38 @@ export default {
             viewMode: '3D',
             pitch: 30,
             rotation: 25,
-            zoom: 10,
-            center: [113.094942, 22.590431],
+            zoom: 12,
+            zooms: [3, 20],
+            center: [113.370565, 23.122751],
             mapStyle: 'amap://styles/macaron',
-            showIndoorMap: false
+            showIndoorMap: false,
+            features: ['road', 'bg'],
         });
         that.selectColor = [51 / 255, 133 / 255, 255 / 255, 0.8];
-        that.clearColor = [0 / 255, 0 / 255, 0 / 255, 0.6];
+        that.clearColor = [71 / 255, 193 / 255, 76 / 255, 0.8];
+        that.clearColor2 = [64 / 255, 64 / 255, 64 / 255, 0.8];
         // 创建Object3DLayer图层
-        that.object3Dlayer = new AMap.Object3DLayer();
+        that.object3Dlayer = new AMap.Object3DLayer({
+            zIndex: 110,
+            opacity: 0.8
+        });
         that.map.add(that.object3Dlayer);
         that.drawBounds();
         that.map.plugin(["AMap.GltfLoader"], function () {
 			      var urlDuck2 = './Assets/gltf/dianxin.gltf';
 
-            var paramDuck = {
-                position: new AMap.LngLat(113.094942, 22.590431), // 必须
-                scale: 0.1, // 非必须，默认1
-                height: 100,  // 非必须，默认0
-                scene: 0, // 非必须，默认0
-            };
+
 
             var gltfObj = new AMap.GltfLoader();
 
 			      gltfObj.load(urlDuck2, function (gltfDuck) {
+              that.modelData.forEach((parent, index) => {
+                var paramDuck = {
+                  position: new AMap.LngLat(parent.modeLocation[0],parent.modeLocation[1]), // 必须
+                  scale: 0.03, // 非必须，默认1
+                  height: 100,  // 非必须，默认0
+                  scene: 0, // 非必须，默认0
+                };
                 gltfDuck.setOption(paramDuck);
                 gltfDuck.rotateX(90);
                 gltfDuck.rotateZ(10);
@@ -212,11 +260,55 @@ export default {
                 that.object3Dlayer.add(gltfDuck);
 
                 console.log("加载出来的模型", gltfDuck)
-                gltfDuck.layerMesh.forEach((element, i, arr) => {
-                  gltfDuck.layerMesh[i].transparent = true;
-                  that.updateMeshColor(gltfDuck.layerMesh[i], that.clearColor);
-                });
+                // gltfDuck.layerMesh.forEach((element, i, arr) => {
+                  gltfDuck.layerMesh[0].transparent = true;
+                  that.updateMeshColor(gltfDuck.layerMesh[0], that.clearColor);
+                  that.updateMeshColor(gltfDuck.layerMesh[1], that.clearColor2);
+                // });
                 that.gltfDucks = gltfDuck;
+                var img = './Assets/img/search-map-icon.png';
+                var points3D = new AMap.Object3D.Points();
+                points3D.transparent = true;
+                parent.iconLocation.forEach((item, p) => {
+                  // let point = new BMap.Point(item.location[0], item.location[1]);
+                  // map.centerAndZoom(point, 15);
+                  // that.makeMark(point, map, item);
+                  var coords = [JSON.parse(item.location[0]), JSON.parse(item.location[1])]; // 天安门;
+                  // 创建纯文本标记  ---------------
+                  var geometry = points3D.geometry;
+                  points3D.textures.push(img);
+                  var center = that.lnglatToG20(coords);
+                  geometry.vertices.push(center.x, center.y, 0);
+                  geometry.pointSizes.push(30);
+                  geometry.vertexColors.push(p * 0.029, p * 0.015, p * 0.01, 0.5);
+                  geometry.pointAreas.push(0, 0, 1, 1);
+                  // 每两个元素描述一个顶点的纹理坐标信息，纹理坐标以图片左上角为原点。分别是左上角和右下角。
+                  geometry.vertexUVs.push(0, 0, 1, 1);
+                  // 每个元素描述一个顶点的纹理索引信息，多纹理时使用，取值范围[0-7]。单纹理或者无纹理时不需要设值。
+                  geometry.textureIndices.push(p);
+
+                  // 创建纯文本标记  ---------------
+                  var text = new AMap.Text({
+                      text: item.name,
+                      anchor:'center', // 设置文本标记锚点
+                      draggable:true,
+                      cursor:'pointer',
+                      angle:10,
+                      style:{
+
+                          'background-color': 'transparent',
+                          'border-width': 0,
+                          'text-align': 'center',
+                          'font-size': '12px',
+                          'color': 'blue',
+                          'margin-top': '20px'
+                      },
+                      position: item.location
+                  });
+                  text.setMap(that.map);
+                });
+                that.object3Dlayer.add(points3D);
+              })
             });
 
             // 绑定事件
@@ -229,7 +321,46 @@ export default {
             // that.map.on('zoomend', that.mapZoomend);
         });
 
+    },
+    lnglatToG20(lnglat) {
+      var lnglat = this.map.lngLatToGeodeticCoord(lnglat);
+      lnglat.x = AMap.Util.format(lnglat.x, 3);
+      lnglat.y = AMap.Util.format(lnglat.y, 3);
+      return lnglat;
+    },
+    pointOnCubicBezier(cp, t) {
+       var ax, bx, cx;
+        var ay, by, cy;
+        var tSquared, tCubed;
 
+        cx = 3.0 * (cp[1].lng - cp[0].lng);
+        bx = 3.0 * (cp[2].lng - cp[1].lng) - cx;
+        ax = cp[3].lng - cp[0].lng - cx - bx;
+
+        cy = 3.0 * (cp[1].lat - cp[0].lat);
+        by = 3.0 * (cp[2].lat - cp[1].lat) - cy;
+        ay = cp[3].lat - cp[0].lat - cy - by;
+
+        tSquared = t * t;
+        tCubed = tSquared * t;
+
+        var lng = (ax * tCubed) + (bx * tSquared) + (cx * t) + cp[0].lng;
+        var lat = (ay * tCubed) + (by * tSquared) + (cy * t) + cp[0].lat;
+
+        return new AMap.LngLat(lng, lat);
+    },
+    computeBezier(points, numberOfPoints) {
+       var dt;
+        var i;
+        var curve = [];
+
+        dt = 1.0 / (numberOfPoints - 1);
+
+        for (i = 0; i < numberOfPoints; i++) {
+            curve[i] = this.pointOnCubicBezier(points, i * dt);
+        }
+
+        return curve;
     },
     clickHandler(e) {
         const that = this;
@@ -238,9 +369,9 @@ export default {
         var px = new AMap.Pixel(pixel.x, pixel.y);
         var obj = that.map.getObject3DByContainerPos(px, [that.object3Dlayer], false) || {};
         // var object = obj.object;
-        console.log('您在[ '+e.lnglat.getLng()+','+e.lnglat.getLat()+' ]的位置点击了地图！');
-        // console.log(obj)
-        if(obj.object) {
+        // console.log('您在[ '+e.lnglat.getLng()+','+e.lnglat.getLat()+' ]的位置点击了地图！');
+        console.log(obj.object)
+        if(obj.object && obj.object.type === "lightmesh") {
           that.rountGo(that.item);
         }
     },
@@ -262,18 +393,68 @@ export default {
       if(obj.object) {
         object.transparent = true;
         // console.log("悬停选中的 object3D 对象", object)
-        that.gltfDucks.layerMesh.forEach((element, i, arr) => {
-            that.updateMeshColor(that.gltfDucks.layerMesh[i], that.clearColor);
-          });
+        // that.gltfDucks.layerMesh.forEach((element, i, arr) => {
+            that.updateMeshColor(that.gltfDucks.layerMesh[0], that.clearColor);
+            that.updateMeshColor(that.gltfDucks.layerMesh[1], that.clearColor2);
+          // });
         that.updateMeshColor(object, that.selectColor);
+
+
+
+        that.modelData[0].iconLocation.forEach((item, index) => {
+          var deepX = (item.location[0] - 113.370565) / 4;
+          var deepY = (item.location[1] - 23.122751) / 4;
+           var points = [
+            new AMap.LngLat(that.modelData[0].modeLocation[0], that.modelData[0].modeLocation[1]),
+            new AMap.LngLat(113.370565 + deepX, 23.137709 + deepY),
+            new AMap.LngLat(113.341972 + deepX * 2, 23.140829 + deepY * 2),
+            new AMap.LngLat(item.location[0], item.location[1])
+          ];
+          var numberOfPoints = 180;
+          var minHeight = 5;
+          if(item.meshLine) {
+            that.object3Dlayer.remove(item.meshLine);
+          }
+          that.modelData[0].iconLocation[index].meshLine = new AMap.Object3D.MeshLine({
+            path: that.computeBezier(points, numberOfPoints, minHeight),
+            height: that.getEllipseHeight(numberOfPoints, 2000, minHeight),
+            color: 'rgba(55,129,240, 0.9)',
+            width: 2
+          });
+          that.modelData[0].iconLocation[index].meshLine.transparent = true;
+          that.modelData[0].iconLocation[index].meshLine['backOrFront'] = 'both';
+          that.object3Dlayer.add(that.modelData[0].iconLocation[index].meshLine);
+        })
+
+        // that.map.add(that.object3Dlayer);
+
       } else {
         if (that.gltfDucks) {
-          that.gltfDucks.layerMesh.forEach((element, i, arr) => {
-            that.updateMeshColor(that.gltfDucks.layerMesh[i], that.clearColor);
-          });
+            that.updateMeshColor(that.gltfDucks.layerMesh[0], that.clearColor);
+            that.updateMeshColor(that.gltfDucks.layerMesh[1], that.clearColor2);
+            that.modelData[0].iconLocation.forEach((item, index) => {
+              if(item.meshLine) {
+                that.object3Dlayer.remove(item.meshLine);
+                that.modelData[0].iconLocation[index].meshLine = null;
+              }
+            })
+
+
         }
 
       }
+    },
+    getEllipseHeight(count, maxHeight, minHeight) {
+      var height = [];
+        var radionUnit = Math.PI / 180;
+
+        for (var i = 0; i < count; i++) {
+            var radion = i * radionUnit;
+
+            height.push(minHeight + Math.sin(radion) * maxHeight);
+        }
+
+        return height;
     },
     updateMeshColor(mesh, color) {
       var vertexColors = mesh.geometry.vertexColors;
@@ -297,7 +478,7 @@ export default {
     mapZoom() {
       const that = this;
       var zoom = that.map.getZoom(); //获取当前地图级别
-      console.log("正在缩放", zoom);
+      // console.log("正在缩放", zoom);
     },
     drawBounds() {
       const that = this;
@@ -322,9 +503,9 @@ export default {
                 for (var i = 0, l = bounds.length; i < l; i++) {
                     //生成行政区划polygon
                     var polygon = new AMap.Polygon({
-                        strokeWeight: 2,
+                        strokeWeight: 5,
                         path: bounds[i],
-                        fillOpacity: 0.4,
+                        fillOpacity: 0.2,
                         fillColor: '#80d8ff',
                         strokeColor: '#0091ea'
                     });

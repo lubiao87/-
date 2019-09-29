@@ -77,7 +77,24 @@ export default {
               name: "天河吉隆科讯手机店"
             }
           ]
-        }
+        },
+        {
+          modeLocation: [113.343006,23.132943],
+          iconLocation: [
+            {
+              location: [113.310236,23.104492],
+              name: "广州电信通讯分区"
+            },
+            {
+              location: [113.2973,23.129487],
+              name: "海珠江北兴创专营"
+            },
+            {
+              location: [113.299312,23.074439],
+              name: "海珠吉隆科讯"
+            }
+          ]
+        },
       ],
       panelShow: true,
       item: {
@@ -381,31 +398,36 @@ export default {
       var px = new AMap.Pixel(pixel.x, pixel.y);
       var obj = that.map.getObject3DByContainerPos(px, [that.object3Dlayer], false) || {};
 
-      // 选中的 face 所在的索引
-      // var index = obj.index;
+
       // 选中的 object3D 对象，这里为当前 Mesh
       var object = obj.object;
       // 被拾取到的对象和拾取射线的交叉点的3D坐标
       // var point = obj.point;
       // 交叉点距透视原点的距离
       // var distance = obj.distance;
+      // var target = ev.target;
+      if(obj.object && obj.object.type === "lightmesh") {
+        // 选中的 face 所在的索引
+        that.modelData.forEach((item, i) => {
+          if(item.modeLocation[0] === obj.object.yl.lng) {
+            that.objIndex = i;
+          }
+        })
 
-      if(obj.object) {
         object.transparent = true;
         // console.log("悬停选中的 object3D 对象", object)
-        // that.gltfDucks.layerMesh.forEach((element, i, arr) => {
-            that.updateMeshColor(that.gltfDucks.layerMesh[0], that.clearColor);
-            that.updateMeshColor(that.gltfDucks.layerMesh[1], that.clearColor2);
-          // });
-        that.updateMeshColor(object, that.selectColor);
-
-
-
-        that.modelData[0].iconLocation.forEach((item, index) => {
+        // console.log(" object3D 对象的target", target)
+        console.log(" object3D index", that.objIndex)
+        // // that.gltfDucks.layerMesh.forEach((element, i, arr) => {
+        //     that.updateMeshColor(that.gltfDucks.layerMesh[0], that.clearColor);
+        //     that.updateMeshColor(that.gltfDucks.layerMesh[1], that.clearColor2);
+        //   // });
+        // that.updateMeshColor(object, that.selectColor);
+        that.modelData[that.objIndex].iconLocation.forEach((item, index) => {
           var deepX = (item.location[0] - 113.370565) / 4;
           var deepY = (item.location[1] - 23.122751) / 4;
            var points = [
-            new AMap.LngLat(that.modelData[0].modeLocation[0], that.modelData[0].modeLocation[1]),
+            new AMap.LngLat(that.modelData[that.objIndex].modeLocation[0], that.modelData[that.objIndex].modeLocation[1]),
             new AMap.LngLat(113.370565 + deepX, 23.137709 + deepY),
             new AMap.LngLat(113.341972 + deepX * 2, 23.140829 + deepY * 2),
             new AMap.LngLat(item.location[0], item.location[1])
@@ -415,29 +437,34 @@ export default {
           if(item.meshLine) {
             that.object3Dlayer.remove(item.meshLine);
           }
-          that.modelData[0].iconLocation[index].meshLine = new AMap.Object3D.MeshLine({
+          that.modelData[that.objIndex].iconLocation[index].meshLine = new AMap.Object3D.MeshLine({
             path: that.computeBezier(points, numberOfPoints, minHeight),
             height: that.getEllipseHeight(numberOfPoints, 2000, minHeight),
             color: 'rgba(55,129,240, 0.9)',
             width: 2
           });
-          that.modelData[0].iconLocation[index].meshLine.transparent = true;
-          that.modelData[0].iconLocation[index].meshLine['backOrFront'] = 'both';
-          that.object3Dlayer.add(that.modelData[0].iconLocation[index].meshLine);
+          that.modelData[that.objIndex].iconLocation[index].meshLine.transparent = true;
+          that.modelData[that.objIndex].iconLocation[index].meshLine['backOrFront'] = 'both';
+          that.object3Dlayer.add(that.modelData[that.objIndex].iconLocation[index].meshLine);
         })
 
         // that.map.add(that.object3Dlayer);
 
       } else {
         if (that.gltfDucks) {
-            that.updateMeshColor(that.gltfDucks.layerMesh[0], that.clearColor);
-            that.updateMeshColor(that.gltfDucks.layerMesh[1], that.clearColor2);
-            that.modelData[0].iconLocation.forEach((item, index) => {
-              if(item.meshLine) {
-                that.object3Dlayer.remove(item.meshLine);
-                that.modelData[0].iconLocation[index].meshLine = null;
-              }
-            })
+            // that.updateMeshColor(that.gltfDucks.layerMesh[0], that.clearColor);
+            // that.updateMeshColor(that.gltfDucks.layerMesh[1], that.clearColor2);
+            // console.log("typeof that.objIndex", that.objIndex );
+            if(typeof that.objIndex === 'number') {
+              that.modelData[that.objIndex].iconLocation.forEach((item, index) => {
+                if(item.meshLine) {
+                  that.object3Dlayer.remove(item.meshLine);
+                  that.modelData[0].iconLocation[index].meshLine = null;
+                }
+              })
+              that.objIndex = null
+            }
+
 
 
         }

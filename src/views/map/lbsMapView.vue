@@ -27,20 +27,35 @@
             {{selectValueName}}
           </div>
         </div>
+        <!-- 微机楼统计 -->
+        <div style="margin-top: 30px;">
+          <h5 class="ui-city-title ui-height48"><span class="ui-linebg"></span>微机楼统计</h5>
+          <div class="clearfix module-statis" style="padding-left: 0;">
+              <div v-for="(item, index) in moduleStatistics" :key="index"  class="modal" :class="'module' + (index + 1)">
+                  <div calss="name" style="font-size: 12px;color: #fff;">{{item.name}}</div>
+                  <div class="number">{{item.value}}</div>
+                  <div :class="item.class"></div>
+
+              </div>
+          </div>
+        </div>
+
+        <!-- 机楼列表 -->
         <div style="margin-top: 30px;">
           <h5 class="ui-city-title ui-height48"><span class="ui-linebg"></span>模房列表</h5>
           <div class="clearfix module-statis" style="padding-left: 0;">
               <div class="lb-module-list">
                 <ul>
-                  <li @click="rountGo(item)">
-                      <span>1. </span>
-                      <span>台山台城机房</span>
+                  <li v-for="(item, index) in modelData" :key="index" @click="rountGo(item)">
+                      <span>{{index + 1}}. </span>
+                      <span>{{item.modelName}}</span>
                       <span class="lb-icon"></span>
                   </li>
                 </ul>
               </div>
           </div>
         </div>
+
       </div>
       <div class="yhui-real-timeimg"></div>
     </div>
@@ -62,39 +77,81 @@ export default {
     return {
       modelData: [
         {
-          modeLocation: [113.370565, 23.122751],
+          modeLocation: [113.365976669489, 23.1273897880092],
+          modelName: "工业园机楼",
           iconLocation: [
             {
-              location: [113.323624, 23.15266],
-              name: "广州恒通通讯"
+              location: [113.366468854055, 23.117265554063],
+              name: "美林花园远端机房"
             },
             {
-              location: [113.383838, 23.096195],
-              name: "广州江北兴创专营店"
+              location: [113.366872581306, 23.1367018208333],
+              name: "棠下荷光路远端机房"
             },
             {
-              location: [113.442897, 23.182298],
-              name: "天河吉隆科讯手机店"
+              location: [113.36554653287395, 23.119129095177218],
+              name: "百合苑接入网机房"
+            },
+            {
+              location: [113.365509061595, 23.1339763309438],
+              name: "职业技术师范接入网机房"
             }
           ]
         },
         {
-          modeLocation: [113.343006,23.132943],
+          modeLocation: [113.077027360425,23.3868981882017],
+          modelName: "赤坭机楼",
           iconLocation: [
             {
-              location: [113.310236,23.104492],
-              name: "广州电信通讯分区"
+              location: [113.062194036127,23.2592018599787],
+              name: "文岗村接入网机房"
             },
             {
-              location: [113.2973,23.129487],
-              name: "海珠江北兴创专营"
+              location: [113.070178532914,23.4414901309656],
+              name: "瑞岭村接入网机房"
             },
             {
-              location: [113.299312,23.074439],
-              name: "海珠吉隆科讯"
+              location: [113.076640750871,23.4724360247037],
+              name: "花都碧桂园接入网机房"
+            },
+            {
+              location: [113.086376629679,23.4124907730316],
+              name: "培正商学院接入网机房"
+            },
+             {
+              location: [113.091310831131,23.370640041006],
+              name: "广州花都珠江轮胎厂远端机房"
+            },
+             {
+              location: [113.099161093311,23.3178317695214],
+              name: "茶塘村远端机房"
             }
           ]
         },
+        {
+          modeLocation: [113.226591230302,23.277700871299],
+          modelName: "江村机楼",
+          iconLocation: [
+            {
+              location: [113.225772731228,23.4053855533015],
+              name: "南航花园接入网机房"
+            },
+            {
+              location: [113.225710927119,23.1635179440987],
+              name: "岭南花园接入网机房"
+            },
+             {
+              location: [113.228370418461,23.2586382224769],
+              name: "驿迅物流接入网机房"
+            }
+          ]
+        },
+      ],
+      moduleStatistics: [
+        {name:"微机楼数", value:3, class: 'right_building'},
+        {name:"微模块间数", value:10, class: 'right_module'},
+        {name:"规划微模块数", value:15, class: 'right_planning'},
+        {name:"已交付微模块数", value:150, class: 'right_cabinet'}
       ],
       panelShow: true,
       item: {
@@ -266,7 +323,7 @@ export default {
               that.modelData.forEach((parent, index) => {
                 var paramDuck = {
                   position: new AMap.LngLat(parent.modeLocation[0],parent.modeLocation[1]), // 必须
-                  scale: 0.03, // 非必须，默认1
+                  scale: 0.02, // 非必须，默认1
                   height: 100,  // 非必须，默认0
                   scene: 0, // 非必须，默认0
                 };
@@ -286,6 +343,25 @@ export default {
                 var img = './Assets/img/search-map-icon.png';
                 var points3D = new AMap.Object3D.Points();
                 points3D.transparent = true;
+                // 创建纯文本标记  ---------------
+                var parentName = new AMap.Text({
+                    text: parent.modelName,
+                    anchor:'center', // 设置文本标记锚点
+                    draggable:true,
+                    cursor:'pointer',
+                    angle:10,
+                    style:{
+
+                        'background-color': 'transparent',
+                        'border-width': 0,
+                        'text-align': 'center',
+                        'font-size': '14px',
+                        'color': '#e91e63',
+                        'margin-top': '30px'
+                    },
+                    position: parent.modeLocation
+                });
+                parentName.setMap(that.map);
                 parent.iconLocation.forEach((item, p) => {
                   // let point = new BMap.Point(item.location[0], item.location[1]);
                   // map.centerAndZoom(point, 15);
@@ -409,7 +485,7 @@ export default {
       if(obj.object && obj.object.type === "lightmesh") {
         // 选中的 face 所在的索引
         that.modelData.forEach((item, i) => {
-          if(item.modeLocation[0] === obj.object.yl.lng) {
+          if(Math.abs(item.modeLocation[0] - obj.object.yl.lng) < 0.001 ) {
             that.objIndex = i;
           }
         })
@@ -424,12 +500,12 @@ export default {
         //   // });
         // that.updateMeshColor(object, that.selectColor);
         that.modelData[that.objIndex].iconLocation.forEach((item, index) => {
-          var deepX = (item.location[0] - 113.370565) / 4;
-          var deepY = (item.location[1] - 23.122751) / 4;
+          var deepX = (item.location[0] - that.modelData[that.objIndex].modeLocation[0]) / 4;
+          var deepY = (item.location[1] - that.modelData[that.objIndex].modeLocation[1]) / 4;
            var points = [
             new AMap.LngLat(that.modelData[that.objIndex].modeLocation[0], that.modelData[that.objIndex].modeLocation[1]),
-            new AMap.LngLat(113.370565 + deepX, 23.137709 + deepY),
-            new AMap.LngLat(113.341972 + deepX * 2, 23.140829 + deepY * 2),
+            new AMap.LngLat(that.modelData[that.objIndex].modeLocation[0] + deepX, that.modelData[that.objIndex].modeLocation[1] + deepY),
+            new AMap.LngLat(that.modelData[that.objIndex].modeLocation[0] + deepX * 2, that.modelData[that.objIndex].modeLocation[1] + deepY * 2),
             new AMap.LngLat(item.location[0], item.location[1])
           ];
           var numberOfPoints = 180;
@@ -459,7 +535,7 @@ export default {
               that.modelData[that.objIndex].iconLocation.forEach((item, index) => {
                 if(item.meshLine) {
                   that.object3Dlayer.remove(item.meshLine);
-                  that.modelData[0].iconLocation[index].meshLine = null;
+                  that.modelData[that.objIndex].iconLocation[index].meshLine = null;
                 }
               })
               that.objIndex = null
@@ -598,6 +674,35 @@ export default {
 }
 </style>
 <style scoped>
+  .module-statis .modal {
+    width:119px;
+    height:65px;
+    opacity:0.8;
+    border-radius:4px;
+    padding: 10px;
+    position: relative;
+    float: left;
+    margin-bottom: 15px;
+  }
+  .module-statis .modal:nth-child(2n+1){
+    margin-right: 15px;
+  }
+  .right_building, .right_module , .right_planning, .right_cabinet, .right_mokuai, .right_delivery {
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    background-size: 100%;
+    float: left;
+  }
+  .module-statis .number {
+    font-size:24px;
+    font-family:'MicrosoftYaHei';
+    font-weight:400;
+    color:rgb(255,255,255);
+    /*opacity:0.6;*/
+  }
 .map {
   position: relative;
   height: 100%;

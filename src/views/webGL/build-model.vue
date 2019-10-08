@@ -32,6 +32,27 @@
             删除人物
           </div> -->
       </div>
+      <!-- 微机楼统计 -->
+      <div style="margin-top: 30px;">
+        <h5 class="ui-city-title ui-height48">
+          <span class="ui-linebg"></span>微机楼统计
+        </h5>
+        <div class="clearfix module-statis" style="padding-left: 0;">
+          <div
+            v-for="(item, index) in moduleStatistics"
+            :key="index"
+            class="modal"
+            :class="'module' + (index + 1)"
+          >
+            <div calss="name" style="font-size: 12px;color: #fff;">
+              {{ item.name }}
+            </div>
+            <div class="number">{{ item.value }}</div>
+            <div :class="item.class"></div>
+          </div>
+        </div>
+      </div>
+
       <div style="margin-top: 30px;">
         <h5 class="ui-city-title ui-height48" @click="showBuilding">
           <span class="ui-linebg"></span>台山台城机房
@@ -44,7 +65,7 @@
                 :key="index"
                 @click="lookFloor(index)"
               >
-                <span>机房:</span>
+                <!-- <span>机房:</span> -->
                 <span>{{ item.name }}</span>
                 <!--<span class="lb-icon" :class="{'danger_icon': item.Situation == '严重警告','warning_icon': item.Situation == '一般警告'}"></span>-->
                 <span class="lb-icon"></span>
@@ -82,11 +103,11 @@
 // import echarts from "echarts"; // 引入echarts
 // import "echarts/lib/chart/map";
 // require("echarts/extension/bmap/bmap");
-// import { api2 } from "../../api/api"; //api配置请求的路径
 import { listSearchMixin } from "../../mixin"; //混淆请求
 import * as THREE from "three";
 require("three-fbxloader-offical");
 import { OrbitControls } from "../../utils/OrbitControls";
+import { api2 } from "../../api/api"; //api配置请求的路径
 // require("../../utils/CSS3DRenderer");
 export default {
   name: "olmap",
@@ -94,6 +115,12 @@ export default {
   mixins: [listSearchMixin],
   data() {
     return {
+      moduleStatistics: [
+        { name: "机房总数", value: 3, class: "right_building" },
+        { name: "机柜总数", value: 20, class: "right_module" }
+        // {name:"规划微模块数", value:15, class: 'right_planning'},
+        // {name:"已交付微模块数", value:150, class: 'right_cabinet'}
+      ],
       selectValue: [],
       scene: null, // 场景
       FBXloader: null, // fbx加载器
@@ -126,119 +153,53 @@ export default {
       cameraZ: -1000,
       dataList: [
         {
-          name: "一楼",
+          name: "一楼001机房",
           id: 111
         },
         {
-          name: "二楼",
+          name: "二楼001机房",
           id: 112
         },
         {
-          name: "三楼",
+          name: "三楼001机房",
           id: 113
         },
         {
-          name: "四楼",
+          name: "四楼001机房",
           id: 114
+        },
+        {
+          name: "四楼002机房",
+          id: 115
         }
       ],
       animationTime: 0,
       animationFlag: true,
       cabinetType: [
         {
-          name: "机柜类型x",
-          size: [600, 800, 600],
-          type: 0
+          name: "机柜类型1",
+          size: [0, 0, 0],
+          index: 0
         },
         {
-          name: "机柜类型a", // 机柜类型
-          size: [600, 300, 2500], // 长宽高
-          type: 1 // 类型1对应的索引，目的为了减少遍历
+          name: "机柜类型2", // 机柜类型
+          size: [0.3, 0.3, 2.6], // 长宽高
+          index: 1 // 类型1对应的索引，目的为了减少遍历
         },
         {
-          name: "机柜类型b",
-          size: [800, 600, 2500],
-          type: 2
+          name: "机柜类型3", // 机柜类型
+          size: [0.3, 0.6, 2.2], // 长宽高
+          index: 2
         },
         {
-          name: "机柜类型c",
-          size: [800, 600, 2000],
-          type: 3
+          name: "机柜类型4", // 机柜类型
+          size: [0.31, 0.6, 2.2], // 长宽高
+          index: 3
         },
         {
-          name: "机柜类型d",
-          size: [400, 600, 2000],
-          type: 4
-        },
-        {
-          name: "机柜类型e",
-          size: [400, 350, 2000],
-          type: 5
-        },
-        {
-          name: "机柜类型f",
-          size: [400, 850, 2000],
-          type: 6
-        },
-        {
-          name: "机柜类型g",
-          size: [800, 300, 2500],
-          type: 7
-        },
-        {
-          name: "机柜类型h",
-          size: [800, 600, 2200],
-          type: 8
-        },
-        {
-          name: "机柜类型i",
-          size: [350, 250, 2200],
-          type: 9
-        },
-        {
-          name: "机柜类型j",
-          size: [250, 250, 2200],
-          type: 10
-        },
-        {
-          name: "机柜类型k",
-          size: [300, 550, 2500],
-          type: 11
-        },
-        {
-          name: "机柜类型l",
-          size: [300, 300, 2500],
-          type: 12
-        },
-        {
-          name: "机柜类型m",
-          size: [300, 850, 2500],
-          type: 13
-        },
-        {
-          name: "机柜类型n",
-          size: [725, 600, 2500],
-          type: 14
-        },
-        {
-          name: "机柜类型o",
-          size: [730, 300, 2500],
-          type: 15
-        },
-        {
-          name: "机柜类型p",
-          size: [400, 350, 2500],
-          type: 16
-        },
-        {
-          name: "机柜类型q",
-          size: [400, 850, 2500],
-          type: 17
-        },
-        {
-          name: "机柜类型r",
-          size: [400, 600, 2500],
-          type: 18
+          name: "机柜类型5", // 机柜类型
+          size: [0.4, 0.6, 1.8], // 长宽高
+          index: 4
         }
       ],
       cabinetPosition: {
@@ -248,330 +209,88 @@ export default {
       },
       cabinetplaced: [
         // 第一排
-        { type: 1, position: [-150, 100] },
-        { type: 2, position: [300, 0] },
-        { type: 2, position: [900, 0] },
-        { type: 2, position: [1500, 0] },
-        { type: 3, position: [2100, 0] },
-        { type: 2, position: [2700, 0] },
-        { type: 2, position: [3300, 0] },
-        { type: 2, position: [3900, 0] },
+        {
+          index: 1,
+          posX: "0",
+          posY: "0",
+          type: "标准机架",
+          name: "HW05-03"
+        },
+        { index: 2, posX: "0.3", posY: "0", type: "标准机架", name: "HW05-01" },
+        {
+          index: 2,
+          posX: "0.9",
+          posY: "0",
+          type: "标准机架",
+          name: "RSS02-02"
+        },
+        {
+          index: 2,
+          posX: "1.5",
+          posY: "0",
+          type: "标准机架",
+          name: "RSS01-04"
+        },
+        {
+          index: 3,
+          posX: "2.1",
+          posY: "0",
+          type: "标准机架",
+          name: "RSS01-05"
+        },
+        {
+          index: 2,
+          posX: "2700",
+          posY: "0",
+          type: "标准机架",
+          name: "RSS01-01"
+        },
+        {
+          index: 2,
+          posX: "0.15",
+          posY: "0.1",
+          type: "标准机架",
+          name: "RSS01-03"
+        },
+        {
+          index: 2,
+          posX: "3.9",
+          posY: "0",
+          type: "标准机架",
+          name: "RSS01-02"
+        },
 
-        { type: 2, position: [8600, 0] },
-        { type: 2, position: [9200, 0] },
-        { type: 2, position: [9800, 0] },
-        { type: 2, position: [10400, 0] },
-        { type: 2, position: [11000, 0] },
-        { type: 2, position: [11600, 0] },
-        { type: 1, position: [12050, 0] },
-        // 第二排
-        { type: 1, position: [-150, 1670] },
-        { type: 2, position: [300, 1670] },
-        { type: 2, position: [900, 1670] },
-        { type: 2, position: [1500, 1670] },
-
-        { type: 4, position: [2400, 1870] },
-        { type: 4, position: [3000, 1870] },
-        { type: 4, position: [3600, 1870] },
-        { type: 4, position: [2400, 1470] },
-        { type: 4, position: [3000, 1470] },
-        { type: 4, position: [3600, 1470] },
-        { type: 2, position: [4200, 1670] },
-        { type: 4, position: [4800, 1470] },
-
-        { type: 5, position: [6200, 1470] },
-        { type: 6, position: [6800, 1470] },
-        { type: 6, position: [7650, 1470] },
-        { type: 6, position: [8500, 1470] },
-        { type: 4, position: [9170, 1470] },
-        { type: 4, position: [9770, 1470] },
-        { type: 4, position: [10370, 1470] },
-
-        { type: 2, position: [11570, 1670] },
-        { type: 7, position: [12000, 1670] },
-
-        { type: 4, position: [10970, 1870] },
-        { type: 4, position: [10370, 1870] },
-        { type: 4, position: [9770, 1870] },
-        { type: 4, position: [9170, 1870] },
-        { type: 4, position: [8570, 1870] },
-        { type: 4, position: [7970, 1870] },
-        { type: 4, position: [7370, 1870] },
-        { type: 4, position: [6770, 1870] },
-        { type: 4, position: [6170, 1870] },
-
-        // 第三排
-        { type: 7, position: [-170, 3340] },
-        { type: 3, position: [300, 3340] },
-        { type: 2, position: [900, 3340] },
-        { type: 2, position: [1500, 3340] },
-        { type: 3, position: [2100, 3340] },
-        { type: 3, position: [2700, 3340] },
-        { type: 3, position: [3300, 3340] },
-        { type: 3, position: [3900, 3340] },
-        { type: 3, position: [4500, 3340] },
-        { type: 3, position: [5100, 3340] },
-        { type: 3, position: [5700, 3340] },
-        { type: 3, position: [6300, 3340] },
-
-        { type: 2, position: [7500, 3340] },
-        { type: 2, position: [8100, 3340] },
-        { type: 2, position: [8700, 3340] },
-        { type: 2, position: [9300, 3340] },
-        { type: 2, position: [9900, 3340] },
-        { type: 2, position: [10500, 3340] },
-        { type: 2, position: [11100, 3340] },
-        { type: 2, position: [11700, 3340] },
-        { type: 7, position: [12150, 3340] },
-
-        // 第四排
-        { type: 1, position: [0, 4910] },
-        { type: 3, position: [450, 5010] },
-        { type: 3, position: [1050, 5010] },
-        { type: 3, position: [1650, 5010] },
-        { type: 2, position: [2250, 5010] },
-        { type: 8, position: [2850, 5010] },
-        { type: 3, position: [3450, 5010] },
-        { type: 3, position: [4050, 5010] },
-        { type: 3, position: [4650, 5010] },
-        { type: 3, position: [5250, 5010] },
-        { type: 3, position: [5850, 5010] },
-        { type: 3, position: [6450, 5010] },
-        { type: 3, position: [7050, 5010] },
-
-        { type: 2, position: [8050, 5010] },
-        { type: 2, position: [8650, 5010] },
-        { type: 2, position: [9250, 5010] },
-        { type: 2, position: [9850, 5010] },
-        { type: 2, position: [10450, 5010] },
-        { type: 2, position: [11050, 5010] },
-        { type: 2, position: [11650, 5010] },
-        { type: 1, position: [12070, 5010] },
-
-        // 第五排
-        { type: 7, position: [-300, 6680] },
-        { type: 3, position: [150, 6680] },
-        { type: 3, position: [750, 6680] },
-        { type: 2, position: [1350, 6680] },
-        { type: 3, position: [1950, 6680] },
-        { type: 2, position: [2550, 6680] },
-        { type: 2, position: [3150, 6680] },
-
-        { type: 5, position: [3900, 6480] },
-        { type: 4, position: [3900, 6880] },
-        { type: 6, position: [4500, 6480] },
-        { type: 6, position: [4625, 6880] },
-        { type: 4, position: [5250, 6480] },
-        { type: 4, position: [5850, 6480] },
-        { type: 4, position: [6450, 6480] },
-        { type: 4, position: [6450, 6880] },
-        { type: 4, position: [7050, 6480] },
-        { type: 4, position: [7050, 6880] },
-        { type: 2, position: [7650, 6680] },
-        { type: 2, position: [8250, 6680] },
-        { type: 2, position: [8850, 6680] },
-        { type: 4, position: [9450, 6480] },
-        { type: 4, position: [9450, 6880] },
-        { type: 2, position: [10050, 6680] },
-        { type: 4, position: [10650, 6480] },
-        { type: 4, position: [10650, 6880] },
-        { type: 2, position: [11250, 6680] },
-        { type: 1, position: [11700, 6770] },
-
-        // 第六排
-        { type: 16, position: [-100, 8550] },
-        { type: 17, position: [500, 8550] },
-        { type: 17, position: [1350, 8550] },
-        { type: 18, position: [2075, 8550] },
-        { type: 17, position: [2800, 8550] },
-        { type: 17, position: [3650, 8550] },
-        { type: 17, position: [4500, 8550] },
-        { type: 17, position: [5350, 8550] },
-        { type: 17, position: [6200, 8550] },
-        { type: 18, position: [6925, 8550] },
-        { type: 18, position: [7525, 8550] },
-        { type: 17, position: [8250, 8550] },
-        { type: 17, position: [9100, 8550] },
-        { type: 17, position: [9950, 8550] },
-        { type: 17, position: [10800, 8550] },
-        { type: 18, position: [11525, 8550] },
-        { type: 16, position: [12000, 8550] },
-
-        { type: 18, position: [-300, 8950] },
-        { type: 18, position: [300, 8950] },
-        { type: 18, position: [900, 8950] },
-        { type: 17, position: [1625, 8950] },
-        { type: 18, position: [2350, 8950] },
-        { type: 18, position: [2950, 8950] },
-        { type: 18, position: [3550, 8950] },
-        { type: 17, position: [4300, 8950] },
-        { type: 17, position: [5150, 8950] },
-        { type: 17, position: [6000, 8950] },
-        { type: 17, position: [6850, 8950] },
-        { type: 18, position: [7575, 8950] },
-        { type: 17, position: [8300, 8950] },
-        { type: 17, position: [9150, 8950] },
-        { type: 17, position: [10000, 8950] },
-        { type: 17, position: [10850, 8950] },
-        { type: 18, position: [11575, 8950] },
-        { type: 18, position: [12175, 8950] },
-
-        // 第七排
-        { type: 7, position: [100, 10620] },
-        { type: 3, position: [550, 10620] },
-        { type: 3, position: [1150, 10620] },
-        { type: 3, position: [1750, 10620] },
-        { type: 3, position: [2350, 10620] },
-
-        { type: 8, position: [3450, 10620] },
-        { type: 3, position: [4050, 10620] },
-        { type: 18, position: [4650, 10420] },
-        { type: 18, position: [4650, 10820] },
-        { type: 3, position: [5250, 10620] },
-        { type: 3, position: [5850, 10620] },
-        { type: 3, position: [6450, 10620] },
-        { type: 3, position: [7050, 10620] },
-        { type: 3, position: [7650, 10620] },
-        { type: 3, position: [8250, 10620] },
-        { type: 3, position: [8850, 10620] },
-        { type: 3, position: [9450, 10620] },
-        { type: 3, position: [10050, 10620] },
-        { type: 3, position: [10650, 10620] },
-        { type: 18, position: [11250, 10420] },
-        { type: 18, position: [11850, 10420] },
-        { type: 18, position: [11850, 10820] },
-        { type: 7, position: [12300, 10620] },
-
-        // 第七排
-        { type: 9, position: [-250, 12090] },
-        { type: 9, position: [0, 12090] },
-        { type: 9, position: [250, 12090] },
-        { type: 9, position: [500, 12090] },
-        { type: 9, position: [750, 12090] },
-        { type: 9, position: [1000, 12090] },
-        { type: 9, position: [1250, 12090] },
-        { type: 9, position: [1500, 12090] },
-        { type: 9, position: [1750, 12090] },
-        { type: 9, position: [2000, 12090] },
-        { type: 9, position: [2250, 12090] },
-        { type: 9, position: [2500, 12090] },
-        { type: 9, position: [2750, 12090] },
-        { type: 9, position: [3000, 12090] },
-        { type: 9, position: [3250, 12090] },
-        { type: 9, position: [3500, 12090] },
-        { type: 9, position: [3750, 12090] },
-        { type: 9, position: [4000, 12090] },
-        { type: 9, position: [4250, 12090] },
-        { type: 9, position: [4500, 12090] },
-        { type: 9, position: [4750, 12090] },
-        { type: 9, position: [5000, 12090] },
-        { type: 10, position: [5250, 12140] },
-        { type: 10, position: [5500, 12140] },
-        { type: 10, position: [5750, 12140] },
-        { type: 9, position: [6000, 12090] },
-        { type: 9, position: [6250, 12090] },
-        { type: 9, position: [6500, 12090] },
-        { type: 9, position: [6750, 12090] },
-        { type: 9, position: [7000, 12090] },
-        { type: 9, position: [7250, 12090] },
-        { type: 9, position: [7500, 12090] },
-        { type: 9, position: [7750, 12090] },
-        { type: 10, position: [8000, 12140] },
-        { type: 10, position: [8250, 12140] },
-        { type: 10, position: [8500, 12140] },
-        { type: 10, position: [8750, 12140] },
-        { type: 10, position: [9000, 12140] },
-        { type: 10, position: [9250, 12140] },
-        { type: 10, position: [9500, 12140] },
-        { type: 10, position: [9750, 12140] },
-        { type: 10, position: [10000, 12140] },
-        { type: 10, position: [10250, 12140] },
-        { type: 10, position: [10500, 12140] },
-        { type: 10, position: [10750, 12140] },
-        { type: 10, position: [11000, 12140] },
-        { type: 10, position: [11250, 12140] },
-        { type: 10, position: [11500, 12140] },
-        { type: 10, position: [11750, 12140] },
-        { type: 10, position: [12000, 12140] },
-        { type: 10, position: [12250, 12140] },
-
-        { type: 9, position: [-250, 12440] },
-        { type: 9, position: [0, 12440] },
-        { type: 9, position: [250, 12440] },
-        { type: 9, position: [500, 12440] },
-        { type: 9, position: [750, 12440] },
-        { type: 9, position: [1000, 12440] },
-        { type: 9, position: [1250, 12440] },
-        { type: 9, position: [1500, 12440] },
-        { type: 9, position: [1750, 12440] },
-        { type: 9, position: [2000, 12440] },
-        { type: 9, position: [2250, 12440] },
-        { type: 9, position: [2500, 12440] },
-        { type: 9, position: [2750, 12440] },
-        { type: 9, position: [3000, 12440] },
-        { type: 9, position: [3250, 12440] },
-        { type: 9, position: [3500, 12440] },
-        { type: 9, position: [3750, 12440] },
-        { type: 9, position: [4000, 12440] },
-        { type: 9, position: [4250, 12440] },
-        { type: 9, position: [4500, 12440] },
-        { type: 9, position: [4750, 12440] },
-        { type: 9, position: [5000, 12440] },
-        { type: 9, position: [5250, 12440] },
-        { type: 9, position: [5500, 12440] },
-        { type: 9, position: [5750, 12440] },
-        { type: 9, position: [6000, 12440] },
-        { type: 9, position: [6250, 12440] },
-        { type: 9, position: [6500, 12440] },
-        { type: 9, position: [6750, 12440] },
-        { type: 9, position: [7000, 12440] },
-        { type: 9, position: [7250, 12440] },
-        { type: 9, position: [7500, 12440] },
-        { type: 9, position: [7750, 12440] },
-        { type: 9, position: [8000, 12440] },
-        { type: 10, position: [8250, 12400] },
-        { type: 10, position: [8500, 12400] },
-        { type: 10, position: [8750, 12400] },
-        { type: 10, position: [9000, 12400] },
-        { type: 10, position: [9250, 12400] },
-        { type: 10, position: [9500, 12400] },
-        { type: 10, position: [9750, 12400] },
-        { type: 10, position: [10000, 12400] },
-        { type: 10, position: [10250, 12400] },
-        { type: 10, position: [10500, 12400] },
-        { type: 10, position: [10750, 12400] },
-        { type: 10, position: [11000, 12400] },
-        { type: 10, position: [11250, 12400] },
-        { type: 10, position: [11500, 12400] },
-        { type: 10, position: [11750, 12400] },
-        { type: 10, position: [12000, 12400] },
-        { type: 10, position: [12250, 12400] },
-
-        // 最后一排
-        { type: 11, position: [0, 13900] },
-        { type: 12, position: [425, 13900] },
-        { type: 12, position: [725, 13900] },
-        { type: 13, position: [1300, 13900] },
-        { type: 13, position: [2150, 13900] },
-        { type: 14, position: [2875, 14110] },
-        { type: 13, position: [3600, 14000] },
-
-        { type: 12, position: [8335, 14000] },
-        { type: 13, position: [8910, 14000] },
-
-        { type: 12, position: [-125, 14310] },
-        { type: 13, position: [250, 14310] },
-        { type: 13, position: [1300, 14310] },
-        { type: 13, position: [2150, 14310] },
-        { type: 13, position: [3600, 14310] },
-        { type: 13, position: [4450, 14310] },
-
-        { type: 13, position: [8060, 14310] },
-        { type: 13, position: [8910, 14310] },
-
-        { type: 14, position: [11210, 14110] },
-        { type: 14, position: [11810, 14110] },
-        { type: 15, position: [12262, 14110] }
+        {
+          index: 2,
+          posX: "8.6",
+          posY: "0",
+          type: "标准机架",
+          name: "RSS02-01"
+        },
+        { index: 2, posX: "9.2", posY: "0", type: "标准机架", name: "ZTE03" },
+        { index: 2, posX: "9.8", posY: "0", type: "标准机架", name: "HW05-03" },
+        {
+          index: 2,
+          posX: "10.4",
+          posY: "0",
+          type: "标准机架",
+          name: "HW05-03"
+        },
+        { index: 2, posX: "11", posY: "0", type: "标准机架", name: "HW05-03" },
+        {
+          index: 2,
+          posX: "11.6",
+          posY: "0",
+          type: "标准机架",
+          name: "HW05-03"
+        },
+        {
+          index: 1,
+          posX: "12.05",
+          posY: "0",
+          type: "标准机架",
+          name: "HW05-03"
+        }
       ]
     };
   },
@@ -596,9 +315,9 @@ export default {
       this.FBXloader = new THREE.FBXLoader(); // fbx加载器
       this.FBXloader.load("./Assets/fbx/building.FBX", self.loaderObj);
       this.FBXloader.load("./Assets/fbx/SambaDancing.FBX", self.loaderMan);
-      this.FBXloader.load("./Assets/fbx/floorOne.FBX", self.loaderFloor1);
-      this.FBXloader.load("./Assets/fbx/floorTwo.FBX", self.loaderFloor2);
-      this.FBXloader.load("./Assets/fbx/floorThree.FBX", self.loaderFloor3);
+      // this.FBXloader.load("./Assets/fbx/floorOne.FBX", self.loaderFloor1);
+      // this.FBXloader.load("./Assets/fbx/floorTwo.FBX", self.loaderFloor2);
+      // this.FBXloader.load("./Assets/fbx/floorThree.FBX", self.loaderFloor3);
       this.FBXloader.load("./Assets/fbx/floorFour.FBX", self.loaderFloor4);
       this.FBXloader.load("./Assets/fbx/air.FBX", self.loaderAir);
       this.FBXloader.load("./Assets/fbx/device1.FBX", self.loaderDevice1);
@@ -653,7 +372,7 @@ export default {
       // planeMesh.receiveShadow = true;
 
       this.axisHelper = new THREE.AxisHelper(8000); // 辅助线
-      // this.scene.add(this.axisHelper);
+      this.scene.add(this.axisHelper);
 
       // this.pushLineBox()  // 虚线框
       window.onresize = this.onWindowResize;
@@ -704,7 +423,7 @@ export default {
     },
     loaderFloor1(obj) {
       this.FloorOne = obj;
-      obj.name = "我家一楼";
+      obj.name = "我家二楼";
       obj.translateY(-16000);
     },
     loaderFloor2(obj) {
@@ -718,9 +437,10 @@ export default {
       obj.translateY(-8000);
     },
     loaderFloor4(obj) {
+      this.FloorOne = obj;
+      this.FloorTwo = obj;
+      this.FloorThree = obj;
       this.FloorFour = obj;
-      obj.name = "我家四楼";
-      obj.translateY(-4000);
     },
     loaderAir(obj) {
       this.Air = obj;
@@ -930,9 +650,9 @@ export default {
     },
     addMeth(item, index) {
       let geometry = new THREE.BoxGeometry(
-        this.cabinetType[item.type].size[0],
-        this.cabinetType[item.type].size[2],
-        this.cabinetType[item.type].size[1]
+        this.cabinetType[item.index].size[0],
+        this.cabinetType[item.index].size[2],
+        this.cabinetType[item.index].size[1]
       ); //创建一个立方体几何对象Geometry
       let material = new THREE.MeshLambertMaterial({
         color: "#9fc1dd",
@@ -941,8 +661,8 @@ export default {
       }); //材质对象Material
       let mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
       // let positionY = -2700
-      // if (this.cabinetType[item.type].size[2] < 2500) {
-      let positionY = -2700 + (this.cabinetType[item.type].size[2] - 2500) / 2;
+      // if (this.cabinetType[item.index].size[2] < 2500) {
+      let positionY = -2700 + (this.cabinetType[item.index].size[2] - 2500) / 2;
       // }
       mesh.position.set(
         -item.position[1] + 11200,
@@ -950,7 +670,8 @@ export default {
         item.position[0] + 2300
       );
       // mesh.position.z = item.position[1]
-      mesh.name = this.cabinetType[item.type].name + index;
+      mesh.TYPE = this.cabinetType[item.index].name + index;
+      mesh.name = item.name;
       return mesh;
     },
     setCabinet() {
@@ -1153,7 +874,7 @@ export default {
         (Math.PI * 1) / 2,
         Math.PI
       );
-      ctx.closePath();
+      cxt.closePath();
     },
     // 创建固定一个精灵图标2
     newCSS3DSprite2(obj, x, y, z) {
@@ -1341,6 +1062,52 @@ export default {
         this.selectBorder = undefined;
         console.log("undefined");
       }
+    },
+    getCabinetType(obj) {
+      let self = this;
+      let params = {
+        url: api2.getFrameList, //获取request_url.js文件的请求路径
+        method: "GET"
+      };
+      this.sendReq(params, res => {
+        console.log("获取机柜类型", res);
+        // if (res.respHeader.resultCode === 0) {
+        //   self.cabinetType = res.respBody.cabinetType.map(item => {
+        //     let items = item;
+        //     items.size = [
+        //       item.size[0] * 1000,
+        //       item.size[1] * 1000,
+        //       item.size[2] * 1000
+        //     ];
+        //     return items;
+        //   });
+        //   self.cabinetplaced = res.respBody.cabinetList.map(item => {
+        //     let items = item;
+        //     items.position = [item.posX * 1000, item.posY * 1000];
+        //     return items;
+        //   });
+        //   self.scene.add(obj);
+        //   self.setCabinet();
+        //   console.log("self.cabinetType", self.cabinetType);
+        //   console.log("self.cabinetplaced", self.cabinetplaced);
+        // }
+      });
+      self.cabinetType = self.cabinetType.map(item => {
+        let items = item;
+        items.size = [
+          item.size[0] * 1000,
+          item.size[1] * 1000,
+          item.size[2] * 1000
+        ];
+        return items;
+      });
+      self.cabinetplaced = self.cabinetplaced.map(item => {
+        let items = item;
+        items.position = [item.posX * 1000, item.posY * 1000];
+        return items;
+      });
+      self.scene.add(obj);
+      self.setCabinet();
     }
   },
   watch: {
@@ -1356,16 +1123,19 @@ export default {
       switch (val) {
         case 0:
           self.scene.add(self.FloorOne);
+          this.FloorOne.position.y = -16000;
           break;
         case 1:
           self.scene.add(self.FloorTwo);
+          this.FloorOne.position.y = -12000;
           break;
         case 2:
           self.scene.add(self.FloorThree);
+          this.FloorOne.position.y = -8000;
           break;
         case 3:
-          self.scene.add(self.FloorFour);
-          self.setCabinet();
+          self.getCabinetType(self.FloorFour); // 对接口
+          self.FloorFour.position.y = -4000;
           break;
 
         default:
@@ -1374,15 +1144,18 @@ export default {
       // console.log(this.scene)
     },
     selectValue(val) {
-      this.listGroup.traverse(function(child) {
-        if (child.isMesh && child.name) {
-          const length = val.filter(v => child.name.indexOf(v) > -1).length;
-          child.material.color.set("#9fc1dd"); // 设置材质颜色
-          if (length) {
-            child.material.color.set("#243665"); // 设置材质颜色
+      console.log("selectValue", val);
+      if (val.length > 0) {
+        this.listGroup.traverse(function(child) {
+          if (child.isMesh && child.TYPE) {
+            const length = val.filter(v => child.TYPE.indexOf(v) > -1).length;
+            child.material.color.set("#9fc1dd"); // 设置材质颜色
+            if (length) {
+              child.material.color.set("#243665"); // 设置材质颜色
+            }
           }
-        }
-      });
+        });
+      }
     }
   }
 };
@@ -1429,6 +1202,40 @@ export default {
 }
 </style>
 <style scoped>
+.module-statis .modal {
+  width: 119px;
+  height: 65px;
+  opacity: 0.8;
+  border-radius: 4px;
+  padding: 10px;
+  position: relative;
+  float: left;
+  margin-bottom: 15px;
+}
+.module-statis .modal:nth-child(2n + 1) {
+  margin-right: 15px;
+}
+.right_building,
+.right_module,
+.right_planning,
+.right_cabinet,
+.right_mokuai,
+.right_delivery {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  background-size: 100%;
+  float: left;
+}
+.module-statis .number {
+  font-size: 24px;
+  font-family: "MicrosoftYaHei";
+  font-weight: 400;
+  color: rgb(255, 255, 255);
+  /*opacity:0.6;*/
+}
 .map {
   position: relative;
   height: 100%;

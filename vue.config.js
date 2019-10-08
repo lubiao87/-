@@ -14,12 +14,13 @@ module.exports = {
   devServer: {
     port: 8888,
     proxy: {
-      "/microModule": {
-        target: "http://192.168.1.141:8090/microModule",
+      "/infoCollectTool": {
+        target: "http://www.yijushch.com/infoCollectTool",
+        // target: "http://192.168.1.178:8022/infoCollectTool",
         changeOrigin: true,
         ws: true,
         pathRewrite: {
-          "^/microModule": "/"
+          "^/infoCollectTool": "/"
         }
       }
     }

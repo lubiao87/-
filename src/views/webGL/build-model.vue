@@ -21,20 +21,38 @@
           'ui-shrinkBar-close': !panelShow
         }"
       ></div>
-      <div class="ui-citytol">
+      <!-- <div class="ui-citytol">
         <h5 class="ui-city-title">
           <span class="icon-location"></span> 当前区域
         </h5>
-        <!-- <div class="scroll-wrap fn-mt10 regionName" @click="addMan">
+        <div class="scroll-wrap fn-mt10 regionName" @click="addMan">
             增加人物
           </div>
           <div class="scroll-wrap fn-mt10 regionName" @click="removeMan">
             删除人物
-          </div> -->
+          </div>
+      </div> -->
+      <!-- 通用搜索框开始 -->
+      <div>
+        <h5 class="ui-city-title ui-height48 none-hover">
+          <span class="ui-linebg"></span>功率统计
+        </h5>
+        <ul class="ui-city-tabbar-ul">
+          <li
+            class="ui-city-tabbar-li"
+            v-for="(item, index) in tabbarData"
+            @click="tabbarActive(index)"
+            :class="{ 'ui-active': index === activeIndex }"
+            :key="index"
+          >
+            {{ item }}
+          </li>
+        </ul>
+        <div id="powerCharts" style="width: 100%;height:100%;"></div>
       </div>
       <!-- 微机楼统计 -->
-      <div style="margin-top: 30px;">
-        <h5 class="ui-city-title ui-height48">
+      <div style="margin-top: 20px;">
+        <h5 class="ui-city-title ui-height48 none-hover">
           <span class="ui-linebg"></span>微机楼统计
         </h5>
         <div class="clearfix module-statis" style="padding-left: 0;">
@@ -53,7 +71,7 @@
         </div>
       </div>
 
-      <div style="margin-top: 30px;">
+      <div style="margin-top: 20px;">
         <h5 class="ui-city-title ui-height48" @click="showBuilding">
           <span class="ui-linebg"></span>台山台城机房
         </h5>
@@ -95,33 +113,45 @@
       >
       </el-option>
     </el-select>
+    <popup :propsFlag="propsFlag" />
   </div>
   <!-- 右边收缩栏结束 -->
 </template>
 
 <script>
-// import echarts from "echarts"; // 引入echarts
-// import "echarts/lib/chart/map";
-// require("echarts/extension/bmap/bmap");
+import echarts from "echarts"; // 引入echarts
 import { listSearchMixin } from "../../mixin"; //混淆请求
 import * as THREE from "three";
 require("three-fbxloader-offical");
 import { OrbitControls } from "../../utils/OrbitControls";
-import { api2 } from "../../api/api"; //api配置请求的路径
+import popup from "../../components/popup/popup";
+// import { api2 } from "../../api/api"; //api配置请求的路径
 // require("../../utils/CSS3DRenderer");
 export default {
   name: "olmap",
   props: ["coordinate"],
   mixins: [listSearchMixin],
+  components: {
+    popup
+  },
   data() {
     return {
+      propsFlag: false,
+      tabbarData: ["直流系统功率", "交流系统功率"],
+      barData: [
+        { value: 589, name: "未用" },
+        { value: 286, name: "已用" },
+        { value: 280, name: "预占" }
+      ],
+      myChart: null,
+      activeIndex: 0,
       moduleStatistics: [
         { name: "机房总数", value: 3, class: "right_building" },
         { name: "机柜总数", value: 20, class: "right_module" }
         // {name:"规划微模块数", value:15, class: 'right_planning'},
         // {name:"已交付微模块数", value:150, class: 'right_cabinet'}
       ],
-      selectValue: [],
+      selectValue: ["全部"],
       scene: null, // 场景
       FBXloader: null, // fbx加载器
       ambient: null, // 环境光
@@ -177,7 +207,7 @@ export default {
       animationFlag: true,
       cabinetType: [
         {
-          name: "机柜类型1",
+          name: "全部",
           size: [0, 0, 0],
           index: 0
         },
@@ -195,11 +225,6 @@ export default {
           name: "机柜类型4", // 机柜类型
           size: [0.31, 0.6, 2.2], // 长宽高
           index: 3
-        },
-        {
-          name: "机柜类型5", // 机柜类型
-          size: [0.4, 0.6, 1.8], // 长宽高
-          index: 4
         }
       ],
       cabinetPosition: {
@@ -216,7 +241,6 @@ export default {
           type: "标准机架",
           name: "HW05-03"
         },
-        { index: 2, posX: "0.3", posY: "0", type: "标准机架", name: "HW05-01" },
         {
           index: 2,
           posX: "0.9",
@@ -233,28 +257,28 @@ export default {
         },
         {
           index: 3,
-          posX: "2.1",
+          posX: "2.2",
           posY: "0",
           type: "标准机架",
           name: "RSS01-05"
         },
         {
           index: 2,
-          posX: "2700",
+          posX: "2.9",
           posY: "0",
           type: "标准机架",
           name: "RSS01-01"
         },
         {
           index: 2,
-          posX: "0.15",
-          posY: "0.1",
+          posX: "3.5",
+          posY: "0",
           type: "标准机架",
           name: "RSS01-03"
         },
         {
           index: 2,
-          posX: "3.9",
+          posX: "4.1",
           posY: "0",
           type: "标准机架",
           name: "RSS01-02"
@@ -286,7 +310,7 @@ export default {
         },
         {
           index: 1,
-          posX: "12.05",
+          posX: "12.25",
           posY: "0",
           type: "标准机架",
           name: "HW05-03"
@@ -302,6 +326,8 @@ export default {
   mounted() {
     const self = this;
     this.$nextTick(() => {
+      this.myChart = echarts.init(document.getElementById("powerCharts"));
+      this.newMap();
       self.createHtml();
     });
     //  this.$parent.restaurants = this.$parent.loadAll();
@@ -315,7 +341,9 @@ export default {
       this.FBXloader = new THREE.FBXLoader(); // fbx加载器
       this.FBXloader.load("./Assets/fbx/building.FBX", self.loaderObj);
       this.FBXloader.load("./Assets/fbx/SambaDancing.FBX", self.loaderMan);
-      // this.FBXloader.load("./Assets/fbx/floorOne.FBX", self.loaderFloor1);
+      this.FBXloader.load("./Assets/fbx/1.FBX", self.loaderCabinet1);
+      this.FBXloader.load("./Assets/fbx/2.FBX", self.loaderCabinet2);
+      this.FBXloader.load("./Assets/fbx/3.FBX", self.loaderCabinet3);
       // this.FBXloader.load("./Assets/fbx/floorTwo.FBX", self.loaderFloor2);
       // this.FBXloader.load("./Assets/fbx/floorThree.FBX", self.loaderFloor3);
       this.FBXloader.load("./Assets/fbx/floorFour.FBX", self.loaderFloor4);
@@ -331,13 +359,6 @@ export default {
       this.scene.add(this.ambient);
       this.clock = new THREE.Clock();
       this.setCamera();
-      // 创建CSS3渲染器
-      // this.CSS3Renderer = new THREE.CSS3DRenderer();
-      // this.CSS3Renderer.setSize(window.innerWidth, window.innerHeight); //设置渲染区域尺寸
-      // // document.body.appendChild(this.CSS3Renderer.domElement); //body元素中插入canvas对象
-      // document
-      //   .getElementById("buildModel")
-      //   .appendChild(this.CSS3Renderer.domElement); // body元素中插入canvas对象
 
       this.controls = new OrbitControls(this.camera, this.renderer.domElement);
       this.controls.target = new THREE.Vector3(0, 0, 0);
@@ -421,26 +442,20 @@ export default {
         }
       });
     },
-    loaderFloor1(obj) {
-      this.FloorOne = obj;
-      obj.name = "我家二楼";
-      obj.translateY(-16000);
-    },
-    loaderFloor2(obj) {
-      this.FloorTwo = obj;
-      obj.name = "我家二楼";
-      obj.translateY(-12000);
-    },
-    loaderFloor3(obj) {
-      this.FloorThree = obj;
-      obj.name = "我家三楼";
-      obj.translateY(-8000);
-    },
     loaderFloor4(obj) {
       this.FloorOne = obj;
       this.FloorTwo = obj;
       this.FloorThree = obj;
       this.FloorFour = obj;
+    },
+    loaderCabinet1(obj) {
+      this.cabinet1 = obj;
+    },
+    loaderCabinet2(obj) {
+      this.cabinet2 = obj;
+    },
+    loaderCabinet3(obj) {
+      this.cabinet3 = obj;
     },
     loaderAir(obj) {
       this.Air = obj;
@@ -591,7 +606,6 @@ export default {
         this.floorIndex = index;
         this.animationFlag = true;
         // this.setCabinet()
-        this.selectValue = [];
       }
     },
     removeObjAll() {
@@ -648,7 +662,7 @@ export default {
       }
       // console.log(this.scene)
     },
-    addMeth(item, index) {
+    addMeth(item) {
       let geometry = new THREE.BoxGeometry(
         this.cabinetType[item.index].size[0],
         this.cabinetType[item.index].size[2],
@@ -659,7 +673,24 @@ export default {
         transparent: true, //开启透明度
         opacity: 0.8 //设置透明度具体值
       }); //材质对象Material
-      let mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
+      let mesh = null;
+      if (item.index === 1) {
+        geometry = this.cabinet1.children[0].geometry;
+        material = this.cabinet1.children[0].material;
+        mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
+      } else if (item.index === 2) {
+        geometry = this.cabinet2.children[0].geometry;
+        material = this.cabinet2.children[0].material;
+        mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
+        mesh.rotateY(-Math.PI / 2);
+        mesh.rotateY90 = true;
+      } else if (item.index === 3) {
+        geometry = this.cabinet3.children[0].geometry;
+        material = this.cabinet3.children[0].material;
+        mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
+        mesh.rotateY(-Math.PI / 2);
+      }
+
       // let positionY = -2700
       // if (this.cabinetType[item.index].size[2] < 2500) {
       let positionY = -2700 + (this.cabinetType[item.index].size[2] - 2500) / 2;
@@ -670,7 +701,7 @@ export default {
         item.position[0] + 2300
       );
       // mesh.position.z = item.position[1]
-      mesh.TYPE = this.cabinetType[item.index].name + index;
+      mesh.TYPE = this.cabinetType[item.index].name;
       mesh.name = item.name;
       return mesh;
     },
@@ -790,7 +821,11 @@ export default {
           const worldPosition = new THREE.Vector3();
           intersects[0].object.getWorldPosition(worldPosition);
           // console.log('世界坐标',worldPosition);
+          // console.log("intersects[0].object", intersects[0].object);
           mesh.position.set(worldPosition.x, worldPosition.y, worldPosition.z); //点光源位置
+          if (intersects[0].object.rotateY90) {
+            mesh.rotateY(-Math.PI / 2);
+          }
           this.border = new THREE.BoxHelper(mesh, "#e54949"); //设置边框，这个边框不会旋转
           this.border.name = "高亮显示柜";
           this.scene.add(this.border); //网格模型添加到场景中
@@ -918,82 +953,14 @@ export default {
         self.listGroup.children
       );
       if (intersects.length > 0) {
-        console.log(intersects);
-        window.open(
-          "http://www.yijushch.com/jmrv/www_wmk/#/device-module-details"
-        );
-        this.scene.updateMatrixWorld(true);
-        const worldPosition = new THREE.Vector3();
-        intersects[0].object.getWorldPosition(worldPosition);
-        if (!intersects[0].object.flag) {
-          // 如果未选中则选中
-          if (this.meshborder) {
-            self.scene.remove(this.meshborder);
-          }
-          intersects[0].object.flag = true;
-          const geometry = intersects[0].object.geometry;
-          const material = new THREE.MeshLambertMaterial({
-            color: "#e54949"
-          }); //材质对象Material
-          this.meshborder = new THREE.Mesh(geometry, material); //网格模型对象Mesh
-          this.meshborder.name = "选中柜";
-          this.scene.updateMatrixWorld(true);
-          const worldPosition = new THREE.Vector3();
-          intersects[0].object.getWorldPosition(worldPosition);
-          // console.log('世界坐标',worldPosition);
-          this.meshborder.position.set(
-            worldPosition.x,
-            worldPosition.y,
-            worldPosition.z
-          );
-          this.scene.add(this.meshborder); //网格模型添加到场景中
-          this.cameraPosition2 = this.camera.position;
-          // this.camera.position.set(worldPosition.x - 3000, 10000, worldPosition.z)
-          // this.controls.target = new THREE.Vector3().addVectors(
-          //   intersects[0].object.position,
-          //   intersects[0].object.getWorldDirection()
-          // );
-          // this.camera.lookAt(intersects[0].object.position);
-          // this.removeObjAll();
-          // console.log(intersects[0].object.name);
-          // if (intersects[0].object.name === "机柜类型j") {
-          //   this.scene.add(this.GKGModel);
-          //   this.GKGModel.position.set(
-          //     worldPosition.x,
-          //     worldPosition.y - 2000,
-          //     worldPosition.z
-          //   );
-          // } else {
-          //   this.scene.add(this.JIGUI);
-          //   this.JIGUI.position.set(
-          //     worldPosition.x,
-          //     worldPosition.y - 2000,
-          //     worldPosition.z
-          //   );
-          // }
-
-          // 创建精灵图标2
-          // this.newCSS3DSprite2(
-          //   intersects,
-          //   worldPosition.x,
-          //   worldPosition.y + 2000,
-          //   worldPosition.z
-          // );
-        } else {
-          intersects[0].object.flag = false;
-          if (this.meshborder) {
-            self.scene.remove(this.meshborder);
-          }
-          // if (this.sprite2) {
-          //   this.scene.remove(this.sprite2);
-          // }
-          // this.scene.remove(this.GKGModel);
-          // this.scene.remove(this.JIGUI);
-          // this.camera.position.set(this.cameraX, this.cameraY, this.cameraZ)
-          this.controls.target = new THREE.Vector3(0, 0, 0);
-          this.camera.lookAt(this.scene.position);
-        }
-        // this.selectBorder = intersects[0].object.flag;
+        // console.log(intersects);
+        // window.open(
+        //   "http://www.yijushch.com/jmrv/www_wmk/#/device-module-details"
+        // );
+        // this.scene.updateMatrixWorld(true);
+        // const worldPosition = new THREE.Vector3();
+        // intersects[0].object.getWorldPosition(worldPosition);
+        this.propsFlag = true;
       }
     },
     lookCabinetfn() {
@@ -1065,33 +1032,33 @@ export default {
     },
     getCabinetType(obj) {
       let self = this;
-      let params = {
-        url: api2.getFrameList, //获取request_url.js文件的请求路径
-        method: "GET"
-      };
-      this.sendReq(params, res => {
-        console.log("获取机柜类型", res);
-        // if (res.respHeader.resultCode === 0) {
-        //   self.cabinetType = res.respBody.cabinetType.map(item => {
-        //     let items = item;
-        //     items.size = [
-        //       item.size[0] * 1000,
-        //       item.size[1] * 1000,
-        //       item.size[2] * 1000
-        //     ];
-        //     return items;
-        //   });
-        //   self.cabinetplaced = res.respBody.cabinetList.map(item => {
-        //     let items = item;
-        //     items.position = [item.posX * 1000, item.posY * 1000];
-        //     return items;
-        //   });
-        //   self.scene.add(obj);
-        //   self.setCabinet();
-        //   console.log("self.cabinetType", self.cabinetType);
-        //   console.log("self.cabinetplaced", self.cabinetplaced);
-        // }
-      });
+      // let params = {
+      //   url: api2.getFrameList, //获取request_url.js文件的请求路径
+      //   method: "GET"
+      // };
+      // this.sendReq(params, res => {
+      //   console.log("获取机柜类型", res);
+      //   if (res.respHeader.resultCode === 0) {
+      //     self.cabinetType = res.respBody.cabinetType.map(item => {
+      //       let items = item;
+      //       items.size = [
+      //         item.size[0] * 1000,
+      //         item.size[1] * 1000,
+      //         item.size[2] * 1000
+      //       ];
+      //       return items;
+      //     });
+      //     self.cabinetplaced = res.respBody.cabinetList.map(item => {
+      //       let items = item;
+      //       items.position = [item.posX * 1000, item.posY * 1000];
+      //       return items;
+      //     });
+      //     self.scene.add(obj);
+      //     self.setCabinet();
+      //     console.log("self.cabinetType", self.cabinetType);
+      //     console.log("self.cabinetplaced", self.cabinetplaced);
+      //   }
+      // });
       self.cabinetType = self.cabinetType.map(item => {
         let items = item;
         items.size = [
@@ -1108,6 +1075,79 @@ export default {
       });
       self.scene.add(obj);
       self.setCabinet();
+    },
+    newMap() {
+      this.myChart.clear();
+      let option = this.setOption();
+      this.myChart.setOption(option);
+    },
+    // tabbar切换数据
+    tabbarActive(index) {
+      this.activeIndex = index;
+      this.newMap();
+    },
+    setOption() {
+      let $this = this;
+      let option = {
+        tooltip: {
+          trigger: "item",
+          formatter: "{a} <br/>{b}: {c} ({d}%)"
+        },
+        legend: {
+          orient: "vertical",
+          top: "center",
+          right: 30,
+          trigger: "item",
+          icon: "rect",
+          itemWidth: 10, // 设置宽度
+          itemHeight: 10, // 设置高度
+          data: ["未用", "已用", "预占", "规划"],
+          textStyle: {
+            //图例文字的样式
+            color: ["#13A86E", "#7B91FF", "#35a0e4", "#E5A73B"],
+            fontSize: 12
+          },
+          formatter: function(params) {
+            for (var i = 0; i < option.series[0].data.length; i++) {
+              if (option.series[0].data[i].name == params) {
+                return params + " " + option.series[0].data[i].value + "KW";
+              }
+            }
+          }
+        },
+        color: ["#13A86E", "#6B7FE3", "#35a0e4", "#E5A73B"],
+        series: [
+          {
+            name: "功率统计",
+            type: "pie",
+            selectedMode: "single",
+            radius: ["50%", "80%"],
+            center: ["25%", "55%"],
+            label: {
+              normal: {
+                show: false
+              }
+            },
+            labelLine: {
+              normal: {
+                show: false
+              }
+            },
+            itemStyle: {
+              // 此配置
+              normal: {
+                borderWidth: 3,
+                borderColor: "rgba(28, 50, 76, 0.9)"
+              },
+              emphasis: {
+                borderWidth: 0
+              }
+            },
+            data: $this.barData
+          }
+        ]
+      };
+      return option;
     }
   },
   watch: {
@@ -1139,19 +1179,55 @@ export default {
           break;
 
         default:
+          self.getCabinetType(self.FloorFour); // 对接口
+          self.FloorFour.position.y = -4000;
           break;
       }
       // console.log(this.scene)
     },
     selectValue(val) {
       console.log("selectValue", val);
-      if (val.length > 0) {
+      if (val.length >= 0 && this.floorIndex) {
+        if (val.indexOf("全部") > -1) {
+          this.listGroup.traverse(function(child) {
+            if (child.isMesh && child.TYPE) {
+              if (child.material instanceof Array) {
+                child.material.forEach((item, index) => {
+                  child.material[index].transparent = true;
+                  child.material[index].opacity = 1;
+                });
+              } else {
+                child.material.transparent = true; // 设置材质颜色
+                child.material.opacity = 1;
+              }
+            }
+          });
+          return;
+        }
         this.listGroup.traverse(function(child) {
           if (child.isMesh && child.TYPE) {
             const length = val.filter(v => child.TYPE.indexOf(v) > -1).length;
-            child.material.color.set("#9fc1dd"); // 设置材质颜色
+            // if (val.length > 0) {
+            if (child.material instanceof Array) {
+              child.material.forEach((item, index) => {
+                child.material[index].transparent = true;
+                child.material[index].opacity = 0.1;
+              });
+            } else {
+              child.material.transparent = true; // 设置材质颜色
+              child.material.opacity = 0.1;
+            }
+            // }
             if (length) {
-              child.material.color.set("#243665"); // 设置材质颜色
+              if (child.material instanceof Array) {
+                child.material.forEach((item, index) => {
+                  child.material[index].transparent = true;
+                  child.material[index].opacity = 1;
+                });
+              } else {
+                child.material.transparent = true; // 设置材质颜色
+                child.material.opacity = 1;
+              }
             }
           }
         });
@@ -1202,6 +1278,10 @@ export default {
 }
 </style>
 <style scoped>
+.none-hover.ui-height48:hover {
+  background-color: inherit;
+  cursor: inherit;
+}
 .module-statis .modal {
   width: 119px;
   height: 65px;
@@ -1255,5 +1335,32 @@ export default {
   top: 100px;
   left: 50px;
   min-width: 240px;
+}
+.ui-city-tabbar-ul {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 23px;
+}
+.ui-city-tabbar-li {
+  padding: 9px 0;
+  background: rgba(107, 127, 227, 0);
+  border: 1px solid rgba(113, 135, 240, 1);
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 400;
+  text-align: center;
+  color: rgba(255, 255, 255, 1);
+  box-sizing: border-box;
+  width: 49%;
+  margin-right: 12px;
+  cursor: pointer;
+}
+.ui-city-tabbar-li:last-child {
+  margin-right: 0;
+}
+.ui-active {
+  background: #7187f0;
+  border: 0;
 }
 </style>

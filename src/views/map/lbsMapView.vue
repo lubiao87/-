@@ -28,7 +28,7 @@
           </div>
         </div>
         <!-- 微机楼统计 -->
-        <div style="margin-top: 30px;">
+        <div style="margin-top: 20px;">
           <h5 class="ui-city-title ui-height48"><span class="ui-linebg"></span>微机楼统计</h5>
           <div class="clearfix module-statis" style="padding-left: 0;">
               <div v-for="(item, index) in moduleStatistics" :key="index"  class="modal" :class="'module' + (index + 1)">
@@ -41,14 +41,14 @@
         </div>
 
         <!-- 机楼列表 -->
-        <div style="margin-top: 30px;">
+        <div style="margin-top: 20px;">
           <h5 class="ui-city-title ui-height48"><span class="ui-linebg"></span>模房列表</h5>
           <div class="clearfix module-statis" style="padding-left: 0;">
               <div class="lb-module-list">
                 <ul>
-                  <li v-for="(item, index) in modelData" :key="index" @click="rountGo(item)">
+                  <li v-for="(items, index) in modelData" :key="index" @click="rountGo(item)">
                       <span>{{index + 1}}. </span>
-                      <span>{{item.modelName}}</span>
+                      <span>{{items.modelName}}</span>
                       <span class="lb-icon"></span>
                   </li>
                 </ul>
@@ -148,10 +148,10 @@ export default {
         },
       ],
       moduleStatistics: [
-        {name:"微机楼数", value:3, class: 'right_building'},
-        {name:"微模块间数", value:10, class: 'right_module'},
-        {name:"规划微模块数", value:15, class: 'right_planning'},
-        {name:"已交付微模块数", value:150, class: 'right_cabinet'}
+        {name:"机楼数", value:3, class: 'right_building'},
+        {name:"接入间数", value:10, class: 'right_module'},
+        {name:"核心DC数", value:15, class: 'right_planning'},
+        {name:"接入局所数", value:150, class: 'right_cabinet'}
       ],
       panelShow: true,
       item: {

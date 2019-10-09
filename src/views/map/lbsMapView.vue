@@ -330,10 +330,10 @@ export default {
                 gltfDuck.setOption(paramDuck);
                 gltfDuck.rotateX(90);
                 gltfDuck.rotateZ(10);
-                gltfDuck.setName = "设置的名称"
+                // gltfDuck.setName = "设置的名称"
                 that.object3Dlayer.add(gltfDuck);
 
-                console.log("加载出来的模型", gltfDuck)
+                // console.log("加载出来的模型", gltfDuck)
                 // gltfDuck.layerMesh.forEach((element, i, arr) => {
                   gltfDuck.layerMesh[0].transparent = true;
                   that.updateMeshColor(gltfDuck.layerMesh[0], that.clearColor);

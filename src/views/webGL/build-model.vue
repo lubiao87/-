@@ -212,19 +212,44 @@ export default {
           index: 0
         },
         {
-          name: "机柜类型2", // 机柜类型
-          size: [0.3, 0.3, 2.6], // 长宽高
+          name: "标准机架2.6", // 机柜类型
+          size: [0.6, 0.6, 2.6], // 长宽高
           index: 1 // 类型1对应的索引，目的为了减少遍历
         },
         {
-          name: "机柜类型3", // 机柜类型
-          size: [0.3, 0.6, 2.2], // 长宽高
+          name: "标准机架2.2", // 机柜类型
+          size: [0.6, 0.6, 2.2], // 长宽高
           index: 2
         },
         {
-          name: "机柜类型4", // 机柜类型
-          size: [0.31, 0.6, 2.2], // 长宽高
+          name: "标准机架2.0", // 机柜类型
+          size: [0.6, 0.6, 2.0], // 长宽高
           index: 3
+        },
+        {
+          name: "DDF机架", // 机柜类型
+          size: [0.6, 0.24, 2.6], // 长宽高
+          index: 4
+        },
+        {
+          name: "空调", // 机柜类型
+          size: [0.5, 0.5, 1.8], // 长宽高
+          index: 5
+        },
+        {
+          name: "列头机架", // 机柜类型
+          size: [0.6, 0.6, 2.6], // 长宽高
+          index: 6
+        },
+        {
+          name: "ODF机架", // 机柜类型
+          size: [0.6, 0.6, 2.6], // 长宽高
+          index: 7
+        },
+        {
+          name: "配线机架", // 机柜类型
+          size: [0.5, 0.3, 1.8], // 长宽高
+          index: 8
         }
       ],
       cabinetPosition: {
@@ -235,52 +260,52 @@ export default {
       cabinetplaced: [
         // 第一排
         {
-          index: 1,
+          index: 6,
           posX: "0",
           posY: "0",
-          type: "标准机架",
+          type: "列头机架",
           name: "HW05-03"
         },
         {
           index: 2,
           posX: "0.9",
           posY: "0",
-          type: "标准机架",
+          type: "标准机架2.2",
           name: "RSS02-02"
         },
         {
           index: 2,
           posX: "1.5",
           posY: "0",
-          type: "标准机架",
+          type: "标准机架2.2",
           name: "RSS01-04"
         },
         {
-          index: 3,
+          index: 2,
           posX: "2.2",
           posY: "0",
-          type: "标准机架",
+          type: "标准机架2.2",
           name: "RSS01-05"
         },
         {
           index: 2,
           posX: "2.9",
           posY: "0",
-          type: "标准机架",
+          type: "标准机架2.2",
           name: "RSS01-01"
         },
         {
           index: 2,
           posX: "3.5",
           posY: "0",
-          type: "标准机架",
+          type: "标准机架2.2",
           name: "RSS01-03"
         },
         {
           index: 2,
           posX: "4.1",
           posY: "0",
-          type: "标准机架",
+          type: "标准机架2.2",
           name: "RSS01-02"
         },
 
@@ -288,7 +313,7 @@ export default {
           index: 2,
           posX: "8.6",
           posY: "0",
-          type: "标准机架",
+          type: "标准机架2.2",
           name: "RSS02-01"
         },
         { index: 2, posX: "9.2", posY: "0", type: "标准机架", name: "ZTE03" },
@@ -297,7 +322,7 @@ export default {
           index: 2,
           posX: "10.4",
           posY: "0",
-          type: "标准机架",
+          type: "标准机架2.2",
           name: "HW05-03"
         },
         { index: 2, posX: "11", posY: "0", type: "标准机架", name: "HW05-03" },
@@ -305,15 +330,229 @@ export default {
           index: 2,
           posX: "11.6",
           posY: "0",
-          type: "标准机架",
+          type: "标准机架2.2",
           name: "HW05-03"
         },
         {
-          index: 1,
+          index: 6,
           posX: "12.25",
           posY: "0",
-          type: "标准机架",
+          type: "列头机架",
           name: "HW05-03"
+        },
+
+        // 第二排
+        {
+          index: 6,
+          posX: "0",
+          posY: "2.4",
+          type: "列头机架",
+          name: "DDF01-03"
+        },
+        {
+          index: 4,
+          posX: "0.6",
+          posY: "2.2",
+          type: "DDF机架",
+          name: "DDF02-01"
+        },
+        {
+          index: 4,
+          posX: "0.9",
+          posY: "2.2",
+          type: "DDF机架",
+          name: "DDF03-02"
+        },
+        {
+          index: 4,
+          posX: "1.2",
+          posY: "2.2",
+          type: "DDF机架",
+          name: "DDF03-01"
+        },
+        {
+          index: 4,
+          posX: "1.5",
+          posY: "2.2",
+          type: "DDF机架",
+          name: "DDF03-04"
+        },
+        {
+          index: 4,
+          posX: "1.8",
+          posY: "2.2",
+          type: "DDF机架",
+          name: "DDF03-05"
+        },
+        {
+          index: 4,
+          posX: "2.1",
+          posY: "2.2",
+          type: "DDF机架",
+          name: "DDF03-06"
+        },
+        {
+          index: 4,
+          posX: "2.4",
+          posY: "2.2",
+          type: "DDF机架",
+          name: "DDF03-07"
+        },
+        // 第三排
+        {
+          index: 4,
+          posX: "0.6",
+          posY: "2.6",
+          type: "DDF机架",
+          name: "DDF02-07"
+        },
+        {
+          index: 4,
+          posX: "0.9",
+          posY: "2.6",
+          type: "DDF机架",
+          name: "DDF03-08"
+        },
+        {
+          index: 4,
+          posX: "1.2",
+          posY: "2.6",
+          type: "DDF机架",
+          name: "DDF03-09"
+        },
+        {
+          index: 4,
+          posX: "1.5",
+          posY: "2.6",
+          type: "DDF机架",
+          name: "DDF03-11"
+        },
+
+        // 第四排
+        {
+          index: 6,
+          posX: "0",
+          posY: "4.0",
+          type: "列头机架",
+          name: "DDF03-04"
+        },
+        {
+          index: 5,
+          posX: "0.6",
+          posY: "4.0",
+          type: "空调",
+          name: "DDF03-04"
+        },
+
+        // 第五排
+        {
+          index: 6,
+          posX: "0",
+          posY: "6.0",
+          type: "列头机架",
+          name: "ZTE-01"
+        },
+        {
+          index: 7,
+          posX: "0.85",
+          posY: "6.0",
+          type: "ODF机架",
+          name: "ODF-02"
+        },
+        {
+          index: 7,
+          posX: "1.7",
+          posY: "6.0",
+          type: "ODF机架",
+          name: "ODF-03"
+        },
+        {
+          index: 7,
+          posX: "2.55",
+          posY: "6.0",
+          type: "ODF机架",
+          name: "ODF-04"
+        },
+        // 第六排
+        {
+          index: 6,
+          posX: "0",
+          posY: "8.0",
+          type: "配线机架",
+          name: "ZTE-01"
+        },
+        {
+          index: 8,
+          posX: "0.6",
+          posY: "8.0",
+          type: "配线机架",
+          name: "ZTE-02"
+        },
+        {
+          index: 8,
+          posX: "1.2",
+          posY: "8.0",
+          type: "配线机架",
+          name: "ZTE-03"
+        },
+
+        // 第七排
+        {
+          index: 6,
+          posX: "0",
+          posY: "10",
+          type: "列头机架",
+          name: "RSS02-01"
+        },
+        {
+          index: 1,
+          posX: "0.6",
+          posY: "10",
+          type: "标准机架2.6",
+          name: "RSS02-02"
+        },
+        {
+          index: 1,
+          posX: "1.2",
+          posY: "10",
+          type: "标准机架2.6",
+          name: "RSS02-03"
+        },
+        {
+          index: 1,
+          posX: "1.8",
+          posY: "10",
+          type: "标准机架2.6",
+          name: "RSS02-04"
+        },
+        // 第八排
+        {
+          index: 6,
+          posX: "0",
+          posY: "12",
+          type: "列头机架",
+          name: "RSS02-01"
+        },
+        {
+          index: 3,
+          posX: "0.6",
+          posY: "12",
+          type: "标准机架2.0",
+          name: "RSS02-02"
+        },
+        {
+          index: 3,
+          posX: "1.2",
+          posY: "12",
+          type: "标准机架2.0",
+          name: "RSS02-03"
+        },
+        {
+          index: 3,
+          posX: "1.8",
+          posY: "12",
+          type: "标准机架2.0",
+          name: "RSS02-04"
         }
       ]
     };
@@ -344,6 +583,11 @@ export default {
       this.FBXloader.load("./Assets/fbx/1.FBX", self.loaderCabinet1);
       this.FBXloader.load("./Assets/fbx/2.FBX", self.loaderCabinet2);
       this.FBXloader.load("./Assets/fbx/3.FBX", self.loaderCabinet3);
+      this.FBXloader.load("./Assets/fbx/DDF.FBX", self.loaderDDF);
+      this.FBXloader.load("./Assets/fbx/kongtiao.FBX", self.loaderKongtiao);
+      this.FBXloader.load("./Assets/fbx/lieTou.FBX", self.loaderLieTou);
+      this.FBXloader.load("./Assets/fbx/ODF.FBX", self.loaderODF);
+      this.FBXloader.load("./Assets/fbx/peixian.FBX", self.loaderPeixian);
       // this.FBXloader.load("./Assets/fbx/floorTwo.FBX", self.loaderFloor2);
       // this.FBXloader.load("./Assets/fbx/floorThree.FBX", self.loaderFloor3);
       this.FBXloader.load("./Assets/fbx/floorFour.FBX", self.loaderFloor4);
@@ -393,7 +637,7 @@ export default {
       // planeMesh.receiveShadow = true;
 
       this.axisHelper = new THREE.AxisHelper(8000); // 辅助线
-      this.scene.add(this.axisHelper);
+      // this.scene.add(this.axisHelper);
 
       // this.pushLineBox()  // 虚线框
       window.onresize = this.onWindowResize;
@@ -448,12 +692,35 @@ export default {
       this.FloorThree = obj;
       this.FloorFour = obj;
     },
+    // 4
+    loaderDDF(obj) {
+      this.DDF = obj;
+    },
+    // 5
+    loaderKongtiao(obj) {
+      this.kongtiao = obj;
+    },
+    // 6
+    loaderLieTou(obj) {
+      this.lietou = obj;
+    },
+    // 7
+    loaderODF(obj) {
+      this.ODF = obj;
+    },
+    // 8
+    loaderPeixian(obj) {
+      this.peixian = obj;
+    },
+    // 1
     loaderCabinet1(obj) {
       this.cabinet1 = obj;
     },
+    // 2
     loaderCabinet2(obj) {
       this.cabinet2 = obj;
     },
+    // 3
     loaderCabinet3(obj) {
       this.cabinet3 = obj;
     },
@@ -682,15 +949,40 @@ export default {
         geometry = this.cabinet2.children[0].geometry;
         material = this.cabinet2.children[0].material;
         mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
-        mesh.rotateY(-Math.PI / 2);
-        mesh.rotateY90 = true;
+        // mesh.rotateY(-Math.PI / 2);
+        // mesh.rotateY90 = true;
       } else if (item.index === 3) {
         geometry = this.cabinet3.children[0].geometry;
         material = this.cabinet3.children[0].material;
         mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
-        mesh.rotateY(-Math.PI / 2);
+        // mesh.rotateY(-Math.PI / 2);
+      } else if (item.index === 4) {
+        geometry = this.DDF.children[0].geometry;
+        material = this.DDF.children[0].material;
+        mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
+        // mesh.rotateY(-Math.PI / 2);
+      } else if (item.index === 5) {
+        geometry = this.kongtiao.children[0].geometry;
+        material = this.kongtiao.children[0].material;
+        mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
+        // mesh.rotateY(-Math.PI / 2);
+      } else if (item.index === 6) {
+        geometry = this.lietou.children[0].geometry;
+        material = this.lietou.children[0].material;
+        mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
+        // mesh.rotateY(-Math.PI / 2);
+      } else if (item.index === 7) {
+        geometry = this.ODF.children[0].geometry;
+        material = this.ODF.children[0].material;
+        mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
+        // mesh.rotateY(-Math.PI / 2);
+      } else if (item.index === 8) {
+        geometry = this.peixian.children[0].geometry;
+        material = this.peixian.children[0].material;
+        mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
+        // mesh.rotateY(-Math.PI / 2);
       }
-
+      mesh.rotateX(-Math.PI / 2);
       // let positionY = -2700
       // if (this.cabinetType[item.index].size[2] < 2500) {
       let positionY = -2700 + (this.cabinetType[item.index].size[2] - 2500) / 2;
@@ -823,9 +1115,10 @@ export default {
           // console.log('世界坐标',worldPosition);
           // console.log("intersects[0].object", intersects[0].object);
           mesh.position.set(worldPosition.x, worldPosition.y, worldPosition.z); //点光源位置
-          if (intersects[0].object.rotateY90) {
-            mesh.rotateY(-Math.PI / 2);
-          }
+          // if (intersects[0].object.rotateY90) {
+          //   mesh.rotateY(-Math.PI / 2);
+          // }
+          mesh.rotateX(-Math.PI / 2);
           this.border = new THREE.BoxHelper(mesh, "#e54949"); //设置边框，这个边框不会旋转
           this.border.name = "高亮显示柜";
           this.scene.add(this.border); //网格模型添加到场景中

@@ -196,24 +196,24 @@ export default {
     return {
       UweiData: [
         {
-          name: "设备总数量",
+          name: "总U位",
           value: 20,
           class: "lb-c7589F0",
           img: "./Assets/img/right_module_ico@2x.png",
           imgClass: "lb-52"
         },
         {
-          name: "已交付数量",
+          name: "已使用U位",
           value: 15,
           class: "lb-c3AB1C7",
-          img: "./Assets/img/weimojian/right_planning_ico@2x.png",
+          img: "./Assets/img/right_planning_ico@2x.png",
           imgClass: "lb-49"
         },
         {
-          name: "预占数量",
+          name: "空闲U位",
           value: 1,
           class: "lb-c54B4E0",
-          img: "./Assets/img/weimojian/right_cabinet_ico@2x.png",
+          img: "./Assets/img/right_cabinet_ico@2x.png",
           imgClass: "lb-52"
         }
       ],

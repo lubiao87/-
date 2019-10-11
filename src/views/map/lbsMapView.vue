@@ -42,7 +42,7 @@
 
         <!-- 机楼列表 -->
         <div style="margin-top: 20px;">
-          <h5 class="ui-city-title ui-height48"><span class="ui-linebg"></span>模房列表</h5>
+          <h5 class="ui-city-title ui-height48"><span class="ui-linebg"></span>机楼列表</h5>
           <div class="clearfix module-statis" style="padding-left: 0;">
               <div class="lb-module-list">
                 <ul>

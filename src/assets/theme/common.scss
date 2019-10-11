@@ -590,6 +590,9 @@ body >div:nth-child(1) {
 .ui-height48:hover {
   background-color: $cornflowerBlueColor;
 }
+.ui-height48.select-h {
+  background-color: $cornflowerBlueColor;
+}
 .ui-area {
   font-size: 14px;
   margin-top: 15px;
@@ -1535,6 +1538,9 @@ body {
 .lb-module-list {
   li {
     padding: 10px;
+  }
+  li.select-li {
+    background: $modelBtnBorder;
   }
 }
 .lb-climate {

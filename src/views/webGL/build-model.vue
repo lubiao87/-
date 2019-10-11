@@ -57,17 +57,14 @@
             <div :class="item.class"></div>
           </div>
         </div>
-        <!-- <div class="ui-citytol">
-          <h5 class="ui-city-title">
-            <span class="icon-location"></span> 当前区域
-          </h5>
+        <div class="ui-citytol">
           <div class="scroll-wrap fn-mt10 regionName" @click="addMan">
             增加人物
           </div>
           <div class="scroll-wrap fn-mt10 regionName" @click="removeMan">
             删除人物
           </div>
-        </div> -->
+        </div>
         <!-- 通用搜索框开始 -->
       </div>
 
@@ -127,6 +124,7 @@
 import echarts from "echarts"; // 引入echarts
 import { listSearchMixin } from "../../mixin"; //混淆请求
 import * as THREE from "three";
+import { MTLLoader, OBJLoader } from "three-obj-mtl-loader";
 require("three-fbxloader-offical");
 import { OrbitControls } from "../../utils/OrbitControls";
 import popup from "../../components/popup/popup";
@@ -1664,8 +1662,10 @@ export default {
       this.scene = null;
       this.scene = new THREE.Scene(); // 场景
       this.FBXloader = new THREE.FBXLoader(); // fbx加载器
+      this.Objloader = new THREE.OBJLoader();
+      this.Objloader.load("./Assets/obj/dog.obj", self.loaderDog);
       this.FBXloader.load("./Assets/fbx/building.FBX", self.loaderObj);
-      // this.FBXloader.load("./Assets/fbx/SambaDancing.FBX", self.loaderMan);
+      this.FBXloader.load("./Assets/fbx/SambaDancing.FBX", self.loaderMan);
       this.FBXloader.load("./Assets/fbx/1.FBX", self.loaderCabinet1);
       this.FBXloader.load("./Assets/fbx/2.FBX", self.loaderCabinet2);
       this.FBXloader.load("./Assets/fbx/3.FBX", self.loaderCabinet3);
@@ -1674,6 +1674,7 @@ export default {
       this.FBXloader.load("./Assets/fbx/lietou.FBX", self.loaderLieTou);
       this.FBXloader.load("./Assets/fbx/ODF.FBX", self.loaderODF);
       this.FBXloader.load("./Assets/fbx/peixian.FBX", self.loaderPeixian);
+      // this.FBXloader.load("./Assets/fbx/dog.FBX", self.loaderDog);
       // this.FBXloader.load("./Assets/fbx/floorTwo.FBX", self.loaderFloor2);
       // this.FBXloader.load("./Assets/fbx/floorThree.FBX", self.loaderFloor3);
       this.FBXloader.load("./Assets/fbx/floorFour.FBX", self.loaderFloor4);
@@ -1777,6 +1778,22 @@ export default {
       this.FloorTwo = obj;
       this.FloorThree = obj;
       this.FloorFour = obj;
+    },
+    // 够
+    loaderDog(obj) {
+      console.log("加载单身狗", obj);
+      obj.translateX(5000);
+      //加载纹理贴图
+      var texture = new THREE.TextureLoader().load(
+        "./Assets/img/DiffuseFace.jpg"
+      );
+      // 基础Basic网格材质，不受光照影响   Phong网格材质受光照影响
+      obj.children[0].material = new THREE.MeshBasicMaterial({
+        map: texture //设置颜色纹理贴图
+      });
+      // obj.scale.set(15, 15, 15);
+      // obj.children[0].scale.set(5, 5, 5); //网格模型缩放
+      this.scene.add(obj);
     },
     // 4
     loaderDDF(obj) {

@@ -57,14 +57,14 @@
             <div :class="item.class"></div>
           </div>
         </div>
-        <div class="ui-citytol">
+        <!-- <div class="ui-citytol">
           <div class="scroll-wrap fn-mt10 regionName" @click="addMan">
             增加人物
           </div>
           <div class="scroll-wrap fn-mt10 regionName" @click="removeMan">
             删除人物
           </div>
-        </div>
+        </div> -->
         <!-- 通用搜索框开始 -->
       </div>
 
@@ -124,7 +124,7 @@
 import echarts from "echarts"; // 引入echarts
 import { listSearchMixin } from "../../mixin"; //混淆请求
 import * as THREE from "three";
-import { MTLLoader, OBJLoader } from "three-obj-mtl-loader";
+import "three-obj-mtl-loader";
 require("three-fbxloader-offical");
 import { OrbitControls } from "../../utils/OrbitControls";
 import popup from "../../components/popup/popup";
@@ -1663,9 +1663,9 @@ export default {
       this.scene = new THREE.Scene(); // 场景
       this.FBXloader = new THREE.FBXLoader(); // fbx加载器
       this.Objloader = new THREE.OBJLoader();
-      this.Objloader.load("./Assets/obj/dog.obj", self.loaderDog);
+      // this.Objloader.load("./Assets/obj/dog.obj", self.loaderDog);
       this.FBXloader.load("./Assets/fbx/building.FBX", self.loaderObj);
-      this.FBXloader.load("./Assets/fbx/SambaDancing.FBX", self.loaderMan);
+      // this.FBXloader.load("./Assets/fbx/SambaDancing.FBX", self.loaderMan);
       this.FBXloader.load("./Assets/fbx/1.FBX", self.loaderCabinet1);
       this.FBXloader.load("./Assets/fbx/2.FBX", self.loaderCabinet2);
       this.FBXloader.load("./Assets/fbx/3.FBX", self.loaderCabinet3);
@@ -1975,12 +1975,12 @@ export default {
       if (!this.lookAround) {
         this.floorIndex = item.floor;
         this.animationFlag = true;
+        this.buildId = item.id;
+        this.dataList.forEach((items, i, arr) => {
+          arr[i].select = false;
+        });
+        this.dataList[index].select = true;
       }
-      this.buildId = item.id;
-      this.dataList.forEach((items, i, arr) => {
-        arr[i].select = false;
-      });
-      this.dataList[index].select = true;
     },
     removeObjAll() {
       const self = this;
@@ -2020,12 +2020,11 @@ export default {
         this.lookAround = true; // 开启动画
         // console.log(this.scene)
         this.selectValue = ["全部"];
+        this.dataList.forEach((items, i, arr) => {
+          arr[i].select = false;
+        });
+        this.buildId = 100;
       }
-      this.dataList.forEach((items, i, arr) => {
-        arr[i].select = false;
-      });
-
-      this.buildId = 100;
     },
     addBuilding() {
       // 显示房子

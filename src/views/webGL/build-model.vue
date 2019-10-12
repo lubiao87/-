@@ -41,7 +41,7 @@
       <!-- 微机楼统计 -->
       <div style="margin-top: 20px;">
         <h5 class="ui-city-title ui-height48 none-hover">
-          <span class="ui-linebg"></span>微机楼统计
+          <span class="ui-linebg"></span>机楼统计
         </h5>
         <div class="clearfix module-statis" style="padding-left: 0;">
           <div
@@ -74,7 +74,7 @@
           @click="showBuilding"
           :class="{ 'select-h': buildId === 100 }"
         >
-          <span class="ui-linebg"></span>台山台城机房
+          <span class="ui-linebg"></span>工业园机楼
         </h5>
         <div class="clearfix module-statis" style="padding-left: 0;">
           <div class="lb-module-list">

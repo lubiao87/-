@@ -2,7 +2,7 @@
   <div style="width: 100%;height:100%;">
     <!-- <input type="flies" src="/assets/GKG.FBX" ref="mapID" alt="" /> -->
     <div id="cesiumContainer" style="position:absolute; top: 0; width: 100%;height:100%;" v-show="!panelFlag"></div>
-    <div id="cesiumContainer2" style="position:absolute; top: 0; width: 100%;height:100%;" v-show="panelFlag"></div>
+    <div id="cesiumContainer2" class="cesiumContainer2" style="position:absolute; top: 0; width: 100%;height:100%;" v-show="panelFlag"></div>
     <el-select
       class="model-select"
       v-model="selectValue"
@@ -283,94 +283,6 @@ export default {
         "iconLocation": [],
         "modeLocation": ["113.712303517451", "23.1794840662287"]
       }, {
-        "modelName": "小楼机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.828316508394", "23.3808727520097"]
-      }, {
-        "modelName": "新塘2机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.618284330749", "23.126375725921"]
-      }, {
-        "modelName": "民乐机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.464971786083", "23.6592401570649"]
-      }, {
-        "modelName": "新塘1机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.608090644158", "23.1105927959377"]
-      }, {
-        "modelName": "棋杆机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.50373841632", "23.5795757389109"]
-      }, {
-        "modelName": "龙潭机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.409390919982", "23.6690423458153"]
-      }, {
-        "modelName": "永和机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.586881718916", "23.1798851870287"]
-      }, {
-        "modelName": "正果机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.890056298663", "23.418639777658"]
-      }, {
-        "modelName": "东成机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.585604439638", "23.5502767879333"]
-      }, {
-        "modelName": "镇龙机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.562855014536", "23.281844609161"]
-      }, {
-        "modelName": "朱村机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.695088856262", "23.2756925035706"]
-      }, {
-        "modelName": "跑马场机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.337570782265", "23.1262897523415"]
-      }, {
-        "modelName": "新太平机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.484507519873", "23.445349997359"]
-      }, {
-        "modelName": "晓港机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.278963731181", "23.0925053525051"]
-      }, {
-        "modelName": "较场西机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.276533433667", "23.1264874028259"]
-      }, {
-        "modelName": "农林机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.291024026833", "23.1292273059697"]
-      }, {
-        "modelName": "东晓机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.282853662173", "23.104045588339"]
-      }, {
-        "modelName": "电信大厦机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.323797109378", "23.1402883279967"]
-      }, {
-        "modelName": "天河机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.329624116323", "23.1365740612017"]
-      }, {
-        "modelName": "天香街机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.265894902843", "23.1361724722417"]
-      }, {
-        "modelName": "客村机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.309209341768", "23.1020835713711"]
-      }, {
-        "modelName": "江南机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.267438105311", "23.1017091916215"]
-      }, {
         "modelName": "鹭江机楼",
         "iconLocation": [],
         "modeLocation": ["113.300799211289", "23.0974545083542"]
@@ -382,10 +294,6 @@ export default {
         "modelName": "北京路机楼",
         "iconLocation": [],
         "modeLocation": ["113.26293700695", "23.1275574748982"]
-      }, {
-        "modelName": "流花机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.252622378512", "23.1488884424523"]
       }, {
         "modelName": "广园机楼",
         "iconLocation": [],
@@ -422,11 +330,13 @@ export default {
         "modelName": "槎龙机楼",
         "iconLocation": [],
         "modeLocation": ["113.220571369841", "23.1754895477239"]
-      }, {
-        "modelName": "同德机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.229344598812", "23.1598128219894"]
-      }, {
+      },
+      // {
+      //   "modelName": "同德机楼",
+      //   "iconLocation": [],
+      //   "modeLocation": ["113.229344598812", "23.1598128219894"]
+      // },
+      {
         "modelName": "石井机楼",
         "iconLocation": [],
         "modeLocation": ["113.228914359268", "23.2070672776627"]
@@ -454,11 +364,8 @@ export default {
         "modelName": "淘金机楼",
         "iconLocation": [],
         "modeLocation": ["113.279778246568", "23.1469971902575"]
-      }, {
-        "modelName": "中山四长话机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.265415387307", "23.129547664648"]
-      }, {
+      },
+      {
         "modelName": "花地机楼",
         "iconLocation": [],
         "modeLocation": ["113.229650379432", "23.0839844338088"]
@@ -494,43 +401,8 @@ export default {
           }
         ],
         "modeLocation": ["113.2266314506", "23.2777316928436"]
-      }, {
-        "modelName": "太和机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.350915743905", "23.2943239338532"]
-      }, {
-        "modelName": "竹料机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.367054355486", "23.3583154104678"]
-      }, {
-        "modelName": "钟落潭机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.407914292975", "23.383482532325"]
-      }, {
-        "modelName": "同和机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.407914292975", "23.1981089150085"]
-      }, {
-        "modelName": "黄埔机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.442009058873", "23.0983470383287"]
-      }, {
-        "modelName": "元岗机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.342526225367", "23.1771318132455"]
-      }, {
-        "modelName": "庄头机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.261296618469", "23.0820950598017"]
-      }, {
-        "modelName": "南岗机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.532997064687", "23.095602196311"]
-      }, {
-        "modelName": "数据大楼",
-        "iconLocation": [],
-        "modeLocation": ["113.277121691283", "23.1269091491465"]
-      }, {
+      },
+      {
         "modelName": "克山机楼",
         "iconLocation": [],
         "modeLocation": ["113.241687222271", "23.1507193675631"]
@@ -542,75 +414,8 @@ export default {
         "modelName": "新机场机楼",
         "iconLocation": [],
         "modeLocation": ["113.296988871003", "23.3760298753955"]
-      }, {
-        "modelName": "云景机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.248637155182", "23.1744933063219"]
-      }, {
-        "modelName": "石基新机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.431225872712", "22.9528695189696"]
-      }, {
-        "modelName": "萝岗机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.492005160951", "23.17870312056"]
-      }, {
-        "modelName": "天河软件园IDC机楼(亚太信息引擎)",
-        "iconLocation": [],
-        "modeLocation": ["113.408859995119", "23.1764591446515"]
-      }, {
-        "modelName": "大岗新机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.396689196172", "22.8068813185154"]
-      }, {
-        "modelName": "石溪机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.283449587463", "23.0690991372716"]
-      }, {
-        "modelName": "七星岗机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.341492903444", "23.0845743088283"]
-      }, {
-        "modelName": "人民中机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.248062938462", "23.1196531174581"]
-      }, {
-        "modelName": "三江2机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.848007184961", "23.1877469709293"]
-      }, {
-        "modelName": "花山机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.269809307186", "23.4535656349382"]
-      }, {
-        "modelName": "石滩2机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.781923259115", "23.1827486409413"]
-      }, {
-        "modelName": "东莞庄机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.330756045005", "23.158281357132"]
-      }, {
-        "modelName": "中新电信",
-        "iconLocation": [],
-        "modeLocation": ["113.6142486842", "23.2892055403827"]
-      }, {
-        "modelName": "龙洞机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.366303037956", "23.1958271992667"]
-      }, {
-        "modelName": "沙溪IDC机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.280273827176", "23.0758740788265"]
-      }, {
-        "modelName": "加速器IDC机楼",
-        "iconLocation": [],
-        "modeLocation": ["113.489723042186", "23.1561942061985"]
-      }, {
-        "modelName": "较场西IDC机楼(广州数据中心)",
-        "iconLocation": [],
-        "modeLocation": ["113.277113011457", "23.1271493003009"]
-      }, {
+      },
+      {
         "modelName": "广州番禺东涌（德昇）数据中心",
         "iconLocation": [],
         "modeLocation": ["113.42394", "22.896573"]
@@ -778,130 +583,107 @@ export default {
     },
     mapInit() {
       const that = this;
-              // 创建地图实例
-        that.map = new AMap.Map("cesiumContainer2", {
-            viewMode: '3D',
-            pitch: 30,
-            rotation: 25,
-            zoom: 12,
-            zooms: [3, 20],
-            center: [113.370565, 23.122751],
-            mapStyle: 'amap://styles/macaron',
-            showIndoorMap: false,
-            features: ['road', 'bg'],
-        });
-        that.selectColor = [51 / 255, 133 / 255, 255 / 255, 0.8];
-        that.clearColor = [71 / 255, 193 / 255, 76 / 255, 0.8];
-        that.clearColor2 = [64 / 255, 64 / 255, 64 / 255, 0.8];
-        // 创建Object3DLayer图层
-        that.object3Dlayer = new AMap.Object3DLayer({
-            zIndex: 110,
-            opacity: 0.8
-        });
-        that.map.add(that.object3Dlayer);
-        that.drawBounds();
-        that.map.plugin(["AMap.GltfLoader"], function () {
-			      var urlDuck2 = './Assets/gltf/dianxin.gltf';
-
-
-
-            var gltfObj = new AMap.GltfLoader();
-
-			      gltfObj.load(urlDuck2, function (gltfDuck) {
-              that.modelData.forEach((parent, index) => {
-                var paramDuck = {
-                  position: new AMap.LngLat(JSON.parse(parent.modeLocation[0]),JSON.parse(parent.modeLocation[1])), // 必须
-                  scale: 0.02, // 非必须，默认1
-                  height: 100,  // 非必须，默认0
-                  scene: 0, // 非必须，默认0
-                };
-                gltfDuck.setOption(paramDuck);
-                gltfDuck.rotateX(90);
-                gltfDuck.rotateZ(10);
-                // gltfDuck.setName = "设置的名称"
-                that.object3Dlayer.add(gltfDuck);
-
-                // console.log("加载出来的模型", gltfDuck)
-                // gltfDuck.layerMesh.forEach((element, i, arr) => {
-                  gltfDuck.layerMesh[0].transparent = true;
-                  that.updateMeshColor(gltfDuck.layerMesh[0], that.clearColor);
-                  that.updateMeshColor(gltfDuck.layerMesh[1], that.clearColor2);
-                // });
-                that.gltfDucks = gltfDuck;
-                var img = './Assets/img/search-map-icon.png';
-                var points3D = new AMap.Object3D.Points();
-                points3D.transparent = true;
-                // 创建纯文本标记  ---------------
-                var parentName = new AMap.Text({
-                    text: parent.modelName,
-                    anchor:'center', // 设置文本标记锚点
-                    draggable:true,
-                    cursor:'pointer',
-                    angle:10,
-                    style:{
-
-                        'background-color': 'transparent',
-                        'border-width': 0,
-                        'text-align': 'center',
-                        'font-size': '14px',
-                        'color': '#e91e63',
-                        'margin-top': '30px'
+            // 创建地图实例
+      that.map = new AMap.Map("cesiumContainer2", {
+          viewMode: '3D',
+          pitch: 30,
+          rotation: 25,
+          zoom: 13,
+          zooms: [11, 20],
+          center: [113.370565, 23.122751],
+          // mapStyle: 'amap://styles/macaron',
+          // showIndoorMap: false,
+          // features: ['road', 'bg'],
+          defaultCursor:'pointer',
+          // turboMode:false,
+          // showBuildingBlock:false,
+          forceVector:true,
+          // showLabel:false,
+          resizeEnable: true
+      });
+      // 创建Object3DLayer图层
+      that.object3Dlayer = new AMap.Object3DLayer({
+          zIndex: 110,
+          opacity: 0.8
+      });
+      that.map.add(that.object3Dlayer);
+      that.drawBounds();
+      var parenTimg = './Assets/img/parent-build.png';
+      var zoomStyleMapping2 = {
+            11:1,
+            12:1,
+            13:1,
+            14:1,
+            15:1,
+            16:1,
+            17:1,
+            18:1
+          };
+      var spots = [];
+      that.modelData.forEach((parent, index) => {
+          var marker = new AMap.ElasticMarker({
+                position:[parent.modeLocation[0], parent.modeLocation[1]],
+                zooms:[11,20],
+                styles:[{
+                        icon:{
+                            img: parenTimg,
+                            size:[32,32],//可见区域的大小
+                            ancher:[16,16],//锚点
+                            // imageSize:[24,24],
+                            fitZoom:12,//最合适的级别
+                            scaleFactor:2,//地图放大一级的缩放比例系数
+                            maxScale:2,//最大放大比例
+                            minScale:1//最小放大比例
+                        },
+                        label:{
+                            content:`<div class="lb-label2" style="width:${parent.modelName.length}em; margin-left: -${(parent.modelName.length - 4)/2}em;">${parent.modelName}</div>` ,
+                            offset:[-16,0],
+                            position:'BM',
+                            minZoom:12.5,
+                        }
                     },
-                    position: parent.modeLocation
-                });
-                parentName.setMap(that.map);
-                parent.iconLocation.forEach((item, p) => {
-                  // let point = new BMap.Point(item.location[0], item.location[1]);
-                  // map.centerAndZoom(point, 15);
-                  // that.makeMark(point, map, item);
-                  var coords = [JSON.parse(item.location[0]), JSON.parse(item.location[1])]; // 天安门;
-                  // 创建纯文本标记  ---------------
-                  var geometry = points3D.geometry;
-                  points3D.textures.push(img);
-                  var center = that.lnglatToG20(coords);
-                  geometry.vertices.push(center.x, center.y, 0);
-                  geometry.pointSizes.push(30);
-                  geometry.vertexColors.push(p * 0.029, p * 0.015, p * 0.01, 0.5);
-                  geometry.pointAreas.push(0, 0, 1, 1);
-                  // 每两个元素描述一个顶点的纹理坐标信息，纹理坐标以图片左上角为原点。分别是左上角和右下角。
-                  geometry.vertexUVs.push(0, 0, 1, 1);
-                  // 每个元素描述一个顶点的纹理索引信息，多纹理时使用，取值范围[0-7]。单纹理或者无纹理时不需要设值。
-                  geometry.textureIndices.push(p);
-
-                  // 创建纯文本标记  ---------------
-                  var text = new AMap.Text({
-                      text: item.name,
-                      anchor:'center', // 设置文本标记锚点
-                      draggable:true,
-                      cursor:'pointer',
-                      angle:10,
-                      style:{
-
-                          'background-color': 'transparent',
-                          'border-width': 0,
-                          'text-align': 'center',
-                          'font-size': '12px',
-                          'color': 'blue',
-                          'margin-top': '20px'
-                      },
-                      position: item.location
-                  });
-                  text.setMap(that.map);
-                });
-                that.object3Dlayer.add(points3D);
+                    {
+                        icon:{
+                            img:parenTimg,
+                            size:[40,40],
+                            ancher:[20,20],
+                            fitZoom:13,
+                            scaleFactor:2,
+                            maxScale:2,
+                            minScale:0.125
+                        },
+                        label:{
+                            content:`<div class="lb-label2" style="width:${parent.modelName.length}em; margin-left: -${(parent.modelName.length - 4)/2}em;">${parent.modelName}</div>` ,
+                            offset: [-20,0],
+                            position:'BM',
+                            minZoom:12.5,
+                        }
+                    }
+                    ],
+                zoomStyleMapping:zoomStyleMapping2
+                // extData: {
+                //   name: parent.modelName
+                // }
               })
-            });
+          marker.setExtData(parent.modelName);
+          spots.push(marker);
+          // 绑定事件
+          // if(parent.iconLocation.length) {
+            marker.on('mouseover', that.mapMousemove);
+            // marker.on('mouseout', that.mapMοuseοut);
+          // }
+          // else {
+          //   marker.on('mousemove', that.mapMousemove2);
+          //   marker.on('mouseout', that.mapMοuseοut2);
+          // }
 
-            // 绑定事件
-            // that.map.on('click', that.clickHandler);
-            // prism 拾取
-            that.map.on('mousemove', that.mapMousemove);
-            // 缩放事件
-            // that.map.on('zoomstart', that.mapZoomstart);
-            that.map.on('zoomchange', that.mapZoom);
-            // that.map.on('zoomend', that.mapZoomend);
-        });
-
+          marker.on('click', that.clickMarker);
+      })
+      that.map.add(spots)
+      // 缩放事件
+      // that.map.on('zoomstart', that.mapZoomstart);
+      that.map.on('zoomchange', that.mapZoom);
+      // that.map.on('zoomend', that.mapZoomend);
     },
     lnglatToG20(lnglat) {
       var lnglat = this.map.lngLatToGeodeticCoord(lnglat);
@@ -951,18 +733,21 @@ export default {
         var obj = that.map.getObject3DByContainerPos(px, [that.object3Dlayer], false) || {};
         // var object = obj.object;
         // console.log('您在[ '+e.lnglat.getLng()+','+e.lnglat.getLat()+' ]的位置点击了地图！');
-        console.log(obj.object)
-        if(obj.object && obj.object.type === "lightmesh") {
-          that.rountGo(that.item);
-        }
+        console.log(obj)
+        // if(obj.object && obj.object.type === "lightmesh") {
+        //   that.rountGo(that.item);
+        // }
+    },
+    clickMarker(e) {
+        // console.log(e);
+        // console.log(e.lnglat+'');
+         this.rountGo(this.item);
     },
     mapMousemove(ev) {
       const that = this;
       var pixel = ev.pixel;
       var px = new AMap.Pixel(pixel.x, pixel.y);
       var obj = that.map.getObject3DByContainerPos(px, [that.object3Dlayer], false) || {};
-
-
       // 选中的 object3D 对象，这里为当前 Mesh
       var object = obj.object;
       // 被拾取到的对象和拾取射线的交叉点的3D坐标
@@ -970,70 +755,176 @@ export default {
       // 交叉点距透视原点的距离
       // var distance = obj.distance;
       // var target = ev.target;
-      if(obj.object && obj.object.type === "lightmesh") {
-        // 选中的 face 所在的索引
-        that.modelData.forEach((item, i) => {
-          if((Math.abs(item.modeLocation[0] - obj.object.yl.lng) < 0.001) && (Math.abs(item.modeLocation[1] - obj.object.yl.lat) < 0.001) ) {
-            that.objIndex = i;
-          }
-        })
 
-        object.transparent = true;
-        // console.log("悬停选中的 object3D 对象", object)
-        // console.log(" object3D 对象的target", target)
-        console.log(" object3D index", that.objIndex)
-        // // that.gltfDucks.layerMesh.forEach((element, i, arr) => {
-        //     that.updateMeshColor(that.gltfDucks.layerMesh[0], that.clearColor);
-        //     that.updateMeshColor(that.gltfDucks.layerMesh[1], that.clearColor2);
-        //   // });
-        // that.updateMeshColor(object, that.selectColor);
+      console.log("mapMousemove-ev", ev);
+      // if(obj.object && obj.object.type === "points") {
+        // 选中的 face 所在的索引
+      that.modelData.forEach((item, i) => {
+        if(item.modelName === ev.target.getExtData()) {
+          that.objIndex = i;
+          // ev.target.hide();
+        }
+      })
+      var parenTimg = './Assets/img/parent-build.png';
+      // ev.target.setAnimation('AMAP_ANIMATION_DROP');
+      if(that.objIndex === null) {return};
+      that.markers = [];
+      var img = './Assets/img/search-map-icon.png';
+      that.modelData[that.objIndex].iconLocation.forEach((item, index) => {
+        var deepX = (item.location[0] - that.modelData[that.objIndex].modeLocation[0]) / 4;
+        var deepY = (item.location[1] - that.modelData[that.objIndex].modeLocation[1]) / 4;
+         var points = [
+          new AMap.LngLat(JSON.parse(that.modelData[that.objIndex].modeLocation[0]), JSON.parse(that.modelData[that.objIndex].modeLocation[1])),
+          new AMap.LngLat(JSON.parse(that.modelData[that.objIndex].modeLocation[0]) + deepX, JSON.parse(that.modelData[that.objIndex].modeLocation[1]) + deepY),
+          new AMap.LngLat(JSON.parse(that.modelData[that.objIndex].modeLocation[0]) + deepX * 2,JSON.parse(that.modelData[that.objIndex].modeLocation[1]) + deepY * 2),
+          new AMap.LngLat(JSON.parse(item.location[0]),JSON.parse(item.location[1]))
+        ];
+        var numberOfPoints = 180;
+        var minHeight = 5;
+        if(item.meshLine) {
+          that.object3Dlayer.remove(item.meshLine);
+        }
+        that.modelData[that.objIndex].iconLocation[index].meshLine = new AMap.Object3D.MeshLine({
+          path: that.computeBezier(points, numberOfPoints, minHeight),
+          height: that.getEllipseHeight(numberOfPoints, 2000, minHeight),
+          color: 'rgba(55,129,240, 0.9)',
+          width: 2
+        });
+        that.modelData[that.objIndex].iconLocation[index].meshLine.transparent = true;
+        that.modelData[that.objIndex].iconLocation[index].meshLine['backOrFront'] = 'both';
+        that.object3Dlayer.add(that.modelData[that.objIndex].iconLocation[index].meshLine);
+
+        // 图标
+        var marker2 = new AMap.Marker({
+          position:new AMap.LngLat(JSON.parse(item.location[0]), JSON.parse(item.location[1])),
+           icon: img,
+          //  animation: "AMAP_ANIMATION_BOUNCE",
+           extData: {
+               id: index + 1
+           },
+           offset: new AMap.Pixel(-20, -30)
+        })
+        // marker2.setTitle(item.name);
+        marker2.setLabel({
+          offset: new AMap.Pixel(0, 40),  //设置文本标注偏移量
+          content: `<div class="lb-label2" style="width:${item.name.length}em; margin-left: -${(item.name.length - 4)/2}em;">${item.name}</div>`, //设置文本标注内容
+          // direction: 'right' //设置文本标注方位
+        });
+        that.markers.push(marker2);
+      })
+      if(!that.overlayGroups) {
+        that.overlayGroups = new AMap.OverlayGroup(that.markers);
+        that.map.add(that.overlayGroups)
+      }
+      // ev.target.setCursor(`url('${img}') ,pointer`)
+       // 图标
+      //  var text =  ev.target.getExtData()
+      // if(!that.marker3) {
+      //   that.marker3 = new AMap.Marker({
+      //     position: new AMap.LngLat(JSON.parse(that.modelData[that.objIndex].modeLocation[0]), JSON.parse(that.modelData[that.objIndex].modeLocation[1])),
+      //     icon: parenTimg,
+      //     //  animation: "AMAP_ANIMATION_BOUNCE",
+      //     offset: new AMap.Pixel(-20, -30)
+      //   })
+      //   // marker2.setTitle(item.name);
+
+      //   that.marker3.setLabel({
+      //     offset: new AMap.Pixel(0, 40),  //设置文本标注偏移量
+      //     content: `<div class="lb-label2" style="width:${text.length}em; margin-left: -${(text.length - 4)/2}em;">${text}</div>`, //设置文本标注内容
+      //   });
+      //   ev.target.setTop(true);
+      //   that.map.add(that.marker3)
+      // }
+
+      // ev.target.hide();
+      if(!that.points3D) {
+        that.points3D = new AMap.Object3D.Points();
+        that.object3Dlayer.add(that.points3D);
+        that.points3D.borderColor = [0.6, 0.8, 1, 1];
+        that.points3D.borderWeight = 3;
+        var geometry = that.points3D.geometry;
+        var center = that.lnglatToG20(that.modelData[that.objIndex].modeLocation);
+        this.zoom = that.map.getZoom(); //获取当前地图级别
+        var size = 60 + (this.zoom - 13) * 20;
+        if (size < 30 ) {
+          size = 30;
+        }
+        console.log("盒子大小", size);
+      // 高度为 0
+        geometry.vertices.push(center.x, center.y, 0);
+        geometry.pointSizes.push(size);
+        // geometry.vertexColors.push(9, 9, p * 0.01, 0.5);
+        that.object3Dlayer.add(that.points3D);
+      }
+      ev.target.on('mouseout', that.mapMοuseοut);
+    },
+    mapMοuseοut(ev) {
+      const that = this;
+      var pixel = ev.pixel;
+      console.log("鼠标离开", pixel);
+      ev.target.setAnimation('AMAP_ANIMATION_NONE');
+      // console.log("getMapScreenMarkers", that.markers.getMap());
+      ev.target.show();
+      if(that.objIndex) {
         that.modelData[that.objIndex].iconLocation.forEach((item, index) => {
-          var deepX = (item.location[0] - that.modelData[that.objIndex].modeLocation[0]) / 4;
-          var deepY = (item.location[1] - that.modelData[that.objIndex].modeLocation[1]) / 4;
-           var points = [
-            new AMap.LngLat(JSON.parse(that.modelData[that.objIndex].modeLocation[0]), JSON.parse(that.modelData[that.objIndex].modeLocation[1])),
-            new AMap.LngLat(JSON.parse(that.modelData[that.objIndex].modeLocation[0]) + deepX, JSON.parse(that.modelData[that.objIndex].modeLocation[1]) + deepY),
-            new AMap.LngLat(JSON.parse(that.modelData[that.objIndex].modeLocation[0]) + deepX * 2,JSON.parse(that.modelData[that.objIndex].modeLocation[1]) + deepY * 2),
-            new AMap.LngLat(JSON.parse(item.location[0]),JSON.parse(item.location[1]))
-          ];
-          var numberOfPoints = 180;
-          var minHeight = 5;
           if(item.meshLine) {
             that.object3Dlayer.remove(item.meshLine);
+            that.modelData[that.objIndex].iconLocation[index].meshLine = null;
+
           }
-          that.modelData[that.objIndex].iconLocation[index].meshLine = new AMap.Object3D.MeshLine({
-            path: that.computeBezier(points, numberOfPoints, minHeight),
-            height: that.getEllipseHeight(numberOfPoints, 2000, minHeight),
-            color: 'rgba(55,129,240, 0.9)',
-            width: 2
-          });
-          that.modelData[that.objIndex].iconLocation[index].meshLine.transparent = true;
-          that.modelData[that.objIndex].iconLocation[index].meshLine['backOrFront'] = 'both';
-          that.object3Dlayer.add(that.modelData[that.objIndex].iconLocation[index].meshLine);
+          // that.map.remove(that.markers[index]);
         })
-
-        // that.map.add(that.object3Dlayer);
-
-      } else {
-        if (that.gltfDucks) {
-            // that.updateMeshColor(that.gltfDucks.layerMesh[0], that.clearColor);
-            // that.updateMeshColor(that.gltfDucks.layerMesh[1], that.clearColor2);
-            // console.log("typeof that.objIndex", that.objIndex );
-            if(typeof that.objIndex === 'number') {
-              that.modelData[that.objIndex].iconLocation.forEach((item, index) => {
-                if(item.meshLine) {
-                  that.object3Dlayer.remove(item.meshLine);
-                  that.modelData[that.objIndex].iconLocation[index].meshLine = null;
-                }
-              })
-              that.objIndex = null
-            }
-
-
-
+        if(that.overlayGroups) {
+          that.map.remove(that.overlayGroups);
+          that.overlayGroups = null;
         }
+        that.objIndex = null;
 
       }
+      if(that.marker3) {
+        that.map.remove(that.marker3);
+        that.marker3 =null;
+      }
+      if(that.points3D) {
+        that.object3Dlayer.remove(that.points3D);
+        that.points3D = null;
+      }
+
+    },
+    mapMousemove2(ev) {
+      const that = this;
+      console.log("mapMousemove-2", ev.target.getExtData());
+      var text =  ev.target.getExtData()
+      var parenTimg = './Assets/img/parent-build.png';
+      ev.target.hide();
+       // 图标
+      if(!that.marker3) {
+        that.marker3 = new AMap.Marker({
+          position: ev.lnglat,
+          icon: parenTimg,
+          //  animation: "AMAP_ANIMATION_BOUNCE",
+          offset: new AMap.Pixel(-20, -30)
+        })
+        // marker2.setTitle(item.name);
+
+        that.marker3.setLabel({
+          offset: new AMap.Pixel(0, 40),  //设置文本标注偏移量
+          content: `<div class="lb-label2" style="width:${text.length}em; margin-left: -${(text.length - 4)/2}em;">${text}</div>`, //设置文本标注内容
+        });
+        that.map.add(that.marker3)
+      }
+    },
+    mapMοuseοut2(ev) {
+      const that = this;
+      var pixel = ev.pixel;
+      console.log("鼠标离开2", pixel);
+      ev.target.show();
+      if(that.marker3) {
+        that.map.remove(that.marker3);
+        that.marker3 =null;
+      }
+
+      ev.target.setAnimation('AMAP_ANIMATION_NONE');
     },
     getEllipseHeight(count, maxHeight, minHeight) {
       var height = [];
@@ -1068,8 +959,8 @@ export default {
     // },
     mapZoom() {
       const that = this;
-      var zoom = that.map.getZoom(); //获取当前地图级别
-      // console.log("正在缩放", zoom);
+      this.zoom = that.map.getZoom(); //获取当前地图级别
+      console.log("正在缩放", this.zoom);
     },
     drawBounds() {
       const that = this;
@@ -1139,7 +1030,32 @@ export default {
   width: 278px;
   border-radius: 5px;
   overflow: hidden;
+
   /* height: 80px; */
+}
+
+.cesiumContainer2 .amap-marker-label {
+  border: 0px solid transparent;
+  background-color: transparent;
+  color: #243665;
+  margin: auto;
+  width: 40px;
+  padding: 0;
+  font-weight: 600;
+  text-shadow:0 0 0.5em #fff,
+                -0 -0 0.5em #fff;
+}
+.cesiumContainer2 .amap-icon img {
+  height: 2.6rem;
+  width: 2.6rem;
+}
+.cesiumContainer2 .lb-label2 {
+  /* width: 160px;
+  text-align: center; */
+  margin-left: -50%;
+  /* background-color: #fff; */
+  /* background-color: transparent; */
+
 }
 .stip-formatter > div {
   margin-top: 10px;

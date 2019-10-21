@@ -112,6 +112,7 @@
         :key="item.type"
         :label="item.name"
         :value="item.name"
+        :class="{ hide: item.index === 1 || item.index === 2 }"
       >
       </el-option>
     </el-select>
@@ -221,42 +222,42 @@ export default {
           index: 0
         },
         {
-          name: "标准机架2.6", // 机柜类型
+          name: "标准机架 - 56个", // 机柜类型
           size: [0.6, 0.6, 2.6], // 长宽高
           index: 1 // 类型1对应的索引，目的为了减少遍历
         },
         {
-          name: "标准机架2.2", // 机柜类型
+          name: "标准机架 - 56个", // 机柜类型
           size: [0.6, 0.6, 2.2], // 长宽高
           index: 2
         },
         {
-          name: "标准机架2.0", // 机柜类型
+          name: "标准机架 - 56个", // 机柜类型
           size: [0.6, 0.6, 2.0], // 长宽高
           index: 3
         },
         {
-          name: "DDF机架", // 机柜类型
+          name: "DDF机架 - 12个", // 机柜类型
           size: [0.6, 0.24, 2.6], // 长宽高
           index: 4
         },
         {
-          name: "空调", // 机柜类型
+          name: "空调 - 12个", // 机柜类型
           size: [0.5, 0.5, 1.8], // 长宽高
           index: 5
         },
         {
-          name: "列头机架", // 机柜类型
+          name: "列头机架 - 14个", // 机柜类型
           size: [0.6, 0.6, 2.6], // 长宽高
           index: 6
         },
         {
-          name: "ODF机架", // 机柜类型
+          name: "ODF机架 - 32个", // 机柜类型
           size: [0.6, 0.6, 2.6], // 长宽高
           index: 7
         },
         {
-          name: "配线机架", // 机柜类型
+          name: "配线机架 - 12个", // 机柜类型
           size: [0.5, 0.3, 1.8], // 长宽高
           index: 8
         }
@@ -279,42 +280,42 @@ export default {
           index: 2,
           posX: "0.9",
           posY: "0",
-          type: "标准机架2.2",
+          type: "标准机架",
           name: "RSS02-02"
         },
         {
           index: 2,
           posX: "1.5",
           posY: "0",
-          type: "标准机架2.2",
+          type: "标准机架",
           name: "RSS01-04"
         },
         {
           index: 2,
           posX: "2.2",
           posY: "0",
-          type: "标准机架2.2",
+          type: "标准机架",
           name: "RSS01-05"
         },
         {
           index: 2,
           posX: "2.9",
           posY: "0",
-          type: "标准机架2.2",
+          type: "标准机架",
           name: "RSS01-01"
         },
         {
           index: 2,
           posX: "3.5",
           posY: "0",
-          type: "标准机架2.2",
+          type: "标准机架",
           name: "RSS01-03"
         },
         {
           index: 2,
           posX: "4.1",
           posY: "0",
-          type: "标准机架2.2",
+          type: "标准机架",
           name: "RSS01-02"
         },
 
@@ -322,7 +323,7 @@ export default {
           index: 2,
           posX: "8.6",
           posY: "0",
-          type: "标准机架2.2",
+          type: "标准机架",
           name: "RSS02-01"
         },
         { index: 2, posX: "9.2", posY: "0", type: "标准机架", name: "ZTE03" },
@@ -331,7 +332,7 @@ export default {
           index: 2,
           posX: "10.4",
           posY: "0",
-          type: "标准机架2.2",
+          type: "标准机架",
           name: "HW05-03"
         },
         { index: 2, posX: "11", posY: "0", type: "标准机架", name: "HW05-03" },
@@ -339,7 +340,7 @@ export default {
           index: 2,
           posX: "11.6",
           posY: "0",
-          type: "标准机架2.2",
+          type: "标准机架",
           name: "HW05-03"
         },
         {
@@ -1331,139 +1332,146 @@ export default {
           posX: "0",
           posY: "10",
           type: "列头机架",
-          name: "RSS02-01"
+          name: "第七直列001/天河工业园整流模块01",
+          setId: 22
         },
         {
           index: 1,
           posX: "0.6",
           posY: "10",
-          type: "标准机架2.6",
-          name: "RSS02-02"
+          type: "标准机架",
+          name: "RSS02-02",
+          parentId: 22
         },
         {
           index: 1,
           posX: "1.2",
           posY: "10",
-          type: "标准机架2.6",
-          name: "RSS02-03"
+          type: "标准机架",
+          name: "RSS02-03",
+          parentId: 22
         },
         {
           index: 1,
           posX: "1.8",
           posY: "10",
-          type: "标准机架2.6",
-          name: "RSS02-04"
+          type: "标准机架",
+          name: "RSS02-04",
+          parentId: 22
         },
         {
           index: 1,
           posX: "2.4",
           posY: "10",
-          type: "标准机架2.6",
-          name: "RSS02-05"
+          type: "标准机架",
+          name: "RSS02-05",
+          parentId: 22
         },
         {
           index: 1,
           posX: "3",
           posY: "10",
-          type: "标准机架2.6",
-          name: "RSS02-06"
+          type: "标准机架",
+          name: "RSS02-06",
+          parentId: 22
         },
         {
           index: 1,
           posX: "3.6",
           posY: "10",
-          type: "标准机架2.6",
-          name: "RSS02-07"
+          type: "标准机架",
+          name: "RSS02-07",
+          parentId: 22
         },
         {
           index: 1,
           posX: "4.2",
           posY: "10",
-          type: "标准机架2.6",
+          type: "标准机架",
           name: "RSS02-08"
         },
         {
           index: 1,
           posX: "4.8",
           posY: "10",
-          type: "标准机架2.6",
+          type: "标准机架",
           name: "RSS02-09"
         },
         {
           index: 1,
           posX: "5.4",
           posY: "10",
-          type: "标准机架2.6",
+          type: "标准机架",
           name: "RSS02-10"
         },
         {
           index: 1,
           posX: "6",
           posY: "10",
-          type: "标准机架2.6",
+          type: "标准机架",
           name: "RSS02-11"
         },
         {
           index: 1,
           posX: "6.6",
           posY: "10",
-          type: "标准机架2.6",
+          type: "标准机架",
           name: "RSS02-12"
         },
         {
           index: 1,
           posX: "7.2",
           posY: "10",
-          type: "标准机架2.6",
+          type: "标准机架",
           name: "RSS02-13"
         },
         {
           index: 1,
           posX: "7.8",
           posY: "10",
-          type: "标准机架2.6",
+          type: "标准机架",
           name: "RSS02-14"
         },
         {
           index: 1,
           posX: "8.4",
           posY: "10",
-          type: "标准机架2.6",
+          type: "标准机架",
           name: "RSS02-15"
         },
         {
           index: 1,
           posX: "9",
           posY: "10",
-          type: "标准机架2.6",
+          type: "标准机架",
           name: "RSS02-16"
         },
         {
           index: 1,
           posX: "9.6",
           posY: "10",
-          type: "标准机架2.6",
+          type: "标准机架",
           name: "RSS02-17"
         },
         {
           index: 1,
           posX: "10.2",
           posY: "10",
-          type: "标准机架2.6",
+          type: "标准机架",
           name: "RSS02-18"
         },
         {
           index: 1,
           posX: "10.8",
           posY: "10",
-          type: "标准机架2.6",
+          type: "标准机架",
           name: "RSS02-19"
         },
         {
           index: 1,
           posX: "11.4",
           posY: "10",
-          type: "标准机架2.6",
+          type: "标准机架",
           name: "RSS02-20"
         },
         {
@@ -1485,133 +1493,133 @@ export default {
           index: 3,
           posX: "0.6",
           posY: "12",
-          type: "标准机架2.0",
+          type: "标准机架",
           name: "RSS02-02"
         },
         {
           index: 3,
           posX: "1.2",
           posY: "12",
-          type: "标准机架2.0",
+          type: "标准机架",
           name: "RSS02-03"
         },
         {
           index: 3,
           posX: "1.8",
           posY: "12",
-          type: "标准机架2.0",
+          type: "标准机架",
           name: "RSS02-04"
         },
         {
           index: 3,
           posX: "2.4",
           posY: "12",
-          type: "标准机架2.0",
+          type: "标准机架",
           name: "RSS02-06"
         },
         {
           index: 3,
           posX: "3",
           posY: "12",
-          type: "标准机架2.0",
+          type: "标准机架",
           name: "RSS02-07"
         },
         {
           index: 3,
           posX: "3.6",
           posY: "12",
-          type: "标准机架2.0",
+          type: "标准机架",
           name: "RSS02-08"
         },
         {
           index: 3,
           posX: "4.2",
           posY: "12",
-          type: "标准机架2.0",
+          type: "标准机架",
           name: "RSS02-09"
         },
         {
           index: 3,
           posX: "4.8",
           posY: "12",
-          type: "标准机架2.0",
+          type: "标准机架",
           name: "RSS02-10"
         },
         {
           index: 3,
           posX: "5.4",
           posY: "12",
-          type: "标准机架2.0",
+          type: "标准机架",
           name: "RSS02-11"
         },
         {
           index: 3,
           posX: "6",
           posY: "12",
-          type: "标准机架2.0",
+          type: "标准机架",
           name: "RSS02-12"
         },
         {
           index: 3,
           posX: "6.6",
           posY: "12",
-          type: "标准机架2.0",
+          type: "标准机架",
           name: "RSS02-13"
         },
         {
           index: 3,
           posX: "7.2",
           posY: "12",
-          type: "标准机架2.0",
+          type: "标准机架",
           name: "RSS02-14"
         },
         {
           index: 3,
           posX: "7.8",
           posY: "12",
-          type: "标准机架2.0",
+          type: "标准机架",
           name: "RSS02-15"
         },
         {
           index: 3,
           posX: "8.4",
           posY: "12",
-          type: "标准机架2.0",
+          type: "标准机架",
           name: "RSS02-16"
         },
         {
           index: 3,
           posX: "9",
           posY: "12",
-          type: "标准机架2.0",
+          type: "标准机架",
           name: "RSS02-16"
         },
         {
           index: 3,
           posX: "9.6",
           posY: "12",
-          type: "标准机架2.0",
+          type: "标准机架",
           name: "RSS02-17"
         },
         {
           index: 3,
           posX: "10.2",
           posY: "12",
-          type: "标准机架2.0",
+          type: "标准机架",
           name: "RSS02-18"
         },
         {
           index: 3,
           posX: "10.8",
           posY: "12",
-          type: "标准机架2.0",
+          type: "标准机架",
           name: "RSS02-19"
         },
         {
           index: 3,
           posX: "11.4",
           posY: "12",
-          type: "标准机架2.0",
+          type: "标准机架",
           name: "RSS02-20"
         },
         {
@@ -1784,13 +1792,13 @@ export default {
       console.log("加载单身狗", obj);
       obj.translateX(5000);
       //加载纹理贴图
-      var texture = new THREE.TextureLoader().load(
-        "./Assets/img/DiffuseFace.jpg"
-      );
-      // 基础Basic网格材质，不受光照影响   Phong网格材质受光照影响
-      obj.children[0].material = new THREE.MeshBasicMaterial({
-        map: texture //设置颜色纹理贴图
-      });
+      // var texture = new THREE.TextureLoader().load(
+      //   "./Assets/img/DiffuseFace.jpg"
+      // );
+      // // 基础Basic网格材质，不受光照影响   Phong网格材质受光照影响
+      // obj.children[0].material = new THREE.MeshBasicMaterial({
+      //   map: texture //设置颜色纹理贴图
+      // });
       // obj.scale.set(15, 15, 15);
       // obj.children[0].scale.set(5, 5, 5); //网格模型缩放
       this.scene.add(obj);
@@ -2109,6 +2117,19 @@ export default {
       // mesh.position.z = item.position[1]
       mesh.TYPE = this.cabinetType[item.index].name;
       mesh.name = item.name;
+      if (item.parentId) {
+        mesh.parentId = item.parentId;
+        // 创建精灵图标
+        this.newCSS3DSprite3(
+          "子",
+          -item.position[1] + 11200,
+          positionY + 1600,
+          item.position[0] + 2300
+        );
+      }
+      if (item.setId) {
+        mesh.setId = item.setId;
+      }
       return mesh;
     },
     setCabinet() {
@@ -2118,6 +2139,8 @@ export default {
       this.listGroup.name = "设备集合";
       // this.listGroup.material.transparent = true
       // this.listGroup.material.opacity = 0
+      // this.borderGroup = new THREE.Group();
+      this.spriteArr = new THREE.Group();
       this.cabinetplaced.forEach((item, index) => {
         let mesh = self.addMeth(item, index);
         self.listGroup.add(mesh);
@@ -2174,7 +2197,6 @@ export default {
       mesh.translateY(-2000);
       this.listGroup.add(mesh); //网格模型添加到场景中
       this.scene.add(this.listGroup);
-
       // setTimeout(() => {
 
       //创建一个屏幕和场景转换工具
@@ -2214,12 +2236,7 @@ export default {
         if (this.border) {
           self.scene.remove(this.border);
         }
-        if (
-          intersects[0].object.name === "擎天柱" ||
-          intersects[0].object.name === "选中柜"
-        ) {
-          // console.log(23);
-        } else {
+        if (intersects[0].object.name !== "擎天柱") {
           const geometry = intersects[0].object.geometry;
           const material = intersects[0].object.material;
           const mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
@@ -2240,9 +2257,14 @@ export default {
           this.newCSS3DSprite(
             intersects,
             worldPosition.x,
-            worldPosition.y + 2000,
+            worldPosition.y + 2800,
             worldPosition.z
           );
+          if (intersects[0].object.setId === 22) {
+            this.scene.add(this.spriteArr);
+          } else {
+            this.scene.remove(this.spriteArr);
+          }
           // console.log(this.scene);
         }
       } else {
@@ -2255,26 +2277,38 @@ export default {
         if (this.sprite) {
           this.scene.remove(this.sprite);
         }
+        if (this.spriteArr) {
+          this.scene.remove(this.spriteArr);
+        }
       }
     },
     // 创建精灵图标
     newCSS3DSprite(obj, x, y, z) {
+      let arrText = obj[0].object.name;
+      let splitText = arrText.split("/");
       let width = 3000,
-        height = 1000;
+        height = splitText.length * 500 + 500;
+      splitText.forEach(item => {
+        if (item.length > 8) {
+          width = 4000;
+        }
+      });
+
       let canvas = document.createElement("canvas");
       canvas.width = width;
       canvas.height = height;
       let ctx = canvas.getContext("2d");
-      let arrText = obj[0].object.name;
 
       ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
       ctx.fillRect(0, 0, width, height);
       // this.drawRoundRect(ctx, 0, 0, width, height, 200);
-      ctx.font = 400 + 'px " bold';
-      ctx.fillStyle = "#ffffff";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText(arrText, width / 2, height / 2);
+      splitText.forEach((item, index) => {
+        ctx.font = 320 + 'px " bold';
+        ctx.fillStyle = "#ffffff";
+        ctx.fillText(item, width / 2, (index + 1) * 500);
+      });
       // ctx.strokeStyle = "#0078AA";
       ctx.stroke();
       this.spriteMaterial = new THREE.SpriteMaterial({
@@ -2285,8 +2319,40 @@ export default {
       }
       this.sprite = new THREE.Sprite(this.spriteMaterial);
       this.scene.add(this.sprite);
-      this.sprite.scale.set(3000, 1000, 1); // 只需要设置x、y两个分量就可以
+      this.sprite.scale.set(width, height, 1); // 只需要设置x、y两个分量就可以
       this.sprite.position.set(x, y, z);
+    },
+    // 创建精灵图标3
+    newCSS3DSprite3(name, x, y, z) {
+      // let width = 2000,
+      //   height = 800;
+      let canvas = document.createElement("canvas");
+      canvas.width = 400;
+      canvas.height = 400;
+      let ctx = canvas.getContext("2d");
+      let arrText = name;
+      ctx.beginPath();
+      ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+      // ctx.fillRect(0, 0, width, height);
+      ctx.arc(200, 200, 200, 0, 2 * Math.PI);
+      // this.drawRoundRect(ctx, 0, 0, width, height, 200);
+      ctx.closePath(); //关闭路径
+      ctx.fill(); //开始填充
+      ctx.font = 160 + 'px " bold';
+      ctx.fillStyle = "#fff";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(arrText, 200, 200);
+      // ctx.strokeStyle = "#0078AA";
+      ctx.stroke();
+
+      this.spriteMaterial = new THREE.SpriteMaterial({
+        map: new THREE.CanvasTexture(canvas) //设置精灵纹理贴图
+      });
+      let sprite = new THREE.Sprite(this.spriteMaterial);
+      this.spriteArr.add(sprite);
+      sprite.scale.set(400, 400, 1); // 只需要设置x、y两个分量就可以
+      sprite.position.set(x, y, z);
     },
     // 圆角矩形
     drawRoundRect(cxt, x, y, width, height, radius) {
@@ -2434,7 +2500,7 @@ export default {
       if (flagArr[0] && flagArr[1] && flagArr[2]) {
         this.controls.target = new THREE.Vector3(0, 0, 0);
         this.selectBorder = undefined;
-        console.log("undefined");
+        // console.log("undefined");
       }
     },
     getCabinetType() {
@@ -2671,6 +2737,9 @@ export default {
 }
 </style>
 <style scoped>
+.hide {
+  display: none;
+}
 .none-hover.ui-height48:hover {
   background-color: inherit;
   cursor: inherit;

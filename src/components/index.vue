@@ -1,6 +1,5 @@
 <template>
   <div class="page-index">
-    page-index
     <index-nav :class="{ top0: navFlag }"></index-nav>
     <keep-alive>
       <router-view

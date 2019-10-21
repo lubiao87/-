@@ -31,7 +31,7 @@
                 class="ui-menu-secondli"
                 v-show="isShowPopulationDistribution"
               >
-                <a class="ui-menu-seconda" @click="pushPage('/index')"
+                <a class="ui-menu-seconda" @click="pushPage('/lbsMapView')"
                   >微机楼可视化</a
                 >
               </li>
@@ -48,12 +48,18 @@
                     '/preemptMessage',
                     '/requestMsg',
                     '/micromoduleDetal',
-                    '/resourcePlanList'
+                    '/resourcePlanList',
+                    '/maintainList'
                   ].indexOf(currentPath) > -1
               }"
               >资源管理</a
             >
-            <ul class="ui-menu-second"></ul>
+            <ul class="ui-menu-second">
+              <li class="ui-menu-secondli" v-show="isShowApplicationList"><a class="ui-menu-seconda" @click="pushPage('/application')">申请单信息</a></li>
+              <li class="ui-menu-secondli" v-show="isShowpreemptMessageList"><a class="ui-menu-seconda" @click="pushPage('/preemptMessage')">预占设备信息</a></li>
+              <li class="ui-menu-secondli" v-show="isShowMaintainList"><a class="ui-menu-seconda" @click="pushPage('/maintainList')">可维护列表</a></li>
+              <li class="ui-menu-secondli" v-show="isShowResourcePlanList"><a class="ui-menu-seconda" @click="pushPage('/resourcePlanList')">资源规划列表</a></li>
+            </ul>
           </li>
           <li class="ui-menu-firstli">
             <a
@@ -99,8 +105,12 @@ export default {
     return {
       logined: false,
       userName: "",
-      isShowPlanManagement: false, //是否展示规划使用管理
-      isShowPopulationDistribution: true
+      isShowPlanManagement: true, //是否展示规划使用管理
+      isShowPopulationDistribution: true,
+      isShowApplicationList:true,//是否展示申请单
+      isShowpreemptMessageList:true,//是否展示预占设备
+      isShowMaintainList:true, // false,//是否展示资源列表
+      isShowResourcePlanList:true, // false,//是否显示资源规划
     };
   },
   mounted() {
@@ -147,10 +157,17 @@ export default {
         //这个无须查看
         this.isShowPopulationDistribution = true;
       }
+
     }
     if (this.isShowPopulationDistribution) {
       this.isShowPlanManagement = true;
     }
+    if(menuList[i].menuUrl.indexOf('/application')>=0){
+        this.isShowApplicationList = true;
+    }
+    if(menuList[i].menuUrl.indexOf('/preemptMessage')>=0){
+            this.isShowpreemptMessageList = true;
+        }
   },
   methods: {
     pushPage(url, param) {

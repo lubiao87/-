@@ -100,7 +100,7 @@ html {
 
 .ui_header {
   width: 100%;
-  background: rgba(36,54,101,0.9);
+  background: rgba(36,54,101,0.8);
   height: 70px;
   padding: 0px 30px;
   box-sizing: border-box;
@@ -454,7 +454,7 @@ body >div:nth-child(1) {
   position: absolute;
   top: 70px;
   height: calc(100vh - 70px);
-  background: rgba(36,54,101,0.9);
+  background: rgba(36,54,101,0.8);
   z-index: 1;
   transition: right 0.5s;
   right: -300px;
@@ -1694,4 +1694,10 @@ align-items: center;
 //  弹框提示字体颜色
 .deleteMassage .el-form-item__label{
   color: #BACDE5;
+}
+.amap-logo{
+  display: none !important;
+}
+.amap-copyright {
+  opacity: 0;
 }

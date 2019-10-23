@@ -117,6 +117,13 @@
       </el-option>
     </el-select>
     <popup :propsFlag="propsFlag" />
+    <div class="menu" v-show="showMenu" ref="menu">
+      <ul>
+        <li @click="deleteMeth">删除机架</li>
+        <li @click="setMethPositon">修改位置</li>
+        <li @click="showProps">查看详情</li>
+      </ul>
+    </div>
   </div>
   <!-- 右边收缩栏结束 -->
 </template>
@@ -125,7 +132,10 @@
 import echarts from "echarts"; // 引入echarts
 import { listSearchMixin } from "../../mixin"; //混淆请求
 import * as THREE from "three";
-import "three-obj-mtl-loader";
+// import "three-obj-mtl-loader";
+import "@/utils/control/TrackballControls.js";
+import "@/utils/control/DragControls.js";
+import "@/utils/control/TransformControls.js";
 require("three-fbxloader-offical");
 import { OrbitControls } from "../../utils/OrbitControls";
 import popup from "../../components/popup/popup";
@@ -140,6 +150,7 @@ export default {
   },
   data() {
     return {
+      showMenu: false,
       buildId: 100,
       propsFlag: false,
       tabbarData: ["直流系统功率", "交流系统功率"],
@@ -1670,7 +1681,7 @@ export default {
       this.scene = null;
       this.scene = new THREE.Scene(); // 场景
       this.FBXloader = new THREE.FBXLoader(); // fbx加载器
-      this.Objloader = new THREE.OBJLoader();
+      // this.Objloader = new THREE.OBJLoader();
       // this.Objloader.load("./Assets/obj/dog.obj", self.loaderDog);
       this.FBXloader.load("./Assets/fbx/building.FBX", self.loaderObj);
       // this.FBXloader.load("./Assets/fbx/SambaDancing.FBX", self.loaderMan);
@@ -2015,6 +2026,11 @@ export default {
         this.scene.remove(this.personPre);
       }
     },
+    // 右键查看机架详情
+    showProps() {
+      this.propsFlag = true;
+      this.showMenu = false;
+    },
     showBuilding() {
       if (this.buildId === 100) {
         return;
@@ -2132,6 +2148,14 @@ export default {
       }
       return mesh;
     },
+    deleteMeth(event) {
+      //阻止本来的默认事件，比如浏览器的默认右键事件是弹出浏览器的选项
+      event.preventDefault();
+      console.log(this.selectedObject);
+      this.listGroup.remove(this.selectedObject);
+      this.showMenu = false;
+      return false;
+    },
     setCabinet() {
       const self = this;
       // if (!this.listGroup) {
@@ -2204,8 +2228,12 @@ export default {
       self.mouse = new THREE.Vector2();
       this.raycaster = new THREE.Raycaster();
       //加入鼠标拖动对象的一系列监听事件
+      document.oncontextmenu = function() {
+        return false;
+      };
       self.renderer.domElement.removeEventListener("mousemove", null);
       self.renderer.domElement.removeEventListener("dblclick", null);
+      self.renderer.domElement.removeEventListener("mousedown", null);
       self.renderer.domElement.addEventListener(
         "mousemove",
         self.onDocumentMouseMove,
@@ -2213,13 +2241,58 @@ export default {
       );
       self.renderer.domElement.addEventListener(
         "dblclick",
+        self.onDocumentDblclick,
+        false
+      );
+      self.renderer.domElement.addEventListener(
+        "click",
         self.onDocumentClick,
+        false
+      );
+      self.renderer.domElement.addEventListener(
+        "mousedown",
+        self.onDocumentMusedown,
         false
       );
       // }, 2000);
 
       // console.log(this.listGroup)
       // }
+    },
+    onDocumentMusedown(ev) {
+      if (ev.button === 2) {
+        console.log("你点了右键");
+        var ev = ev || event;
+        ev.preventDefault();
+        const self = this;
+        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+        const intersects = this.raycaster.intersectObjects(
+          self.listGroup.children
+        );
+        if (intersects.length > 0) {
+          this.selectedObject = intersects[0].object;
+          var scrollTop =
+            document.documentElement.scrollTop || document.body.scrollTop;
+          this.$refs.menu.style.left = ev.clientX + "px";
+          this.$refs.menu.style.top = ev.clientY + scrollTop + "px";
+          this.showMenu = true;
+          if (!this.transformControls) {
+            this.transformControls = new THREE.TransformControls(
+              this.camera,
+              this.renderer.domElement
+            );
+            this.transformControls.attach(intersects[0].object);
+            this.transformControls.setSpace("local");
+            // this.scene.add(this.transformControls);
+
+            console.log("getMode", this.transformControls.getMode());
+          }
+        } else {
+          this.showMenu = false;
+        }
+      }
     },
     onDocumentMouseMove(event) {
       //阻止本来的默认事件，比如浏览器的默认右键事件是弹出浏览器的选项
@@ -2281,6 +2354,10 @@ export default {
           this.scene.remove(this.spriteArr);
         }
       }
+    },
+    setMethPositon() {
+      this.scene.add(this.transformControls);
+      this.showMenu = false;
     },
     // 创建精灵图标
     newCSS3DSprite(obj, x, y, z) {
@@ -2415,7 +2492,7 @@ export default {
       this.sprite2.scale.set(3000, 1000, 1); // 只需要设置x、y两个分量就可以
       this.sprite2.position.set(x, y, z);
     },
-    onDocumentClick(event) {
+    onDocumentDblclick(event) {
       //阻止本来的默认事件，比如浏览器的默认右键事件是弹出浏览器的选项
       event.preventDefault();
       const self = this;
@@ -2434,6 +2511,16 @@ export default {
         // const worldPosition = new THREE.Vector3();
         // intersects[0].object.getWorldPosition(worldPosition);
         this.propsFlag = true;
+      }
+    },
+    onDocumentClick(event) {
+      this.showMenu = false;
+      //阻止本来的默认事件，比如浏览器的默认右键事件是弹出浏览器的选项
+      event.preventDefault();
+      if (this.transformControls) {
+        this.scene.remove(this.transformControls);
+        this.transformControls.dispose();
+        this.transformControls = null;
       }
     },
     lookCabinetfn() {
@@ -2739,6 +2826,20 @@ export default {
 <style scoped>
 .hide {
   display: none;
+}
+.menu {
+  width: 80px;
+  background: #00bcd4;
+  position: absolute;
+  color: #000;
+  padding: 10px 0;
+  border-radius: 5px;
+}
+.menu li {
+  padding: 2px 10px;
+}
+.menu li:hover {
+  background: #7187f0;
 }
 .none-hover.ui-height48:hover {
   background-color: inherit;

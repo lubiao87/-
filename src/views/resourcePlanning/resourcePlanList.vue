@@ -215,7 +215,9 @@
                                     "roomId": 3,
                                     "row": "天河区",
                                     "totalMachineCount": 200,
-                                    "width": 20
+                                    "width": 20,
+                                    "vitalLevel": "A",
+                                    "auditAuthority": 1
                                 },
                                 {
                                     "aCPower": "青云机楼",
@@ -232,7 +234,9 @@
                                     "roomId": 1,
                                     "row": "荔湾区",
                                     "totalMachineCount": 100,
-                                    "width": 20
+                                    "width": 20,
+                                    "vitalLevel": "B",
+                                    "auditAuthority": 2
                                 },
                                 {
                                     "aCPower": "跑马场机楼",
@@ -249,7 +253,9 @@
                                     "roomId": 1,
                                     "row": "荔湾区",
                                     "totalMachineCount": 300,
-                                    "width": 10
+                                    "width": 10,
+                                    "vitalLevel": "C",
+                                    "auditAuthority": 1
                                 },
                                 {
                                     "aCPower": "跑马场机楼",
@@ -266,7 +272,9 @@
                                     "roomId": 1,
                                     "row": "白云区",
                                     "totalMachineCount": 300,
-                                    "width": 10
+                                    "width": 10,
+                                    "vitalLevel": "A",
+                                    "auditAuthority": 2
                                 }
                             ]
                         },
@@ -304,7 +312,12 @@
                                     "row": "2",
                                     "totalUnitCount": 30,
                                     "unuseUnitCount": 20,
-                                    "width": 2
+                                    "width": 2,
+                                    "rectifier": 1,
+                                    "quitEquip": 3,
+                                    "quitEquipUnit": 5,
+                                    "vitalLevel": "A",
+                                    "auditAuthority": 1
                                 },
                                 {
                                     "cabinetId": 2,
@@ -328,7 +341,12 @@
                                     "row": "2",
                                     "totalUnitCount": 42,
                                     "unuseUnitCount": 22,
-                                    "width": 2
+                                    "width": 2,
+                                    "rectifier": 2,
+                                    "quitEquip": 4,
+                                    "quitEquipUnit": 7,
+                                    "vitalLevel": "B",
+                                    "auditAuthority": 2
                                 },
                                 {
                                     "cabinetId": 3,
@@ -352,7 +370,12 @@
                                     "row": "2",
                                     "totalUnitCount": 34,
                                     "unuseUnitCount": 30,
-                                    "width": 4
+                                    "width": 4,
+                                    "rectifier": 3,
+                                    "quitEquip": 4,
+                                    "quitEquipUnit": 6,
+                                    "vitalLevel": "C",
+                                    "auditAuthority": 1
                                 },
                                 {
                                     "cabinetId": 4,
@@ -376,7 +399,12 @@
                                     "row": "2",
                                     "totalUnitCount": 30,
                                     "unuseUnitCount": 18,
-                                    "width": 3
+                                    "width": 3,
+                                    "rectifier": 5,
+                                    "quitEquip": 6,
+                                    "quitEquipUnit": 8,
+                                    "vitalLevel": "A",
+                                    "auditAuthority": 2
                                 }
                             ]
                         },

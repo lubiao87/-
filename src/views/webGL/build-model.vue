@@ -77,7 +77,7 @@
           <span class="ui-linebg"></span>工业园机楼
         </h5>
         <div class="clearfix module-statis" style="padding-left: 0;">
-          <div class="lb-module-list">
+          <div class="lb-module-list ui-link-ul">
             <ul>
               <li
                 v-for="(item, index) in dataList"
@@ -124,6 +124,15 @@
         <li @click="showProps">查看详情</li>
       </ul>
     </div>
+    <div class="menu menu2" v-show="showMenu2" ref="menu2">
+      <ul>
+        <li v-for="(item, index) in dataMeth" :key="index">
+          <span class="raius"></span>
+          <span class="dowon"></span>
+          {{ item }}
+        </li>
+      </ul>
+    </div>
   </div>
   <!-- 右边收缩栏结束 -->
 </template>
@@ -150,6 +159,15 @@ export default {
   },
   data() {
     return {
+      dataMeth: [
+        "输出屏01",
+        "整流器01",
+        "低压系统开关",
+        "变压器1#",
+        "变电站",
+        "天河F4"
+      ],
+      showMenu2: false,
       showMenu: false,
       buildId: 100,
       propsFlag: false,
@@ -254,7 +272,7 @@ export default {
         },
         {
           name: "空调 - 12个", // 机柜类型
-          size: [0.5, 0.5, 1.8], // 长宽高
+          size: [0.5, 0.5, 2.6], // 长宽高
           index: 5
         },
         {
@@ -269,7 +287,7 @@ export default {
         },
         {
           name: "配线机架 - 12个", // 机柜类型
-          size: [0.5, 0.3, 1.8], // 长宽高
+          size: [0.5, 0.3, 2.6], // 长宽高
           index: 8
         }
       ],
@@ -1343,7 +1361,7 @@ export default {
           posX: "0",
           posY: "10",
           type: "列头机架",
-          name: "第七直列001/天河工业园整流模块01",
+          name: "列头机架",
           setId: 22
         },
         {
@@ -2309,6 +2327,7 @@ export default {
         if (this.border) {
           self.scene.remove(this.border);
         }
+
         if (intersects[0].object.name !== "擎天柱") {
           const geometry = intersects[0].object.geometry;
           const material = intersects[0].object.material;
@@ -2326,13 +2345,22 @@ export default {
           this.border = new THREE.BoxHelper(mesh, "#e54949"); //设置边框，这个边框不会旋转
           this.border.name = "高亮显示柜";
           this.scene.add(this.border); //网格模型添加到场景中
-          // 创建精灵图标
-          this.newCSS3DSprite(
-            intersects,
-            worldPosition.x,
-            worldPosition.y + 2800,
-            worldPosition.z
-          );
+          if (intersects[0].object.name === "列头机架") {
+            var scrollTop =
+              document.documentElement.scrollTop || document.body.scrollTop;
+            this.$refs.menu2.style.left = event.clientX + "px";
+            this.$refs.menu2.style.top = event.clientY + scrollTop + "px";
+            this.showMenu2 = true;
+          } else {
+            // 创建精灵图标
+            this.newCSS3DSprite(
+              intersects,
+              worldPosition.x,
+              worldPosition.y + 2800,
+              worldPosition.z
+            );
+            this.showMenu2 = false;
+          }
           if (intersects[0].object.setId === 22) {
             this.scene.add(this.spriteArr);
           } else {
@@ -2353,6 +2381,7 @@ export default {
         if (this.spriteArr) {
           this.scene.remove(this.spriteArr);
         }
+        this.showMenu2 = false;
       }
     },
     setMethPositon() {
@@ -2376,17 +2405,16 @@ export default {
       canvas.height = height;
       let ctx = canvas.getContext("2d");
 
-      ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+      ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
       ctx.fillRect(0, 0, width, height);
       // this.drawRoundRect(ctx, 0, 0, width, height, 200);
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       splitText.forEach((item, index) => {
         ctx.font = 320 + 'px " bold';
-        ctx.fillStyle = "#ffffff";
+        ctx.fillStyle = "red";
         ctx.fillText(item, width / 2, (index + 1) * 500);
       });
-      // ctx.strokeStyle = "#0078AA";
       ctx.stroke();
       this.spriteMaterial = new THREE.SpriteMaterial({
         map: new THREE.CanvasTexture(canvas) //设置精灵纹理贴图
@@ -2430,67 +2458,6 @@ export default {
       this.spriteArr.add(sprite);
       sprite.scale.set(400, 400, 1); // 只需要设置x、y两个分量就可以
       sprite.position.set(x, y, z);
-    },
-    // 圆角矩形
-    drawRoundRect(cxt, x, y, width, height, radius) {
-      cxt.beginPath();
-      cxt.arc(x + radius, y + radius, radius, Math.PI, (Math.PI * 3) / 2);
-      cxt.lineTo(width - radius + x, y);
-      cxt.arc(
-        width - radius + x,
-        radius + y,
-        radius,
-        (Math.PI * 3) / 2,
-        Math.PI * 2
-      );
-      cxt.lineTo(width + x, height + y - radius);
-      cxt.arc(
-        width - radius + x,
-        height - radius + y,
-        radius,
-        0,
-        (Math.PI * 1) / 2
-      );
-      cxt.lineTo(radius + x, height + y);
-      cxt.arc(
-        radius + x,
-        height - radius + y,
-        radius,
-        (Math.PI * 1) / 2,
-        Math.PI
-      );
-      cxt.closePath();
-    },
-    // 创建固定一个精灵图标2
-    newCSS3DSprite2(obj, x, y, z) {
-      let width = 3000,
-        height = 1000;
-      let canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
-      let ctx = canvas.getContext("2d");
-      let arrText = obj[0].object.name;
-
-      ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-      ctx.fillRect(0, 0, width, height);
-      // this.drawRoundRect(ctx, 0, 0, width, height, 200);
-      ctx.font = 400 + 'px " bold';
-      ctx.fillStyle = "#ffffff";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(arrText, width / 2, height / 2);
-      // ctx.strokeStyle = "#0078AA";
-      ctx.stroke();
-      this.spriteMaterial = new THREE.SpriteMaterial({
-        map: new THREE.CanvasTexture(canvas) //设置精灵纹理贴图
-      });
-      if (this.sprite2) {
-        this.scene.remove(this.sprite2);
-      }
-      this.sprite2 = new THREE.Sprite(this.spriteMaterial);
-      this.scene.add(this.sprite2);
-      this.sprite2.scale.set(3000, 1000, 1); // 只需要设置x、y两个分量就可以
-      this.sprite2.position.set(x, y, z);
     },
     onDocumentDblclick(event) {
       //阻止本来的默认事件，比如浏览器的默认右键事件是弹出浏览器的选项
@@ -2680,7 +2647,7 @@ export default {
               // 此配置
               normal: {
                 borderWidth: 3,
-                borderColor: "rgba(28, 50, 76, 0.9)"
+                borderColor: "rgba(76, 102, 199, 0.9)"
               },
               emphasis: {
                 borderWidth: 0
@@ -2824,6 +2791,16 @@ export default {
 }
 </style>
 <style scoped>
+@media screen and (max-height: 769px) {
+  .lb-module-list {
+    height: 160px;
+  }
+}
+.lb-module-list {
+  max-height: 360px;
+  overflow: auto;
+  padding-bottom: 30px;
+}
 .hide {
   display: none;
 }
@@ -2836,10 +2813,47 @@ export default {
   border-radius: 5px;
 }
 .menu li {
-  padding: 2px 10px;
+  padding: 4px 10px;
 }
 .menu li:hover {
   background: #7187f0;
+  cursor: pointer;
+}
+.menu2 li:hover {
+  background: transparent;
+}
+.menu2 {
+  width: 132px;
+  background: rgba(22, 36, 74, 0.7);
+  border-radius: 4px;
+}
+.menu2 .raius {
+  width: 12px;
+  height: 12px;
+  background: rgba(255, 255, 255, 1);
+  border: 3px solid rgba(113, 135, 240, 1);
+  border-radius: 50%;
+  position: absolute;
+  top: 8px;
+  left: 10px;
+}
+.menu2 li {
+  color: #fff;
+  position: relative;
+  padding-left: 30px;
+  font-size: 14px;
+}
+.menu2 li .dowon {
+  width: 8px;
+  height: 9px;
+  background: url(../../assets/common/image/arrow.png) no-repeat center;
+  background-size: 100%;
+  position: absolute;
+  bottom: -4px;
+  left: 12px;
+}
+.menu2 ul li:last-child .dowon {
+  display: none;
 }
 .none-hover.ui-height48:hover {
   background-color: inherit;

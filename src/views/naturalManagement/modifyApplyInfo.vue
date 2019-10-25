@@ -14,7 +14,7 @@
             </li>
             <li class="examineLi">
               <label class="lable">申请类型</label>
-              <span class="text">设备申请</span>
+              <span class="text">机架申请</span>
             </li>
           </ul>
           <ul class="examineUl">
@@ -53,7 +53,7 @@
             <el-input v-model="tbSysApply.sqdw" class="examineLi2" ></el-input>
           </li>
           <li class="examineLi2">
-            <label class="examineLi2 lable">设备名称</label>
+            <label class="examineLi2 lable">机架名称</label>
             <el-input v-model="tbSysApply.sbmc" class="examineLi2" ></el-input>
           </li>
           <li class="examineLi2">

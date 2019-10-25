@@ -63,14 +63,24 @@
                     <el-option  v-for="item in areaSelectList" :key="item.areaId" :label="item.name" :value="item.areaId" ></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="整流器数：" auto-complete="off" prop="unuseUnitCount">
-              <el-input v-model="cabinetData.unuseUnitCount" style="margin:0px 26px;width:80%"></el-input>
+            <el-form-item label="整流器数：" auto-complete="off" prop="rectifier">
+              <el-input v-model="cabinetData.rectifier" style="margin:0px 26px;width:80%"></el-input>
             </el-form-item>
-            <el-form-item label="退网设备数：" auto-complete="off" prop="unuseUnitCount">
-              <el-input v-model="cabinetData.unuseUnitCount" style="margin:0px 26px;width:80%"></el-input>
+            <el-form-item label="退网设备数：" auto-complete="off" prop="quitEquip">
+              <el-input v-model="cabinetData.quitEquip" style="margin:0px 26px;width:80%"></el-input>
             </el-form-item>
-            <el-form-item label="退网设备所占U位：" auto-complete="off" prop="unuseUnitCount">
-              <el-input v-model="cabinetData.unuseUnitCount" style="margin:0px 26px;width:80%"></el-input>
+            <el-form-item label="退网设备所占U位：" auto-complete="off" prop="quitEquipUnit">
+              <el-input v-model="cabinetData.quitEquipUnit" style="margin:0px 26px;width:80%"></el-input>
+            </el-form-item>
+            <el-form-item label="重要等级：" prop="vitalLevel" filterable>
+                <el-select v-model="cabinetData.vitalLevel" filterable style="margin:0px 26px">
+                    <el-option  v-for="item in vitalLevelSelectList" :key="item.vitalLevelId" :label="item.name" :value="item.vitalLevelId" ></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="审核权限：" prop="auditAuthority" filterable>
+                <el-select v-model="cabinetData.auditAuthority" filterable style="margin:0px 26px">
+                    <el-option  v-for="item in authoritySelectList" :key="item.auditAuthorityId" :label="item.name" :value="item.auditAuthorityId" ></el-option>
+                </el-select>
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
@@ -164,7 +174,12 @@ export default {
         remainStandCabient: null,
         totalStandCabient: null,
         usePower: null,
-        unuseUnitCount: null
+        unuseUnitCount: null,
+        rectifier: null,
+        quitEquip: null,
+        quitEquipUnit: null,
+        vitalLevel: null,
+        auditAuthority: null
       },
       moduleSelectList: null,
       majorSelectList: [
@@ -176,6 +191,15 @@ export default {
         { name: "天河区", areaId : 1},
         { name: "荔湾区", areaId : 2},
         { name: "白云区", areaId : 3}
+      ],
+      vitalLevelSelectList: [
+        { name: "A", vitalLevelId : "A"},
+        { name: "B", vitalLevelId : "B"},
+        { name: "C", vitalLevelId : "C"}
+      ],
+      authoritySelectList: [
+        { name: "县级", auditAuthorityId : 1},
+        { name: "市级", auditAuthorityId : 2},
       ],
       rules: {
         name: [{ required: true, message: "请输入机柜名称", trigger: "blur" }],
@@ -238,6 +262,11 @@ export default {
         this.cabinetData.totalStandCabient = row.totalStandCabient;
         this.cabinetData.usePower = row.usePower;
         this.cabinetData.unuseUnitCount = row.unuseUnitCount;
+        this.cabinetData.rectifier = row.rectifier
+        this.cabinetData.quitEquip = row.quitEquip
+        this.cabinetData.quitEquipUnit = row.quitEquipUnit
+        this.cabinetData.vitalLevel = row.vitalLevel
+        this.cabinetData.auditAuthority = row.auditAuthority
       } else {
         this.defauleData();
       }

@@ -4,22 +4,22 @@
            <div class="examineNews">
                <ul class="examineUl">
                    <li class="examineLi">
-                       <label class="lable">申请设备名称</label>
-                       <span class="text">XXXX设备名称</span>
+                       <label class="lable">申请机架名称</label>
+                       <span class="text">XXXX机架名称</span>
                    </li>
                    <li class="examineLi">
                        <label class="lable">机房名称</label>
-                       <span class="text">XXXX设备名称</span>
+                       <span class="text">XXXX机架名称</span>
                    </li>
                </ul>
                <ul class="examineUl">
                <li class="examineLi">
                    <label class="lable">机柜名称</label>
-                   <span class="text">XXXX设备名称</span>
+                   <span class="text">XXXX机架名称</span>
                </li>
                <li class="examineLi">
                    <label class="lable">电流类型</label>
-                   <span class="text">交流</span>
+                   <span class="text">直流</span>
                </li>
            </ul>
            </div>

@@ -26,6 +26,8 @@ $curiousBlueColor: #1892e0;
 $moduleColor2: #20ACCA;
 $moduleColor3: #3AB7FF;
 $moduleColor4: #1DCD78;
+$moduleColor5: rgb(32, 161, 165);
+$moduleColor6: rgb(47, 122, 76);
 $progressColor: #6690FF;
 $progressColor2: #354D8B;
 $modelBtnBorder: #7187F0;
@@ -52,6 +54,12 @@ $c54B4E0: #54B4E0;
 }
 .module4 {
   background: $moduleColor4;
+}
+.module5 {
+  background: $moduleColor5;
+}
+.module6 {
+  background: $moduleColor6;
 }
 .lb-c7589F0 {
   background: $c7589F0;
@@ -100,7 +108,7 @@ html {
 
 .ui_header {
   width: 100%;
-  background: rgba(36,54,101,0.8);
+  background: rgba(91, 120, 231, 0.95);
   height: 70px;
   padding: 0px 30px;
   box-sizing: border-box;
@@ -454,7 +462,7 @@ body >div:nth-child(1) {
   position: absolute;
   top: 70px;
   height: calc(100vh - 70px);
-  background: rgba(36,54,101,0.8);
+  background: rgba(76, 102, 199, 0.9);
   z-index: 1;
   transition: right 0.5s;
   right: -300px;
@@ -1700,4 +1708,62 @@ align-items: center;
 }
 .amap-copyright {
   opacity: 0;
+}
+
+.ui-menu-firsta {
+  color: #fff !important;
+}
+.cesium-viewer-bottom {
+  display: none !important;
+}
+body {
+  color: #fff;
+}
+.el-input__inner {
+  background-color: rgba(91, 120, 231, 0.9);
+}
+.el-select-dropdown {
+  background-color: rgba(91, 120, 231, 0.9);
+}
+.ui-menu-second {
+  background-color: rgba(91, 120, 231, 0.9);
+}
+.ui-menu-seconda {
+  color: #fff;
+}
+.el-popper[x-placement^=bottom] .popper__arrow::after {
+  border-bottom-color: rgba(91, 120, 231, 0.9);
+  top: 0;
+}
+.el-popper[x-placement^=bottom] .popper__arrow {
+  border-bottom-color: transparent;
+}
+.el-select .el-tag__close.el-icon-close {
+  background-color: #7c92f1;
+}
+.el-select .el-tag {
+  background-color: #90a8ff;
+}
+.el-tag--info, .el-tag--info .el-tag__close {
+  color: #fff;
+}
+.el-autocomplete-suggestion li {
+  line-height: 20px;
+  color: #fff;
+  margin-top: 10px;
+}
+.el-autocomplete {
+  width: 100%;
+}
+.el-autocomplete-suggestion {
+  width: 268px;
+  background-color: #5c66a9;
+  border: 1px solid rgba(91, 120, 231, 1);
+}
+.el-input__inner {
+  border: 1px solid rgba(91, 120, 231, 1);
+}
+.el-autocomplete-suggestion li.highlighted, .el-autocomplete-suggestion li:hover {
+  background: rgba(0, 0, 0, 0.2);
+
 }

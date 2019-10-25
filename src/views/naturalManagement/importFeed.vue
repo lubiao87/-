@@ -71,7 +71,7 @@
             },
             inputPlaceholder: {
                 type: String,
-                default: '请输入微模块名称'
+                default: '请输入名称'
             },
             datePacleholder: {
                 type: String,

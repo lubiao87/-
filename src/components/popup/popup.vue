@@ -15,7 +15,7 @@
           <div class="grid-content" style="width: 100%;">
             <div class="lb-bread">
               <div class="cabinet_ico"></div>
-              交流功率信息/直流功率信息
+              直流功率信息
             </div>
             <div class="lb-table">
               <h5 class="ui-city-title ui-height48">
@@ -28,9 +28,9 @@
               >
                 <el-table-column prop="type" label="类别" width="80">
                 </el-table-column>
-                <el-table-column prop="currentOne" label="交流1" width="120">
+                <el-table-column prop="currentOne" label="直流1" width="120">
                 </el-table-column>
-                <el-table-column prop="cunrrentTwo" label="交流2">
+                <el-table-column prop="cunrrentTwo" label="直流2">
                 </el-table-column>
               </el-table>
             </div>
@@ -218,8 +218,8 @@ export default {
         }
       ],
       cabinetLength: 12,
-      // 交流电
-      currentType: "交流情况",
+      // 直流电
+      currentType: "直流情况",
       cunrrentData: [
         {
           type: "电流",

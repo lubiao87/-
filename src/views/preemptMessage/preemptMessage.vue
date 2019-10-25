@@ -67,7 +67,7 @@
                 pageSize : 10,
                 tableData: [
 					{'sqdh':'20191016001','sqr':'张三','sqdw':'网络部','sqsj':'2019-10-16 14:45:26','sqlx':'机架申请','sqlxmc':'ODF-07-25','zyyzzt':'已成功'},
-                    {'sqdh':'20191016002','sqr':'李四','sqdw':'网络部','sqsj':'2019-10-11 17:08:19','sqlx':'设备申请','sqlxmc':'DDF-03-12','zyyzzt':'已成功'},
+                    {'sqdh':'20191016002','sqr':'李四','sqdw':'网络部','sqsj':'2019-10-11 17:08:19','sqlx':'机架申请','sqlxmc':'DDF-03-12','zyyzzt':'已成功'},
                 ],
                 code:null,
                 equipmentName:"",

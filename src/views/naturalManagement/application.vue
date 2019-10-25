@@ -62,10 +62,10 @@
               ></el-table-column>
 
               <el-table-column label="操作" width="180" header-align="center">
-                <template>
+                <template slot-scope="scope">
                   <el-button
                     type="text"
-                    @click.stop="examineVerify()"
+                    @click.stop="examineVerify(scope.row)"
                     :class="'applyButton'"
                     >审核</el-button
                   >
@@ -280,9 +280,10 @@ export default {
     requestApplyInfo() {
       this.$refs.modifyApplyInfo.init();
     },
-    examineVerify() {
+    examineVerify(data) {
       //alert("hjk");
-      this.$refs.examine.init();
+      // console.log(data);
+      this.$refs.examine.init(data);
     },
     openRecordDialog(val) {
       this.recordDialog = true;
@@ -296,6 +297,7 @@ export default {
   /*滚动条整体样式*/
   width: 6px; /*高宽分别对应横竖滚动条的尺寸*/
   height: 6px;
+  display: none;
 }
 
 .parinciRepresent::-webkit-scrollbar-thumb {

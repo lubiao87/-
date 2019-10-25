@@ -75,7 +75,7 @@
           </div>
           <ul class="examineUl firstChild">
             <li class="examineLi2">
-              <label class="lable">申请设备名称</label>
+              <label class="lable">申请机架名称</label>
               <span class="text">2U服务器机架</span>
             </li>
             <li class="examineLi2">
@@ -93,7 +93,7 @@
           </ul>
           <ul class="examineUl">
             <li class="examineLi2">
-              <label class="lable">申请设备专业</label>
+              <label class="lable">申请机架专业</label>
               <span class="text"> 机柜</span>
             </li>
             <li class="examineLi2">

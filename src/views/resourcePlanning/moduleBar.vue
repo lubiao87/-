@@ -49,6 +49,16 @@
                     <el-option  v-for="item in statusSelectList" :key="item.planStatusId" :label="item.name" :value="item.planStatusId" ></el-option>
                 </el-select>
             </el-form-item>
+            <el-form-item label="重要等级：" prop="vitalLevel" filterable>
+                <el-select v-model="machineModule.vitalLevel" filterable style="margin:0px 26px">
+                    <el-option  v-for="item in vitalLevelSelectList" :key="item.vitalLevelId" :label="item.name" :value="item.vitalLevelId" ></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="审核权限：" prop="auditAuthority" filterable>
+                <el-select v-model="machineModule.auditAuthority" filterable style="margin:0px 26px">
+                    <el-option  v-for="item in authoritySelectList" :key="item.auditAuthorityId" :label="item.name" :value="item.auditAuthorityId" ></el-option>
+                </el-select>
+            </el-form-item>
             
             
 
@@ -128,7 +138,9 @@ export default {
         dCPower: null,
         aCPower: null,
         code: null,
-        planStatus: null
+        planStatus: null,
+        vitalLevel: null,
+        auditAuthority: null
       },
       moduleRoomSelectList: null,
       buildSelectList: [
@@ -144,6 +156,15 @@ export default {
       statusSelectList: [
         { name: "规划中", planStatusId : 0},
         { name: "已规划", planStatusId : 2}
+      ],
+      vitalLevelSelectList: [
+        { name: "A", vitalLevelId : "A"},
+        { name: "B", vitalLevelId : "B"},
+        { name: "C", vitalLevelId : "C"}
+      ],
+      authoritySelectList: [
+        { name: "县级", auditAuthorityId : 1},
+        { name: "市级", auditAuthorityId : 2}
       ],
       // 取消参数校验
 /*       rules: {
@@ -208,6 +229,8 @@ export default {
         this.machineModule.dCPower = row.dCPower;
         this.machineModule.aCPower = row.aCPower;
         this.machineModule.planStatus = row.planStatus
+        this.machineModule.vitalLevel = row.vitalLevel
+        this.machineModule.auditAuthority = row.auditAuthority
       } else {
         this.defauleData();
       }

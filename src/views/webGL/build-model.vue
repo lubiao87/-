@@ -22,7 +22,11 @@
         }"
       ></div>
       <div>
-        <h5 class="ui-city-title ui-height48 gl-tongji" @click="showChart" :class="{ active: showChartFlag }">
+        <h5
+          class="ui-city-title ui-height48 gl-tongji"
+          @click="showChart"
+          :class="{ active: showChartFlag }"
+        >
           <span class="ui-linebg"></span>功率统计
           <i class="el-icon-arrow-down"></i>
           <i class="el-icon-arrow-up"></i>
@@ -147,11 +151,17 @@ import * as THREE from "three";
 import "@/utils/control/TrackballControls.js";
 import "@/utils/control/DragControls.js";
 import "@/utils/control/TransformControls.js";
+import "@/utils/renderers/CSS2DRenderer.js";
+
+import "@/utils/postprocessing/EffectComposer.js";
+import "@/utils/postprocessing/RenderPass.js";
+import "@/utils/postprocessing/ShaderPass.js";
+import "@/utils/shaders/CopyShader.js";
+import "@/utils/postprocessing/OutlinePass.js";
 require("three-fbxloader-offical");
 import { OrbitControls } from "../../utils/OrbitControls";
 import popup from "../../components/popup/popup";
 // import { api2 } from "../../api/api"; //api配置请求的路径
-// require("../../utils/CSS3DRenderer");
 export default {
   name: "olmap",
   props: ["coordinate"],
@@ -1743,28 +1753,65 @@ export default {
       //设置阴影贴图精度
       // this.SpotLight.shadowMapWidth = this.SpotLight.shadowMapHeight = 1024;
       this.scene.add(this.SpotLight);
-
-      // //创建一个平面几何体作为投影面
-      // let planeGeometry = new THREE.PlaneGeometry(80000, 100000);
-      // let planeMaterial = new THREE.MeshLambertMaterial({
-      //   color: 0x999999
-      // }); //材质对象Material
-      // // 平面网格模型作为投影面
-      // let planeMesh = new THREE.Mesh(planeGeometry, planeMaterial); //网格模型对象Mesh
-      // this.scene.add(planeMesh); //网格模型添加到场景中
-      // // 设置接收阴影的投影面
-      // planeMesh.rotateX(-Math.PI / 2); //旋转网格模型
-      // planeMesh.position.y = -17800; //设置网格模型y坐标
-      // planeMesh.receiveShadow = true;
+      // this.setOutlinePass();
 
       this.axisHelper = new THREE.AxisHelper(8000); // 辅助线
       // this.scene.add(this.axisHelper);
 
       // this.pushLineBox()  // 虚线框
       window.onresize = this.onWindowResize;
-      window.requestAnimationFrame(this.render);
+      // window.requestAnimationFrame(this.render);
       this.render();
       this.raycaster = new THREE.Raycaster();
+    },
+
+    // OutlinePass通道
+    setOutlinePass() {
+      // 创建一个渲染器通道，场景和相机作为参数
+      this.renderPass = new THREE.RenderPass(this.scene, this.camera);
+      // 创建OutlinePass通道,显示外轮廓边框
+      this.OutlinePass = new THREE.OutlinePass(
+        new THREE.Vector2(window.innerWidth, window.innerHeight),
+        this.scene,
+        this.camera
+      );
+       var effectCopy = new THREE.ShaderPass(THREE.CopyShader);//CopyShader是为了能将结果输出，普通的通道一般都是不能输出的，要靠CopyShader进行输出
+      effectCopy.renderToScreen = true;//设置这个参数的目的是马上将当前的内容输出
+
+      // 后处理完成，设置renderToScreen为true，后处理结果在Canvas画布上显示
+      this.OutlinePass.renderToScreen = true;
+      //OutlinePass相关属性设置
+      this.OutlinePass.visibleEdgeColor = new THREE.Color(0, 1, 0);
+      this.OutlinePass.hiddenEdgeColor = new THREE.Color(0, 1, 0);
+      this.OutlinePass.edgeThickness = 3.0;
+      // 创建后处理对象EffectComposer，WebGL渲染器作为参数
+      this.composer = new THREE.EffectComposer(this.renderer);
+      // 设置renderPass通道
+      this.composer.addPass(this.renderPass);
+      // 设置OutlinePass通道
+      this.composer.addPass(this.OutlinePass);
+    },
+    render() {
+      // if (this.scene) {
+
+      //更新控制器
+      this.controls.update();
+      //渲染场景和相机
+      this.renderer.render(this.scene, this.camera);
+      // this.CSS3Renderer.render(this.scene, this.camera); //执行渲染操作
+      // if (this.mixer !== null) {
+      //   // console.log(this.clock.getDelta())
+      //   //clock.getDelta()方法获得两帧的时间间隔
+      //   // 更新混合器相关的时间
+      //   this.mixer.update(this.clock.getDelta());
+      // }
+      // var delta = this.clock.getDelta();
+      this.lookAroundFn(); // 楼房渐变
+      if (typeof this.selectBorder !== "undefined") {
+        this.lookCabinetfn();
+      }
+      // this.composer.render(delta);
+      window.requestAnimationFrame(this.render);
     },
     loaderMan(obj) {
       // console.log(obj)
@@ -1928,26 +1975,7 @@ export default {
       this.camera.updateProjectionMatrix();
       this.renderer.setSize(window.innerWidth, window.innerHeight);
     },
-    render() {
-      // if (this.scene) {
 
-      window.requestAnimationFrame(this.render);
-      //更新控制器
-      this.controls.update();
-      //渲染场景和相机
-      this.renderer.render(this.scene, this.camera);
-      // this.CSS3Renderer.render(this.scene, this.camera); //执行渲染操作
-      if (this.mixer !== null) {
-        // console.log(this.clock.getDelta())
-        //clock.getDelta()方法获得两帧的时间间隔
-        // 更新混合器相关的时间
-        this.mixer.update(this.clock.getDelta());
-      }
-      this.lookAroundFn(); // 楼房渐变
-      if (typeof this.selectBorder !== "undefined") {
-        this.lookCabinetfn();
-      }
-    },
     lookAroundFn() {
       // 楼房渐变
       const self = this;
@@ -2264,6 +2292,7 @@ export default {
         self.onDocumentClick,
         false
       );
+      // self.renderer.domElement.addEventListener("click", self.choose, false);
       self.renderer.domElement.addEventListener(
         "mousedown",
         self.onDocumentMusedown,
@@ -2658,6 +2687,39 @@ export default {
     },
     showChart() {
       this.showChartFlag = !this.showChartFlag;
+    },
+    choose(event) {
+      var Sx = event.clientX;
+      var Sy = event.clientY;
+      // vm.x = Sx + 20;
+      // vm.y = Sy + 20;
+      //屏幕坐标转标准设备坐标
+      var x = (Sx / window.innerWidth) * 2 - 1;
+      var y = -(Sy / window.innerHeight) * 2 + 1;
+      var raycaster = new THREE.Raycaster();
+      raycaster.setFromCamera(new THREE.Vector2(x, y), this.camera);
+      var intersects = raycaster.intersectObjects(
+        this.listGroup.children,
+        true
+      );
+      if (intersects.length > 0) {
+        // vm.message = intersects[0].object.message
+        console.log(intersects[0].object.name);
+        var mesh = intersects[0].object;
+
+        this.OutlinePass.selectedObjects = [mesh];
+        // text.textContent = intersects[0].object.name;
+        // 设置标签位置，用于坐标变换
+        // 插入的父对象很关键，层级模型问题
+        // label.position.copy(intersects[0].object.position);
+
+        this.scene.updateMatrixWorld(true);
+        var worldPosition = new THREE.Vector3();
+        mesh.getWorldPosition(worldPosition);
+        // label.position.copy(worldPosition);
+
+        this.lastMesh = mesh;
+      }
     }
   },
   watch: {
@@ -2815,7 +2877,7 @@ export default {
   display: inline-block;
 }
 .gl-tongji.active {
-  background-color: #8A9EFF;
+  background-color: #8a9eff;
 }
 .gl-tongji:hover + div {
   height: 176px;
@@ -2893,7 +2955,7 @@ export default {
 }
 .none-hover.ui-height48:hover {
   background-color: inherit;
-cursor: inherit;
+  cursor: inherit;
 }
 .module-statis .modal {
   width: 119px;

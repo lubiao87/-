@@ -88,8 +88,8 @@
             >
             </i>
             <template slot-scope="{ item }">
-              <div class="name">{{ item.value }}</div>
-              <span class="addr">{{ item.address }}</span>
+              <div class="name">{{ item.modelName }}</div>
+              <!-- <span class="addr">{{ item.address }}</span> -->
             </template>
           </el-autocomplete>
           <div class="lb-module-list page-index" style="margin-top: 12px;">
@@ -97,7 +97,8 @@
               <li
                 v-for="(items, index) in modelData"
                 :key="index"
-                @click="rountGo(item)"
+                @click="rountGo(items)"
+                @dblclick="mapDbllickMarker"
               >
                 <span>{{ index + 1 }}. </span>
                 <span>{{ items.modelName }}</span>
@@ -119,8 +120,8 @@
         >
           5G BBU <span>4</span>
         </li>
-        <li>综合接入间 <span>2</span></li>
-        <li>其它 <span>7</span></li>
+        <li>综合接入间 <span>0</span></li>
+        <li>其它 <span>0</span></li>
       </ul>
       <div class="close-btn" @click="hineMenuFn" v-show="MarkerClick">X</div>
       <div class="jianTou"></div>
@@ -145,6 +146,28 @@ export default {
       showMenu: false,
       MarkerClick: false,
       modelData: [
+        {
+          modelName: "工业园机楼",
+          iconLocation: [
+            {
+              location: ["113.377468854055", "23.114265554063"],
+              name: "美林花园远端机房"
+            },
+            {
+              location: ["113.386872581306", "23.1477018208333"],
+              name: "棠下荷光路远端机房"
+            },
+            {
+              location: ["113.35224653287395", "23.115129095177218"],
+              name: "百合苑接入网机房"
+            },
+            {
+              location: ["113.345509061595", " 23.1469763309438"],
+              name: "职业技术师范接入网机房"
+            }
+          ],
+          modeLocation: ["113.366016977858", "23.1274220838625"]
+        },
         {
           modelName: "青云机楼",
           iconLocation: [],
@@ -421,28 +444,6 @@ export default {
           modeLocation: ["113.2588905707", "23.1631942137906"]
         },
         {
-          modelName: "工业园机楼",
-          iconLocation: [
-            {
-              location: ["113.377468854055", "23.114265554063"],
-              name: "美林花园远端机房"
-            },
-            {
-              location: ["113.386872581306", "23.1477018208333"],
-              name: "棠下荷光路远端机房"
-            },
-            {
-              location: ["113.35224653287395", "23.115129095177218"],
-              name: "百合苑接入网机房"
-            },
-            {
-              location: ["113.345509061595", " 23.1469763309438"],
-              name: "职业技术师范接入网机房"
-            }
-          ],
-          modeLocation: ["113.366016977858", "23.1274220838625"]
-        },
-        {
           modelName: "沙河机楼",
           iconLocation: [],
           modeLocation: ["113.318247631221", "23.1668891037351"]
@@ -714,49 +715,34 @@ export default {
     createFilter(queryString) {
       return restaurant => {
         return (
-          restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
-          0
+          restaurant.modelName
+            .toLowerCase()
+            .indexOf(queryString.toLowerCase()) === 0
         );
       };
     },
     loadAll() {
-      return [
-        { value: "广原机楼", address: "广东省广州市越秀区北京路295号" },
-        {
-          value: "工业园机楼",
-          address: "广州市天河区黄埔大道中"
-        },
-        {
-          value: "东圃机楼",
-          address: "广州市珠村裕景工业园"
-        },
-        {
-          value: "东圃机楼",
-          address: "广州市珠村裕景工业园"
-        },
-        {
-          value: "东圃机楼",
-          address: "广州市珠村裕景工业园"
-        },
-        {
-          value: "东圃机楼",
-          address: "广州市珠村裕景工业园"
-        },
-        {
-          value: "东圃机楼",
-          address: "广州市珠村裕景工业园"
-        }
-      ];
+      return this.modelData;
     },
     handleSelect(item) {
       console.log(item);
-      this.rountGo(this.item);
+      this.state = item.modelName;
+      this.map.setZoomAndCenter(13, [
+        parseFloat(item.modeLocation[0]),
+        parseFloat(item.modeLocation[1])
+      ]); //同时设置地图层级与中心点
     },
     handleIconClick(ev) {
       console.log(ev);
+      this.state = "";
     },
     rountGo(item) {
-      this.$router.push({ path: item.path, query: item.query });
+      this.state = item.modelName;
+      this.map.setZoomAndCenter(13, [
+        parseFloat(item.modeLocation[0]),
+        parseFloat(item.modeLocation[1])
+      ]); //同时设置地图层级与中心点
+      // this.$router.push({ path: item.path, query: item.query });
     },
     cesiumInit() {
       const that = this;
@@ -1044,7 +1030,8 @@ export default {
       return false;
     },
     mapDbllickMarker() {
-      this.rountGo(this.item);
+      console.log("双击");
+      this.$router.push({ path: this.item.path, query: this.item.query });
     },
     mapMousemoveLi() {
       const that = this;
@@ -1132,7 +1119,6 @@ export default {
         that.overlayGroups = new AMap.OverlayGroup(that.markers);
         that.map.add(that.overlayGroups);
       }
-      // ev.target.on("mouseout", that.mapMοuseοutLi);
     },
     mapMοuseοutLi() {
       const that = this;
@@ -1144,7 +1130,7 @@ export default {
       if (this.showMarker3) {
         return false;
       }
-      if (that.objIndex) {
+      if (that.objIndex != null) {
         that.modelData[that.objIndex].iconLocation.forEach((item, index) => {
           if (item.meshLine) {
             that.object3Dlayer.remove(item.meshLine);

@@ -22,24 +22,28 @@
         }"
       ></div>
       <div>
-        <h5 class="ui-city-title ui-height48 none-hover">
+        <h5 class="ui-city-title ui-height48 gl-tongji" @click="showChart" :class="{ active: showChartFlag }">
           <span class="ui-linebg"></span>功率统计
+          <i class="el-icon-arrow-down"></i>
+          <i class="el-icon-arrow-up"></i>
         </h5>
-        <ul class="ui-city-tabbar-ul">
-          <li
-            class="ui-city-tabbar-li"
-            v-for="(item, index) in tabbarData"
-            @click="tabbarActive(index)"
-            :class="{ 'ui-active': index === activeIndex }"
-            :key="index"
-          >
-            {{ item }}
-          </li>
-        </ul>
-        <div id="powerCharts" style="width: 100%;height:100%;"></div>
+        <div class="show">
+          <ul class="ui-city-tabbar-ul">
+            <li
+              class="ui-city-tabbar-li"
+              v-for="(item, index) in tabbarData"
+              @click="tabbarActive(index)"
+              :class="{ 'ui-active': index === activeIndex }"
+              :key="index"
+            >
+              {{ item }}
+            </li>
+          </ul>
+          <div id="powerCharts" class="powerCharts"></div>
+        </div>
       </div>
       <!-- 微机楼统计 -->
-      <div style="margin-top: 20px;">
+      <div>
         <h5 class="ui-city-title ui-height48 none-hover">
           <span class="ui-linebg"></span>机楼统计
         </h5>
@@ -69,13 +73,13 @@
       </div>
 
       <div style="margin-top: 20px;">
-        <h5
+        <!-- <h5
           class="ui-city-title ui-height48"
           @click="showBuilding"
           :class="{ 'select-h': buildId === 100 }"
         >
           <span class="ui-linebg"></span>工业园机楼
-        </h5>
+        </h5> -->
         <div class="clearfix module-statis" style="padding-left: 0;">
           <div class="lb-module-list ui-link-ul">
             <ul>
@@ -85,9 +89,7 @@
                 @click="lookFloor(item, index)"
                 :class="{ 'select-li': item.select }"
               >
-                <!-- <span>机房:</span> -->
                 <span>{{ item.name }}</span>
-                <!--<span class="lb-icon" :class="{'danger_icon': item.Situation == '严重警告','warning_icon': item.Situation == '一般警告'}"></span>-->
                 <span class="lb-icon"></span>
               </li>
             </ul>
@@ -159,13 +161,13 @@ export default {
   },
   data() {
     return {
+      showChartFlag: false,
       dataMeth: [
         "输出屏01",
         "整流器01",
-        "低压系统开关",
+        "低压系统开关01",
         "变压器1#",
-        "变电站",
-        "天河F4"
+        "变电站-天河F4"
       ],
       showMenu2: false,
       showMenu: false,
@@ -217,28 +219,23 @@ export default {
       cameraZ: -1000,
       dataList: [
         {
-          name: "一楼001机房",
+          name: "工业园机楼 - 1楼101机房 - 0",
           id: 111,
           floor: 1
         },
         {
-          name: "二楼001机房",
+          name: "工业园机楼 - 2楼101机房 - 0",
           id: 112,
           floor: 2
         },
         {
-          name: "三楼001机房",
+          name: "工业园机楼 - 3楼101机房 - 0",
           id: 113,
           floor: 3
         },
         {
-          name: "四楼001机房",
+          name: "工业园机楼 - 4楼101机房 - 116",
           id: 114,
-          floor: 4
-        },
-        {
-          name: "四楼002机房",
-          id: 115,
           floor: 4
         }
       ],
@@ -2342,14 +2339,14 @@ export default {
           //   mesh.rotateY(-Math.PI / 2);
           // }
           mesh.rotateX(-Math.PI / 2);
-          this.border = new THREE.BoxHelper(mesh, "#e54949"); //设置边框，这个边框不会旋转
+          this.border = new THREE.BoxHelper(mesh, "#5b78e7"); //设置边框，这个边框不会旋转
           this.border.name = "高亮显示柜";
           this.scene.add(this.border); //网格模型添加到场景中
           if (intersects[0].object.name === "列头机架") {
             var scrollTop =
               document.documentElement.scrollTop || document.body.scrollTop;
-            this.$refs.menu2.style.left = event.clientX + "px";
-            this.$refs.menu2.style.top = event.clientY + scrollTop + "px";
+            this.$refs.menu2.style.left = event.clientX + 20 + "px";
+            this.$refs.menu2.style.top = event.clientY + scrollTop - 200 + "px";
             this.showMenu2 = true;
           } else {
             // 创建精灵图标
@@ -2437,7 +2434,7 @@ export default {
       let ctx = canvas.getContext("2d");
       let arrText = name;
       ctx.beginPath();
-      ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+      ctx.fillStyle = "rgba(91, 120, 231, 0.95)";
       // ctx.fillRect(0, 0, width, height);
       ctx.arc(200, 200, 200, 0, 2 * Math.PI);
       // this.drawRoundRect(ctx, 0, 0, width, height, 200);
@@ -2658,6 +2655,9 @@ export default {
         ]
       };
       return option;
+    },
+    showChart() {
+      this.showChartFlag = !this.showChartFlag;
     }
   },
   watch: {
@@ -2790,11 +2790,47 @@ export default {
   max-width: 440px !important;
 }
 </style>
-<style scoped>
+<style scoped lang="scss">
+// @import "@/assets/theme/common.scss";
 @media screen and (max-height: 769px) {
   .lb-module-list {
     height: 160px;
   }
+}
+
+.gl-tongji {
+  cursor: pointer;
+}
+.gl-tongji + div {
+  height: 0;
+  overflow: hidden;
+}
+.gl-tongji:hover .el-icon-arrow-down {
+  display: none;
+}
+.gl-tongji .el-icon-arrow-up {
+  display: none;
+}
+.gl-tongji:hover .el-icon-arrow-up {
+  display: inline-block;
+}
+.gl-tongji.active {
+  background-color: #8A9EFF;
+}
+.gl-tongji:hover + div {
+  height: 176px;
+}
+.gl-tongji.active + div {
+  height: 176px;
+}
+.gl-tongji.active .el-icon-arrow-up {
+  display: inline-block;
+}
+.gl-tongji.active .el-icon-arrow-down {
+  display: none;
+}
+.powerCharts {
+  height: 116px;
 }
 .lb-module-list {
   max-height: 360px;
@@ -2823,7 +2859,7 @@ export default {
   background: transparent;
 }
 .menu2 {
-  width: 132px;
+  width: 140px;
   background: rgba(22, 36, 74, 0.7);
   border-radius: 4px;
 }
@@ -2857,7 +2893,7 @@ export default {
 }
 .none-hover.ui-height48:hover {
   background-color: inherit;
-  cursor: inherit;
+cursor: inherit;
 }
 .module-statis .modal {
   width: 119px;
@@ -2917,7 +2953,7 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-bottom: 23px;
+  margin-top: 10px;
 }
 .ui-city-tabbar-li {
   padding: 9px 0;
@@ -2929,9 +2965,10 @@ export default {
   text-align: center;
   color: rgba(255, 255, 255, 1);
   box-sizing: border-box;
-  width: 49%;
+  width: 46%;
   margin-right: 12px;
   cursor: pointer;
+  float: left;
 }
 .ui-city-tabbar-li:last-child {
   margin-right: 0;

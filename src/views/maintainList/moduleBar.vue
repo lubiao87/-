@@ -1,58 +1,148 @@
 <template>
-    <div class="examineDiaLog">
-        <el-dialog :title='moduleHandleType == 1 ? "机房添加" : "机房修改"' :visible.sync="dialogTableVisible">
-           <el-form :model="machineModule"  ref="machineModule" label-width="140px" > <!-- :rules="rules" -->
-            <el-form-item label="机房名称：" auto-complete="off" prop="name">
-              <el-input v-model="machineModule.name" style="margin:0px 26px;width:80%"></el-input>
-            </el-form-item>
-            <el-form-item label="所在房间号：" prop="moduleRoomName">
-              <el-input v-model="machineModule.moduleRoomName" style="margin:0px 26px;width:80%"></el-input>
-<!--                 <el-select v-model="machineModule.roomId" filterable style="margin:0px 26px">
+  <div class="examineDiaLog">
+    <el-dialog
+      :title="moduleHandleType == 1 ? '机房添加' : '机房修改'"
+      :visible.sync="dialogTableVisible"
+    >
+      <el-form :model="machineModule" ref="machineModule" label-width="140px">
+        <!-- :rules="rules" -->
+        <el-form-item label="机房名称：" auto-complete="off" prop="name">
+          <el-input
+            v-model="machineModule.name"
+            style="margin:0px 26px;width:80%"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="所在房间号：" prop="moduleRoomName">
+          <el-input
+            v-model="machineModule.moduleRoomName"
+            style="margin:0px 26px;width:80%"
+          ></el-input>
+          <!--                 <el-select v-model="machineModule.roomId" filterable style="margin:0px 26px">
                     <el-option  v-for="item in moduleRoomSelectList" :key="item.moduleRoomId" :label="item.name" :value="item.moduleRoomId" ></el-option>
                 </el-select> -->
-            </el-form-item>
-              <el-form-item label="所在楼层：" auto-complete="off" prop="dCPower">
-                <el-input v-model="machineModule.dCPower" style="margin:0px 26px;width:80%"></el-input>
-              <!-- <span class="nuitFont">Kw</span> -->
-            </el-form-item>
-            <el-form-item label="所属机楼：" prop="aCPower">
-                <el-select v-model="machineModule.aCPower" filterable style="margin:0px 26px">
-                    <el-option  v-for="item in buildSelectList" :key="item.buildId" :label="item.name" :value="item.buildId" ></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="所属区域：" prop="row">
-                <el-select v-model="machineModule.row" filterable style="margin:0px 26px">
-                    <el-option  v-for="item in areaSelectList" :key="item.areaId" :label="item.name" :value="item.areaId" ></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="机房总面积：" prop="area">
-              <el-input v-model="machineModule.area" style="margin:0px 26px;width:80%"></el-input>
-              <span class="nuitFont">m²</span>
-            </el-form-item>
-            <el-form-item label="可放机架总数：" auto-complete="off" prop="totalMachineCount">
-              <el-input v-model="machineModule.totalMachineCount" style="margin:0px 26px;width:80%"></el-input>
-            </el-form-item>
-            <el-form-item label="机房长度：" auto-complete="off" prop="longth">
-              <el-input v-model="machineModule.longth" style="margin:0px 26px;width:80%"></el-input>
-              <span class="nuitFont">m</span>
-            </el-form-item>
-            <el-form-item label="机房高度：" auto-complete="off" prop="height">
-              <el-input v-model="machineModule.height" style="margin:0px 26px;width:80%"></el-input>
-              <span class="nuitFont">m</span>
-            </el-form-item>
-            <el-form-item label="机房宽度：" auto-complete="off" prop="width">
-              <el-input v-model="machineModule.width" style="margin:0px 26px;width:80%"></el-input>
-              <span class="nuitFont">m</span>
-            </el-form-item>
-<!--              <el-form-item label="机房规划状态：" prop="planStatus" filterable>
+        </el-form-item>
+        <el-form-item label="所在楼层：" auto-complete="off" prop="dCPower">
+          <el-input
+            v-model="machineModule.dCPower"
+            style="margin:0px 26px;width:80%"
+          ></el-input>
+          <!-- <span class="nuitFont">Kw</span> -->
+        </el-form-item>
+        <el-form-item label="所属机楼：" prop="aCPower">
+          <el-select
+            v-model="machineModule.aCPower"
+            filterable
+            style="margin:0px 26px"
+          >
+            <el-option
+              v-for="item in buildSelectList"
+              :key="item.buildId"
+              :label="item.name"
+              :value="item.buildId"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="所属区域：" prop="row">
+          <el-select
+            v-model="machineModule.row"
+            filterable
+            style="margin:0px 26px"
+          >
+            <el-option
+              v-for="item in areaSelectList"
+              :key="item.areaId"
+              :label="item.name"
+              :value="item.areaId"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="重要等级：" prop="row">
+          <el-select
+            v-model="machineModule.row"
+            filterable
+            style="margin:0px 26px"
+          >
+            <el-option
+              v-for="item in areaSelectList2"
+              :key="item.areaId"
+              :label="item.name"
+              :value="item.areaId"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="审核权限：" prop="row">
+          <el-select
+            v-model="machineModule.row"
+            filterable
+            style="margin:0px 26px"
+          >
+            <el-option
+              v-for="item in areaSelectList3"
+              :key="item.areaId"
+              :label="item.name"
+              :value="item.areaId"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="机架来源：" prop="row">
+          <el-select
+            v-model="machineModule.row"
+            filterable
+            style="margin:0px 26px"
+          >
+            <el-option
+              v-for="item in areaSelectList4"
+              :key="item.areaId"
+              :label="item.name"
+              :value="item.areaId"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="机房总面积：" prop="area">
+          <el-input
+            v-model="machineModule.area"
+            style="margin:0px 26px;width:80%"
+          ></el-input>
+          <span class="nuitFont">m²</span>
+        </el-form-item>
+        <el-form-item
+          label="可放机架总数："
+          auto-complete="off"
+          prop="totalMachineCount"
+        >
+          <el-input
+            v-model="machineModule.totalMachineCount"
+            style="margin:0px 26px;width:80%"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="机房长度：" auto-complete="off" prop="longth">
+          <el-input
+            v-model="machineModule.longth"
+            style="margin:0px 26px;width:80%"
+          ></el-input>
+          <span class="nuitFont">m</span>
+        </el-form-item>
+        <el-form-item label="机房高度：" auto-complete="off" prop="height">
+          <el-input
+            v-model="machineModule.height"
+            style="margin:0px 26px;width:80%"
+          ></el-input>
+          <span class="nuitFont">m</span>
+        </el-form-item>
+        <el-form-item label="机房宽度：" auto-complete="off" prop="width">
+          <el-input
+            v-model="machineModule.width"
+            style="margin:0px 26px;width:80%"
+          ></el-input>
+          <span class="nuitFont">m</span>
+        </el-form-item>
+        <!--              <el-form-item label="机房规划状态：" prop="planStatus" filterable>
                 <el-select v-model="machineModule.planStatus" filterable style="margin:0px 26px">
                     <el-option  v-for="item in statusSelectList" :key="item.planStatusId" :label="item.name" :value="item.planStatusId" ></el-option>
                 </el-select>
             </el-form-item> -->
-            
-            
 
-<!--             <el-form-item label="额定交流功率：" auto-complete="off" prop="ACPower">
+        <!--             <el-form-item label="额定交流功率：" auto-complete="off" prop="ACPower">
               <el-input v-model="machineModule.ACPower" style="margin:0px 26px;width:80%"></el-input>
               <span class="nuitFont">Kw</span>
             </el-form-item>
@@ -62,13 +152,13 @@
             <el-form-item label="列号：" auto-complete="off" prop="column">
               <el-input v-model="machineModule.column" style="margin:0px 26px;width:80%"></el-input>
             </el-form-item>-->
-          </el-form> 
-          <div slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="updateMessage">保存</el-button>
-            <el-button @click="dialogTableVisible = false">关闭</el-button>
-          </div>
-        </el-dialog>
-    </div>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="updateMessage">保存</el-button>
+        <el-button @click="dialogTableVisible = false">关闭</el-button>
+      </div>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -132,21 +222,30 @@ export default {
       },
       moduleRoomSelectList: null,
       buildSelectList: [
-        { name: "青云机楼", buildId : 1},
-        { name: "工业园机楼", buildId : 2},
-        { name: "跑马场机楼", buildId : 3}
+        { name: "青云机楼", buildId: 1 },
+        { name: "工业园机楼", buildId: 2 },
+        { name: "跑马场机楼", buildId: 3 }
       ],
       areaSelectList: [
-        { name: "天河区", areaId : 1},
-        { name: "荔湾区", areaId : 2},
-        { name: "白云区", areaId : 3}
+        { name: "天河区", areaId: 1 },
+        { name: "荔湾区", areaId: 2 },
+        { name: "白云区", areaId: 3 }
+      ],
+      areaSelectList2: [{ name: "1", areaId: 1 }, { name: "2", areaId: 2 }],
+      areaSelectList3: [
+        { name: "县级", areaId: 1 },
+        { name: "市级", areaId: 2 }
+      ],
+      areaSelectList4: [
+        { name: "收到录入", areaId: 1 },
+        { name: "资源获取", areaId: 2 }
       ],
       statusSelectList: [
-        { name: "规划中", planStatusId : 0},
-        { name: "已规划", planStatusId : 2}
-      ],
+        { name: "规划中", planStatusId: 0 },
+        { name: "已规划", planStatusId: 2 }
+      ]
       // 取消参数校验
-/*       rules: {
+      /*       rules: {
         name: [
           { required: false, message: "请输入微模块名称", trigger: "blur" }
         ],
@@ -207,7 +306,7 @@ export default {
         this.machineModule.totalMachineCount = row.totalMachineCount;
         this.machineModule.dCPower = row.dCPower;
         this.machineModule.aCPower = row.aCPower;
-        this.machineModule.planStatus = row.planStatus
+        this.machineModule.planStatus = row.planStatus;
       } else {
         this.defauleData();
       }
@@ -279,15 +378,15 @@ export default {
         code: null
       };
     },
-    moduleFormatter(row, column, cellValue, index){ 
-      if(cellValue == 0){
-          return '规划中';
-      }else if(cellValue == 1){
-          return '已预占';
-      }else if(cellValue == 2){
-          return '已规划';
-      }else{
-          return '暂无数据';
+    moduleFormatter(row, column, cellValue, index) {
+      if (cellValue == 0) {
+        return "规划中";
+      } else if (cellValue == 1) {
+        return "已预占";
+      } else if (cellValue == 2) {
+        return "已规划";
+      } else {
+        return "暂无数据";
       }
     }
   }

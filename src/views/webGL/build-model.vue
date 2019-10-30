@@ -1442,7 +1442,7 @@ export default {
           posX: "7.2",
           posY: "10",
           type: "标准机架",
-          name: "RSS02-13"
+          name: "RSS02-13*07行09列*2U*8U"
         },
         {
           index: 1,
@@ -1583,70 +1583,70 @@ export default {
           posX: "6.6",
           posY: "12",
           type: "标准机架",
-          name: "RSS02-13"
+          name: "RSS02-13*07行09列*2U*8U"
         },
         {
           index: 3,
           posX: "7.2",
           posY: "12",
           type: "标准机架",
-          name: "RSS02-14"
+          name: "RSS02-13*07行09列*2U*8U"
         },
         {
           index: 3,
           posX: "7.8",
           posY: "12",
           type: "标准机架",
-          name: "RSS02-15"
+          name: "RSS02-13*07行09列*2U*8U"
         },
         {
           index: 3,
           posX: "8.4",
           posY: "12",
           type: "标准机架",
-          name: "RSS02-16"
+          name: "RSS02-13*07行09列*2U*8U"
         },
         {
           index: 3,
           posX: "9",
           posY: "12",
           type: "标准机架",
-          name: "RSS02-16"
+          name: "RSS02-13*07行09列*2U*8U"
         },
         {
           index: 3,
           posX: "9.6",
           posY: "12",
           type: "标准机架",
-          name: "RSS02-17"
+          name: "RSS02-13*07行09列*2U*8U"
         },
         {
           index: 3,
           posX: "10.2",
           posY: "12",
           type: "标准机架",
-          name: "RSS02-18"
+          name: "RSS02-13*07行09列*2U*8U"
         },
         {
           index: 3,
           posX: "10.8",
           posY: "12",
           type: "标准机架",
-          name: "RSS02-19"
+          name: "RSS02-13*07行09列*2U*8U"
         },
         {
           index: 3,
           posX: "11.4",
           posY: "12",
           type: "标准机架",
-          name: "RSS02-20"
+          name: "RSS02-13*07行09列*2U*8U"
         },
         {
           index: 6,
           posX: "12",
           posY: "12",
           type: "列头机架",
-          name: "RSS02-21"
+          name: "RSS02-13*07行09列*2U*8U"
         }
       ]
     };
@@ -2409,12 +2409,12 @@ export default {
             this.showMenu2 = true;
           } else {
             // 创建精灵图标
-            // this.newCSS3DSprite(
-            //   intersects,
-            //   worldPosition.x,
-            //   worldPosition.y + 2800,
-            //   worldPosition.z
-            // );
+            this.newCSS3DSprite(
+              intersects,
+              worldPosition.x,
+              worldPosition.y + 2800,
+              worldPosition.z
+            );
             this.showMenu2 = false;
           }
           // 朔源
@@ -2448,7 +2448,7 @@ export default {
     // 创建精灵图标
     newCSS3DSprite(obj, x, y, z) {
       let arrText = obj[0].object.name;
-      let splitText = arrText.split("/");
+      let splitText = arrText.split("*");
       let width = 3000,
         height = splitText.length * 500 + 500;
       splitText.forEach(item => {
@@ -2462,15 +2462,25 @@ export default {
       canvas.height = height;
       let ctx = canvas.getContext("2d");
 
-      ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
+      ctx.fillStyle = "rgba(22, 36, 74, 0.9)";
       ctx.fillRect(0, 0, width, height);
       // this.drawRoundRect(ctx, 0, 0, width, height, 200);
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
+      const titleArr = ["名称：", "位置：", "已用：", "未用："];
       splitText.forEach((item, index) => {
-        ctx.font = 320 + 'px " bold';
-        ctx.fillStyle = "red";
-        ctx.fillText(item, width / 2, (index + 1) * 500);
+        ctx.font = 300 + 'px " bold';
+        ctx.fillStyle = "#666";
+        ctx.fillText(titleArr[index], 160 * titleArr[index].length + 240, (index + 1) * 500);
+        ctx.font = 300 + 'px " bold';
+        ctx.fillStyle = "#fff";
+        let leftP = 1500;
+        if (index === 0) {
+          leftP = 2000;
+        } else if (index === 1) {
+          leftP = 2000;
+        }
+        ctx.fillText(item, leftP, (index + 1) * 500);
       });
       ctx.stroke();
       this.spriteMaterial = new THREE.SpriteMaterial({
@@ -2484,7 +2494,7 @@ export default {
       this.sprite.scale.set(width, height, 1); // 只需要设置x、y两个分量就可以
       this.sprite.position.set(x, y, z);
     },
-    // 创建精灵图标3
+    // 创建朔源精灵图标3
     newCSS3DSprite3(name, x, y, z) {
       // let width = 2000,
       //   height = 800;

@@ -43,23 +43,31 @@ $c54B4E0: #54B4E0;
 }
 
 /*搭配辅助色结束*/
-.module1 {
+.modal.module:nth-child(1) {
   background: $cornflowerBlueColor;
 }
-.module2 {
+.modal.module:nth-child(2) {
   background: $moduleColor2;
 }
-.module3 {
+.modal.module:nth-child(3) {
   background: $moduleColor3;
 }
-.module4 {
+.modal.module:nth-child(4) {
   background: $moduleColor4;
 }
-.module5 {
+.modal.module:nth-child(5) {
   background: $moduleColor5;
 }
-.module6 {
+.modal.module:nth-child(6) {
   background: $moduleColor6;
+}
+.module-statis .module.select {
+  opacity: 1 !important;
+  box-shadow: 2px 2px 2px #b1a3a3;
+}
+.module-statis .modal:hover {
+  opacity: 1 !important;
+  box-shadow: 2px 2px 2px #b1a3a3;
 }
 .lb-c7589F0 {
   background: $c7589F0;

@@ -21,42 +21,18 @@
           'ui-shrinkBar-close': !panelShow
         }"
       ></div>
-      <div>
-        <h5
-          class="ui-city-title ui-height48 gl-tongji"
-          @click="showChart"
-          :class="{ active: showChartFlag }"
-        >
-          <span class="ui-linebg"></span>功率统计
-          <i class="el-icon-arrow-down"></i>
-          <i class="el-icon-arrow-up"></i>
-        </h5>
-        <div class="show">
-          <ul class="ui-city-tabbar-ul">
-            <li
-              class="ui-city-tabbar-li"
-              v-for="(item, index) in tabbarData"
-              @click="tabbarActive(index)"
-              :class="{ 'ui-active': index === activeIndex }"
-              :key="index"
-            >
-              {{ item }}
-            </li>
-          </ul>
-          <div id="powerCharts" class="powerCharts"></div>
-        </div>
-      </div>
       <!-- 微机楼统计 -->
       <div>
         <h5 class="ui-city-title ui-height48 none-hover">
-          <span class="ui-linebg"></span>机楼统计
+          <span class="ui-linebg"></span>统计
         </h5>
         <div class="clearfix module-statis" style="padding-left: 0;">
           <div
             v-for="(item, index) in moduleStatistics"
             :key="index"
-            class="modal"
-            :class="'module' + (index + 1)"
+            class="modal module"
+            :class="{ select: item.select }"
+            @click="setSelectBox(index)"
           >
             <div calss="name" style="font-size: 12px;color: #fff;">
               {{ item.name }}
@@ -75,15 +51,16 @@
         </div> -->
         <!-- 通用搜索框开始 -->
       </div>
-
-      <div style="margin-top: 20px;">
-        <!-- <h5
-          class="ui-city-title ui-height48"
-          @click="showBuilding"
-          :class="{ 'select-h': buildId === 100 }"
-        >
-          <span class="ui-linebg"></span>工业园机楼
-        </h5> -->
+      <div class="show1" v-show="boxTitle !== '机房列表'">
+        <h5 class="ui-city-title ui-height48 none-hover">
+          <span class="ui-linebg"></span>{{boxTitle}}
+        </h5>
+        <div id="powerCharts" class="powerCharts"></div>
+      </div>
+      <div style="margin-top: 20px;" class="show2" v-show="moduleStatistics[4].select">
+        <h5 class="ui-city-title ui-height48 none-hover">
+          <span class="ui-linebg"></span>{{boxTitle}}
+        </h5>
         <div class="clearfix module-statis" style="padding-left: 0;">
           <div class="lb-module-list ui-link-ul">
             <ul>
@@ -93,7 +70,7 @@
                 @click="lookFloor(item, index)"
                 :class="{ 'select-li': item.select }"
               >
-                <span>{{ item.name }}</span>
+                <span>{{ index + ". " + item.name }}</span>
                 <span class="lb-icon"></span>
               </li>
             </ul>
@@ -171,6 +148,7 @@ export default {
   },
   data() {
     return {
+      boxTitle: "机房列表",
       showChartFlag: false,
       dataMeth: [
         "输出屏01",
@@ -183,7 +161,6 @@ export default {
       showMenu: false,
       buildId: 100,
       propsFlag: false,
-      tabbarData: ["直流系统功率", "交流系统功率"],
       barData: [
         { value: 589, name: "未用" },
         { value: 286, name: "已用" },
@@ -192,10 +169,11 @@ export default {
       myChart: null,
       activeIndex: 0,
       moduleStatistics: [
-        { name: "机房总数", value: 3, class: "right_building" },
-        { name: "机柜总数", value: 20, class: "right_module" }
-        // {name:"规划微模块数", value:15, class: 'right_planning'},
-        // {name:"已交付微模块数", value:150, class: 'right_cabinet'}
+        { name: "空间利用率", value: "30%", class: "right_building" },
+        { name: "功率比例", value: "362kw", class: "right_module" },
+        { name: "非专业机柜总数", value: "7个", class: "right_planning" },
+        { name: "专业机柜总数", value: "8个", class: "right_cabinet" },
+        { name: "机房总数", value: "5个", class: "right_mokuai", select: true }
       ],
       selectValue: ["全部"],
       scene: null, // 场景
@@ -229,23 +207,28 @@ export default {
       cameraZ: -1000,
       dataList: [
         {
-          name: "工业园机楼 - 1楼101机房 - 0",
+          name: "1楼101机房 - 0",
           id: 111,
           floor: 1
         },
         {
-          name: "工业园机楼 - 2楼101机房 - 0",
+          name: "2楼101机房 - 0",
           id: 112,
           floor: 2
         },
         {
-          name: "工业园机楼 - 3楼101机房 - 0",
+          name: "3楼101机房 - 0",
           id: 113,
           floor: 3
         },
         {
-          name: "工业园机楼 - 4楼101机房 - 116",
+          name: "4楼101机房 - 116",
           id: 114,
+          floor: 4
+        },
+        {
+          name: "4楼102机房 - 0",
+          id: 115,
           floor: 4
         }
       ],
@@ -1764,7 +1747,54 @@ export default {
       this.render();
       this.raycaster = new THREE.Raycaster();
     },
+    // 选择统计
+    setSelectBox(index) {
+      const that = this;
+      this.moduleStatistics.forEach((item, i, arr) => {
+        that.$set(arr[i], "select", false);
+        if (index === i) {
+          that.$set(arr[index], "select", true);
+        }
+      });
+      this.boxTitle = this.moduleStatistics[index].name;
+      if (this.moduleStatistics[index].name === "机房总数") {
+        this.boxTitle = "机房列表";
+      }
+      switch (index) {
+        case 0:
+          this.barData = [
+            { value: 70, name: "未用" },
+            { value: 30, name: "已用" }
+          ];
+          this.newMap();
+          break;
+        case 1:
+          this.barData = [
+            { value: 1000, name: "未用" },
+            { value: 362, name: "已用" },
+            { value: 400, name: "预占" }
+          ];
+          this.newMap();
+          break;
+        case 2:
+          this.barData = [
+            { value: 5, name: "电池" },
+            { value: 2, name: "空调" }
+          ];
+          this.newMap();
+          break;
+        case 3:
+          this.barData = [
+            { value: 6, name: "电池" },
+            { value: 2, name: "空调" }
+          ];
+          this.newMap();
+          break;
 
+        default:
+          break;
+      }
+    },
     // OutlinePass通道
     setOutlinePass() {
       // 创建一个渲染器通道，场景和相机作为参数
@@ -2379,14 +2409,15 @@ export default {
             this.showMenu2 = true;
           } else {
             // 创建精灵图标
-            this.newCSS3DSprite(
-              intersects,
-              worldPosition.x,
-              worldPosition.y + 2800,
-              worldPosition.z
-            );
+            // this.newCSS3DSprite(
+            //   intersects,
+            //   worldPosition.x,
+            //   worldPosition.y + 2800,
+            //   worldPosition.z
+            // );
             this.showMenu2 = false;
           }
+          // 朔源
           if (intersects[0].object.setId === 22) {
             this.scene.add(this.spriteArr);
           } else {
@@ -2623,6 +2654,10 @@ export default {
       this.newMap();
     },
     setOption() {
+      let data = [];
+      this.barData.forEach((item) => {
+        data.push(item.name);
+      })
       let $this = this;
       let option = {
         tooltip: {
@@ -2637,16 +2672,28 @@ export default {
           icon: "rect",
           itemWidth: 10, // 设置宽度
           itemHeight: 10, // 设置高度
-          data: ["未用", "已用", "预占", "规划"],
+          data: data,
           textStyle: {
             //图例文字的样式
-            color: ["#13A86E", "#7B91FF", "#35a0e4", "#E5A73B"],
-            fontSize: 12
+            // color: ["#13A86E", "#7B91FF", "#35a0e4", "#E5A73B"],
+            color: "#fff",
+            fontSize: 14
           },
           formatter: function(params) {
+            let str = "kw";
+            console.log("$this.moduleStatistics", $this.moduleStatistics)
+            if ($this.moduleStatistics[0].select) {
+              str = "%";
+            } else if ($this.moduleStatistics[1].select) {
+              str = "kw";
+            } else if ($this.moduleStatistics[2].select) {
+              str = "";
+            } else if ($this.moduleStatistics[3].select) {
+              str = "";
+            }
             for (var i = 0; i < option.series[0].data.length; i++) {
               if (option.series[0].data[i].name == params) {
-                return params + " " + option.series[0].data[i].value + "KW";
+                return params + " " + option.series[0].data[i].value + str;
               }
             }
           }
@@ -2654,7 +2701,7 @@ export default {
         color: ["#13A86E", "#6B7FE3", "#35a0e4", "#E5A73B"],
         series: [
           {
-            name: "功率统计",
+            name: "",
             type: "pie",
             selectedMode: "single",
             radius: ["50%", "80%"],
@@ -2669,16 +2716,16 @@ export default {
                 show: false
               }
             },
-            itemStyle: {
-              // 此配置
-              normal: {
-                borderWidth: 3,
-                borderColor: "rgba(76, 102, 199, 0.9)"
-              },
-              emphasis: {
-                borderWidth: 0
-              }
-            },
+            // itemStyle: {
+            //   // 此配置
+            //   normal: {
+            //     borderWidth: 3,
+            //     borderColor: "rgba(76, 102, 199, 0.9)"
+            //   },
+            //   emphasis: {
+            //     borderWidth: 0
+            //   }
+            // },
             data: $this.barData
           }
         ]
@@ -2860,39 +2907,40 @@ export default {
   }
 }
 
-.gl-tongji {
-  cursor: pointer;
-}
-.gl-tongji + div {
-  height: 0;
-  overflow: hidden;
-}
-.gl-tongji:hover .el-icon-arrow-down {
-  display: none;
-}
-.gl-tongji .el-icon-arrow-up {
-  display: none;
-}
-.gl-tongji:hover .el-icon-arrow-up {
-  display: inline-block;
-}
-.gl-tongji.active {
-  background-color: #8a9eff;
-}
-.gl-tongji:hover + div {
-  height: 176px;
-}
-.gl-tongji.active + div {
-  height: 176px;
-}
-.gl-tongji.active .el-icon-arrow-up {
-  display: inline-block;
-}
-.gl-tongji.active .el-icon-arrow-down {
-  display: none;
-}
+// .gl-tongji {
+//   cursor: pointer;
+// }
+// .gl-tongji + div {
+//   height: 0;
+//   overflow: hidden;
+// }
+// .gl-tongji:hover .el-icon-arrow-down {
+//   display: none;
+// }
+// .gl-tongji .el-icon-arrow-up {
+//   display: none;
+// }
+// .gl-tongji:hover .el-icon-arrow-up {
+//   display: inline-block;
+// }
+// .gl-tongji.active {
+//   background-color: #8a9eff;
+// }
+// .gl-tongji:hover + div {
+//   height: 176px;
+// }
+// .gl-tongji.active + div {
+//   height: 176px;
+// }
+// .gl-tongji.active .el-icon-arrow-up {
+//   display: inline-block;
+// }
+// .gl-tongji.active .el-icon-arrow-down {
+//   display: none;
+// }
 .powerCharts {
   height: 116px;
+  width: 270px;
 }
 .lb-module-list {
   max-height: 360px;
@@ -2966,7 +3014,9 @@ export default {
   position: relative;
   float: left;
   margin-bottom: 15px;
+  cursor: pointer;
 }
+
 .module-statis .modal:nth-child(2n + 1) {
   margin-right: 15px;
 }

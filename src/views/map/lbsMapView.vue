@@ -717,7 +717,7 @@ export default {
         return (
           restaurant.modelName
             .toLowerCase()
-            .indexOf(queryString.toLowerCase()) === 0
+            .indexOf(queryString.toLowerCase()) > -1
         );
       };
     },

@@ -156,6 +156,12 @@
                 label="数据来源"
                 :key="34"
               ></el-table-column>
+              <el-table-column
+                v-if="sourceType == 2"
+                prop="totalMachineTime"
+                label="上架时间"
+                :key="66"
+              ></el-table-column>
               <!-- <el-table-column v-if="sourceType == 2" prop="usePower" label="使用功率（kW）" :formatter ="powerFormatter" :key="13"></el-table-column> -->
               <!-- <el-table-column v-if="sourceType == 2" prop="cabinetStatus" label="状态" :formatter="cabinetStatusFormatter" :key="16"></el-table-column> -->
             </el-table>
@@ -320,6 +326,7 @@ export default {
                 roomId: 3,
                 row: "天河区",
                 totalMachineCount: 200,
+                totalMachineTime: "2019年1月11日 12:00",
                 width: 20
               },
               {
@@ -337,6 +344,7 @@ export default {
                 roomId: 1,
                 row: "荔湾区",
                 totalMachineCount: 100,
+                totalMachineTime: "2019年2月",
                 width: 20
               },
               {
@@ -354,6 +362,7 @@ export default {
                 roomId: 1,
                 row: "荔湾区",
                 totalMachineCount: 300,
+                totalMachineTime: "2019年3月",
                 width: 10
               },
               {
@@ -371,6 +380,7 @@ export default {
                 roomId: 1,
                 row: "白云区",
                 totalMachineCount: 300,
+                totalMachineTime: "2019年1月11日 12:00",
                 width: 10
               }
             ]
@@ -410,6 +420,7 @@ export default {
                 totalUnitCount: 30,
                 unuseUnitCount: 20,
                 width: 2,
+                totalMachineTime: "2019年1月11日 12:00",
                 dataSources: "手动录入"
               },
               {
@@ -435,6 +446,7 @@ export default {
                 totalUnitCount: 42,
                 unuseUnitCount: 22,
                 width: 2,
+                totalMachineTime: "2019年1月11日 12:00",
                 dataSources: "资源同步"
               },
               {
@@ -460,6 +472,7 @@ export default {
                 totalUnitCount: 34,
                 unuseUnitCount: 30,
                 width: 4,
+                totalMachineTime: "2019年1月11日 12:00",
                 dataSources: "手动录入"
               },
               {
@@ -485,6 +498,7 @@ export default {
                 totalUnitCount: 30,
                 unuseUnitCount: 18,
                 width: 3,
+                totalMachineTime: "2019年1月11日 12:00",
                 dataSources: "手动录入"
               }
             ]

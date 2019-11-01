@@ -57,7 +57,7 @@
             v-for="(item, index) in moduleStatistics"
             :key="index"
             class="modal"
-            :class="'module' + (index + 1)"
+            :class="'module'"
           >
             <div calss="name" style="font-size: 12px;color: #fff;">
               {{ item.name }}
@@ -82,7 +82,7 @@
             @select="handleSelect"
           >
             <i
-              class="el-icon-edit el-input__icon"
+              class="el-icon-circle-close el-input__icon"
               slot="suffix"
               @click="handleIconClick"
             >
@@ -685,7 +685,8 @@ export default {
           coordinate: [113.280714, 23.125624]
           // name: 'enping'
         }
-      ]
+      ],
+      clickFlag: null
       // stops: false
     };
   },
@@ -1012,25 +1013,36 @@ export default {
     },
     mapClickMarker(ev) {
       //阻止本来的默认事件，比如浏览器的默认右键事件是弹出浏览器的选项
-      event.preventDefault();
-      this.MarkerClick = true;
       const that = this;
-      var scrollTop =
-        document.documentElement.scrollTop || document.body.scrollTop;
-      this.$refs.menu.style.left = ev.pixel.x - 80 + "px";
-      this.$refs.menu.style.top = ev.pixel.y - 180 + scrollTop + "px";
-      this.getExtData = ev.target.getExtData();
-      that.modelData.forEach((item, i) => {
-        if (item.modelName === this.getExtData) {
-          that.objIndex = i;
-        }
-      });
-      this.showMenu = true;
+      event.preventDefault();
+      if (this.clickFlag) {
+        //取消上次延时未执行的方法
+        this.clickFlag = clearTimeout(this.clickFlag);
+      }
+      this.clickFlag = setTimeout(function() {
+        // click 事件的处理
+        that.MarkerClick = true;
+        var scrollTop =
+          document.documentElement.scrollTop || document.body.scrollTop;
+        that.$refs.menu.style.left = ev.pixel.x - 80 + "px";
+        that.$refs.menu.style.top = ev.pixel.y - 180 + scrollTop + "px";
+        that.getExtData = ev.target.getExtData();
+        that.modelData.forEach((item, i) => {
+          if (item.modelName === that.getExtData) {
+            that.objIndex = i;
+          }
+        });
+        that.showMenu = true;
+      }, 300); //延时300毫秒执行
 
       return false;
     },
     mapDbllickMarker() {
       console.log("双击");
+      if (this.clickFlag) {
+        //取消上次延时未执行的方法
+        this.clickFlag = clearTimeout(this.clickFlag);
+      }
       this.$router.push({ path: this.item.path, query: this.item.query });
     },
     mapMousemoveLi() {

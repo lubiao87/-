@@ -72,9 +72,9 @@ export default {
                 color: "rgba(186,205,229,0.6)",
                 formatter(params) {
                   if ($_this.formatterText === 1) {
-                    return "已占用" + params.data + "kw";
+                    return "已用" + params.data + "%";
                   } else {
-                    return "已占用" + params.data + "kw";
+                    return "已占用" + params.data + "U";
                   }
                 }
               }
@@ -97,9 +97,9 @@ export default {
                 color: "rgba(186,205,229,0.6)",
                 formatter(params) {
                   if ($_this.formatterText === 1) {
-                    return "剩余" + params.data + "kw";
+                    return "剩余" + params.data + "%";
                   } else {
-                    return "剩余" + params.data + "kw";
+                    return "剩余" + params.data + "U";
                   }
                 }
               }

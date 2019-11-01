@@ -42,20 +42,20 @@
               {{ EchartsTitle }}
             </div>
           </div>
-          <!-- <div class="passStatus Pass">
-            <p class="passText nowPass">功率申请审核结果：<span>通过</span></p>
+          <div class="passStatus Pass">
+            <p class="passText nowPass">U位申请审核结果：<span>通过</span></p>
             <div style="margin-top: 24px">
-              <echarts-Bar
+              <echarts-Bar-copy
                 v-if="hackReset"
                 :charts="chart2"
-                :EchartsId="passEcharts"
+                :EchartsId="passEcharts2"
                 :formatterText="formatterNumber"
-              ></echarts-Bar>
+              ></echarts-Bar-copy>
             </div>
             <div class="echarts-title">
-              {{ EchartsTitle }}
+              {{ EchartsTitle2 }}
             </div>
-          </div> -->
+          </div>
           <div class="passStatus noPass">
             <div class="passParent">
               <div class="passText">
@@ -103,6 +103,7 @@
           </el-input>
         </div>
         <div slot="footer" class="dialog-footer">
+          <el-button @click="cancelApply">确认</el-button>
           <el-button @click="cancelApply">提交OA审核</el-button>
           <el-button @click="dialogTableVisible = false">关闭</el-button>
         </div>
@@ -116,12 +117,13 @@
 <script>
 import imageSrc from "../../assets/common/images";
 import echartsBar from "./echartsBar";
+import echartsBarCopy from "./echartsBarCopy";
 // import {listSearchMixin} from '../../mixin' //请求
 import { api } from "../../api/api"; //请求
 import qs from "qs";
 export default {
   name: "examine",
-  components: { echartsBar },
+  components: { echartsBar, echartsBarCopy },
   // mixins: [listSearchMixin],
   props: {},
   data() {
@@ -130,6 +132,7 @@ export default {
       cabinetIcon: imageSrc.cabinetIcon,
       conditionerIco: imageSrc.conditionerIco,
       passEcharts: "passEcharts", // 传送通过ID
+      passEcharts2: "passEcharts2", // 传送通过ID
       NopassEcharts: "NopassEcharts", // 传送不通过Id值
       formatterNumberNo: 1, // 判断不通过数据展示格式
       formatterNumber: 2, // 判断通过数据展示格式
@@ -168,6 +171,9 @@ export default {
       return this.formatterNumber === 1
         ? "机房使用功率情况"
         : "机架使用功率情况";
+    },
+    EchartsTitle2() {
+      return this.formatterNumber === 1 ? "机房空间占用比例" : "U位占用情况";
     }
   },
   methods: {

@@ -1698,7 +1698,7 @@ align-items: center;
 .el-message-box .el-button:focus, .el-button:hover{
   border:1px solid rgba(186,205,229,.1);
   border-radius:4px;
-  background: transparent;
+  background: #7187f0;
   color: #BACDE5;
 }
 .el-message-box .el-button.el-button--primary{
@@ -1766,12 +1766,44 @@ body {
 .el-autocomplete-suggestion {
   width: 268px;
   background-color: #5c66a9;
-  border: 1px solid rgba(91, 120, 231, 1);
+  border: 1px solid #7187F0;
 }
 .el-input__inner {
-  border: 1px solid rgba(91, 120, 231, 1);
+  border: 1px solid #7187F0;
 }
 .el-autocomplete-suggestion li.highlighted, .el-autocomplete-suggestion li:hover {
   background: rgba(0, 0, 0, 0.2);
 
+}
+.el-date-editor .el-range-input {
+  color: #fff;
+  background-color: transparent;
+}
+.el-date-table td.in-range div, .el-date-table td.in-range div:hover, .el-date-table.is-week-mode .el-date-table__row.current div, .el-date-table.is-week-mode .el-date-table__row:hover div {
+  background-color: #7187F0;
+}
+.el-button {
+  background: #7187F0;
+    border: 1px solid #7187F0;
+    color: #fff;
+}
+.el-pager li.active {
+  color: #fff;
+}
+.el-button.is-plain:focus, .el-button.is-plain:hover {
+  background-color: transparent;
+}
+.parinciRepreTable .el-button span {
+  color: #fff;
+}
+.el-button--text:active {
+  background-color: #7187F0;
+}
+.el-button--text {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.el-button--text span {
+  display: inline-block;
+  margin: 5px 2px;
 }

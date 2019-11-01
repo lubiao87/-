@@ -6,9 +6,9 @@
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(0, 0, 0, 0.8)"
   >
-    <!-- <input type="flies" src="/Assets/GKG.FBX" ref="mapID" alt="" /> -->
-    <!-- 右边收缩栏开始 -->
     <div style="width: 100%;height:100%;" id="buildModel"></div>
+    <div class="lable-title">{{ floorName }}</div>
+    <!-- 右边收缩栏开始 -->
     <div
       class="ui-shrinkBar"
       v-bind:class="{ 'ui-shrinkBar-right': panelShow }"
@@ -53,13 +53,17 @@
       </div>
       <div class="show1" v-show="boxTitle !== '机房列表'">
         <h5 class="ui-city-title ui-height48 none-hover">
-          <span class="ui-linebg"></span>{{boxTitle}}
+          <span class="ui-linebg"></span>{{ boxTitle }}
         </h5>
         <div id="powerCharts" class="powerCharts"></div>
       </div>
-      <div style="margin-top: 20px;" class="show2" v-show="moduleStatistics[4].select">
+      <div
+        style="margin-top: 20px;"
+        class="show2"
+        v-show="moduleStatistics[4].select"
+      >
         <h5 class="ui-city-title ui-height48 none-hover">
-          <span class="ui-linebg"></span>{{boxTitle}}
+          <span class="ui-linebg"></span>{{ boxTitle }}
         </h5>
         <div class="clearfix module-statis" style="padding-left: 0;">
           <div class="lb-module-list ui-link-ul">
@@ -70,7 +74,7 @@
                 @click="lookFloor(item, index)"
                 :class="{ 'select-li': item.select }"
               >
-                <span>{{ index + ". " + item.name }}</span>
+                <span>{{ index + 1 + ". " + item.name }}</span>
                 <span class="lb-icon"></span>
               </li>
             </ul>
@@ -109,11 +113,23 @@
     </div>
     <div class="menu menu2" v-show="showMenu2" ref="menu2">
       <ul>
-        <li v-for="(item, index) in dataMeth" :key="index">
+        <li
+          v-for="(item, index) in dataMeth"
+          :key="index"
+          @click="zlLiFn(item)"
+        >
           <span class="raius"></span>
           <span class="dowon"></span>
           {{ item }}
         </li>
+      </ul>
+      <div class="close-btn" @click="hineMenu2" v-show="freezeShowMenu2">X</div>
+    </div>
+    <div class="menu menu3" v-show="showMenu3" ref="menu3">
+      <ul>
+        <li><label for="">名称：</label> RSS02-04</li>
+        <li><label for="">位置：</label> 07行09列</li>
+        <li><label for="">已用/未用：</label> 2U/8U</li>
       </ul>
     </div>
   </div>
@@ -148,6 +164,8 @@ export default {
   },
   data() {
     return {
+      freezeShowMenu2: false,
+      showMenu3: false,
       boxTitle: "机房列表",
       showChartFlag: false,
       dataMeth: [
@@ -159,7 +177,7 @@ export default {
       ],
       showMenu2: false,
       showMenu: false,
-      buildId: 100,
+      buildId: null,
       propsFlag: false,
       barData: [
         { value: 589, name: "未用" },
@@ -169,11 +187,16 @@ export default {
       myChart: null,
       activeIndex: 0,
       moduleStatistics: [
-        { name: "空间利用率", value: "30%", class: "right_building" },
+        { name: "空间利用率", value: "30%", class: "right_planning" },
         { name: "功率比例", value: "362kw", class: "right_module" },
         { name: "非专业机柜总数", value: "7个", class: "right_planning" },
         { name: "专业机柜总数", value: "8个", class: "right_cabinet" },
-        { name: "机房总数", value: "5个", class: "right_mokuai", select: true }
+        {
+          name: "机房总数",
+          value: "5个",
+          class: "right_building",
+          select: true
+        }
       ],
       selectValue: ["全部"],
       scene: null, // 场景
@@ -205,29 +228,30 @@ export default {
       cameraX: 40000,
       cameraY: 10000,
       cameraZ: -1000,
+      floorName: "工业园机楼",
       dataList: [
         {
-          name: "1楼101机房 - 0",
+          name: "1楼101机房",
           id: 111,
           floor: 1
         },
         {
-          name: "2楼101机房 - 0",
+          name: "2楼101机房",
           id: 112,
           floor: 2
         },
         {
-          name: "3楼101机房 - 0",
+          name: "3楼101机房",
           id: 113,
           floor: 3
         },
         {
-          name: "4楼101机房 - 116",
+          name: "4楼101机房",
           id: 114,
           floor: 4
         },
         {
-          name: "4楼102机房 - 0",
+          name: "4楼102机房",
           id: 115,
           floor: 4
         }
@@ -1747,6 +1771,37 @@ export default {
       this.render();
       this.raycaster = new THREE.Raycaster();
     },
+    // 整流器
+    zlLiFn(item) {
+      const that = this;
+      if (item === "整流器01") {
+        console.log("你想看整流器？");
+        console.log("this.meshZL.position", this.meshZL);
+        this.camera.lookAt(this.meshZL.position);
+        this.scene.position.set(
+          -this.meshZL.position.x,
+          -this.meshZL.position.y,
+          -this.meshZL.position.z
+        );
+
+        this.meshZL.material.transparent = true;
+        this.meshZL.material.opacity = 0.1;
+        window.startTime = 0;
+        window.ns = 0;
+        let times = setInterval(function() {
+          window.startTime += 0.05;
+          window.ns += 0.02;
+          if (window.ns >= 1) {
+            window.ns = 0.1;
+          }
+          that.meshZL.material.opacity = window.ns;
+          if (window.startTime >= 10) {
+            window.clearInterval(times);
+            that.meshZL.material.opacity = 1;
+          }
+        });
+      }
+    },
     // 选择统计
     setSelectBox(index) {
       const that = this;
@@ -1785,8 +1840,8 @@ export default {
           break;
         case 3:
           this.barData = [
-            { value: 6, name: "电池" },
-            { value: 2, name: "空调" }
+            { value: 6, name: "传输机架" },
+            { value: 2, name: "数据机架" }
           ];
           this.newMap();
           break;
@@ -1805,8 +1860,8 @@ export default {
         this.scene,
         this.camera
       );
-       var effectCopy = new THREE.ShaderPass(THREE.CopyShader);//CopyShader是为了能将结果输出，普通的通道一般都是不能输出的，要靠CopyShader进行输出
-      effectCopy.renderToScreen = true;//设置这个参数的目的是马上将当前的内容输出
+      var effectCopy = new THREE.ShaderPass(THREE.CopyShader); //CopyShader是为了能将结果输出，普通的通道一般都是不能输出的，要靠CopyShader进行输出
+      effectCopy.renderToScreen = true; //设置这个参数的目的是马上将当前的内容输出
 
       // 后处理完成，设置renderToScreen为true，后处理结果在Canvas画布上显示
       this.OutlinePass.renderToScreen = true;
@@ -2072,6 +2127,7 @@ export default {
           arr[i].select = false;
         });
         this.dataList[index].select = true;
+        this.floorName = "工业园机楼 - " + this.dataList[index].name;
       }
     },
     removeObjAll() {
@@ -2294,6 +2350,17 @@ export default {
       mesh.translateY(-2000);
       this.listGroup.add(mesh); //网格模型添加到场景中
       this.scene.add(this.listGroup);
+
+      // 整流器
+      var geometryZL = new THREE.BoxGeometry(1000, 600, 400); //创建一个立方体几何对象Geometry
+      var materialZL = new THREE.MeshLambertMaterial({
+        color: "#666"
+      }); //材质对象Material
+      this.meshZL = new THREE.Mesh(geometryZL, materialZL); //网格模型对象Mesh
+      this.scene.add(this.meshZL); //网格模型添加到场景中
+      this.meshZL.translateX(5000);
+      this.meshZL.translateZ(16000);
+      this.meshZL.translateY(-2000);
       // setTimeout(() => {
 
       //创建一个屏幕和场景转换工具
@@ -2407,15 +2474,23 @@ export default {
             this.$refs.menu2.style.left = event.clientX + 20 + "px";
             this.$refs.menu2.style.top = event.clientY + scrollTop - 200 + "px";
             this.showMenu2 = true;
+            this.showMenu3 = false;
           } else {
             // 创建精灵图标
-            this.newCSS3DSprite(
-              intersects,
-              worldPosition.x,
-              worldPosition.y + 2800,
-              worldPosition.z
-            );
-            this.showMenu2 = false;
+            // this.newCSS3DSprite(
+            //   intersects,
+            //   worldPosition.x,
+            //   worldPosition.y + 2800,
+            //   worldPosition.z
+            // );
+            var scrollTop =
+              document.documentElement.scrollTop || document.body.scrollTop;
+            this.$refs.menu3.style.left = event.clientX + 20 + "px";
+            this.$refs.menu3.style.top = event.clientY + scrollTop - 120 + "px";
+            this.showMenu3 = true;
+            if (!this.freezeShowMenu2) {
+              this.showMenu2 = false;
+            }
           }
           // 朔源
           if (intersects[0].object.setId === 22) {
@@ -2438,7 +2513,10 @@ export default {
         if (this.spriteArr) {
           this.scene.remove(this.spriteArr);
         }
-        this.showMenu2 = false;
+        if (!this.freezeShowMenu2) {
+          this.showMenu2 = false;
+        }
+        this.showMenu3 = false;
       }
     },
     setMethPositon() {
@@ -2471,7 +2549,11 @@ export default {
       splitText.forEach((item, index) => {
         ctx.font = 300 + 'px " bold';
         ctx.fillStyle = "#666";
-        ctx.fillText(titleArr[index], 160 * titleArr[index].length + 240, (index + 1) * 500);
+        ctx.fillText(
+          titleArr[index],
+          160 * titleArr[index].length + 240,
+          (index + 1) * 500
+        );
         ctx.font = 300 + 'px " bold';
         ctx.fillStyle = "#fff";
         let leftP = 1500;
@@ -2548,14 +2630,30 @@ export default {
       }
     },
     onDocumentClick(event) {
+      const self = this;
+      event.preventDefault();
       this.showMenu = false;
       //阻止本来的默认事件，比如浏览器的默认右键事件是弹出浏览器的选项
-      event.preventDefault();
-      if (this.transformControls) {
-        this.scene.remove(this.transformControls);
-        this.transformControls.dispose();
-        this.transformControls = null;
+      this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+      this.raycaster.setFromCamera(this.mouse, this.camera);
+      const intersects = this.raycaster.intersectObjects(
+        self.listGroup.children
+      );
+      if (intersects) {
+        this.freezeShowMenu2 = true;
+        // this.showMenu2 = true;
+      } else {
+        if (this.transformControls) {
+          this.scene.remove(this.transformControls);
+          this.transformControls.dispose();
+          this.transformControls = null;
+        }
       }
+    },
+    hineMenu2() {
+      this.showMenu2 = false;
+      this.freezeShowMenu2 = false;
     },
     lookCabinetfn() {
       let flagArr = [];
@@ -2665,9 +2763,9 @@ export default {
     },
     setOption() {
       let data = [];
-      this.barData.forEach((item) => {
+      this.barData.forEach(item => {
         data.push(item.name);
-      })
+      });
       let $this = this;
       let option = {
         tooltip: {
@@ -2691,7 +2789,7 @@ export default {
           },
           formatter: function(params) {
             let str = "kw";
-            console.log("$this.moduleStatistics", $this.moduleStatistics)
+            console.log("$this.moduleStatistics", $this.moduleStatistics);
             if ($this.moduleStatistics[0].select) {
               str = "%";
             } else if ($this.moduleStatistics[1].select) {
@@ -2916,7 +3014,31 @@ export default {
     height: 160px;
   }
 }
-
+.lable-title {
+  width: 100%;
+  height: 60px;
+  background-color: rgba(35, 52, 98, 0.7);
+  position: absolute;
+  top: 70px;
+  font-size: 20px;
+  line-height: 60px;
+  padding-left: 30px;
+  left: 0;
+}
+.close-btn {
+  width: 30px;
+  height: 30px;
+  background: rgba(22, 36, 74, 0.7);
+  border-radius: 4px;
+  position: absolute;
+  right: -35px;
+  top: 0;
+  text-align: center;
+  line-height: 30px;
+  font-size: 14px;
+  color: #fff;
+  cursor: pointer;
+}
 // .gl-tongji {
 //   cursor: pointer;
 // }
@@ -2971,15 +3093,25 @@ export default {
 .menu li {
   padding: 4px 10px;
 }
+.menu2 li {
+  cursor: inline;
+  text-indent: 5px;
+}
 .menu li:hover {
   background: #7187f0;
   cursor: pointer;
 }
 .menu2 li:hover {
   background: transparent;
+  cursor: inherit;
+}
+.menu2 li:nth-child(2):hover {
+  background: #7187f0;
+  background-clip: content-box;
+  cursor: pointer;
 }
 .menu2 {
-  width: 140px;
+  width: 150px;
   background: rgba(22, 36, 74, 0.7);
   border-radius: 4px;
 }
@@ -3010,6 +3142,14 @@ export default {
 }
 .menu2 ul li:last-child .dowon {
   display: none;
+}
+.menu3 {
+  width: 146px;
+  background: rgba(22, 36, 74, 0.6);
+  color: #fff;
+}
+.menu3 li label {
+  color: rgba(255, 255, 255, 0.4);
 }
 .none-hover.ui-height48:hover {
   background-color: inherit;
@@ -3067,7 +3207,7 @@ export default {
 }
 .model-select {
   position: absolute;
-  top: 100px;
+  top: 140px;
   left: 50px;
   min-width: 240px;
 }

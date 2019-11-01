@@ -61,7 +61,7 @@
                 label="申请预占结果"
               ></el-table-column>
 
-              <el-table-column label="操作" width="180" header-align="center">
+              <el-table-column label="操作" width="190" header-align="center">
                 <template slot-scope="scope">
                   <el-button
                     type="text"

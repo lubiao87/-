@@ -63,11 +63,11 @@ $c54B4E0: #54B4E0;
 }
 .module-statis .module.select {
   opacity: 1 !important;
-  box-shadow: 2px 2px 2px #b1a3a3;
+  // box-shadow: 2px 2px 2px #b1a3a3;
 }
 .module-statis .modal:hover {
   opacity: 1 !important;
-  box-shadow: 2px 2px 2px #b1a3a3;
+  // box-shadow: 2px 2px 2px #b1a3a3;
 }
 .lb-c7589F0 {
   background: $c7589F0;
@@ -1806,4 +1806,7 @@ body {
 .el-button--text span {
   display: inline-block;
   margin: 5px 2px;
+}
+.el-button--text:focus, .el-button--text:hover {
+  background-color: #7187F0;
 }

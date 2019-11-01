@@ -145,28 +145,28 @@
           border
           style="width: 100%; color: #BACDE6;font-size: 14px;"
         >
-          <el-table-column prop="name" label="设备名称"> </el-table-column>
+          <el-table-column prop="type" label="设备名称"> </el-table-column>
           <el-table-column prop="major" label="设备专业"> </el-table-column>
-          <el-table-column prop="unitId" label="设备额定功率">
+          <el-table-column prop="currentOne" label="设备额定功率">
             <template slot-scope="scope">
-              <div>{{ scope.row.unitId }} kw</div>
+              <div>{{ scope.row.currentOne }} kw</div>
             </template>
           </el-table-column>
-          <el-table-column prop="power" label="设备实时功率">
+          <el-table-column prop="cunrrentTwo" label="设备实时功率">
             <template slot-scope="scope">
-              <div>{{ scope.row.power }} kw</div>
+              <div>{{ scope.row.cunrrentTwo }} kw</div>
             </template>
           </el-table-column>
-          <el-table-column prop="readyStatus" label="设备状态">
+          <el-table-column prop="status" label="设备状态">
             <template slot-scope="scope">
-              <div v-if="scope.row.readyStatus == 1">未交付/预占</div>
-              <div v-if="scope.row.readyStatus == 2">已交付</div>
+              <div v-if="scope.row.status == 1">未交付/预占</div>
+              <div v-if="scope.row.status == 2">已交付</div>
             </template>
           </el-table-column>
-          <el-table-column width="140" prop="applyUser" label="用户名称">
+          <el-table-column prop="userName" label="用户名称">
             <template slot-scope="scope">
               <div>
-                {{ scope.row.applyEmployer + "-" + scope.row.applyUser }}
+                {{ scope.row.userName }}
               </div>
             </template>
           </el-table-column>
@@ -230,20 +230,29 @@ export default {
       showUnitData: false,
       UnitData: [
         {
-          type: "电流",
-          currentOne: "256.52 A",
-          cunrrentTwo: "676.21 A",
-          shishigonglv: ""
+          type: "BH棠盛园宾馆2YTU-1(D)",
+          major: "ATMDDNFR设备",
+          currentOne: "256.52",
+          cunrrentTwo: "676.21",
+          shishigonglv: "",
+          status: 1, // 1 未交付/预占 2 已交付
+          userName: "张三"
         },
         {
-          type: "电压",
-          currentOne: "256.52 A",
-          cunrrentTwo: "676.21 A"
+          type: "BZ华景新城福门阁YTU-1(D)",
+          major: "DSLAM设备",
+          currentOne: "256.52",
+          cunrrentTwo: "676.21",
+          status: 2,
+          userName: "李四"
         },
         {
-          type: "功率",
-          currentOne: "256.52 A",
-          cunrrentTwo: "676.21 A"
+          type: "BH卫生防疫大楼U-1(D)",
+          major: "光电转换设备",
+          currentOne: "256.52",
+          cunrrentTwo: "676.21",
+          status: 1,
+          userName: "王五"
         }
       ],
       myChart: null,
@@ -364,30 +373,31 @@ export default {
     },
     getUnitData(item) {
       console.log("item", item);
-      let params = "";
-      if (item.name === "已交付数量") {
-        params = 2;
-      } else if (item.name === "预占数量") {
-        params = 1;
-      } else {
-        params = "";
-      }
       this.showUnitData = true;
-      let param = {
-        url: api2.getUnit + this.IDS + "?readyStatus=" + params, //获取request_url.js文件的请求路径
-        method: "get"
-      };
-      let _this = this;
-      this.sendReq(param, res => {
-        console.log("getUnit:", res);
-        this.UnitData = res.respBody.unitList;
-        // if (res.respBody.unitList.length > 0) {
-        //   res.respBody.unitList.forEach((item, idnex) => {
-        //     this.UnitData.push(item);
+      // let params = "";
+      // if (item.name === "已交付数量") {
+      //   params = 2;
+      // } else if (item.name === "预占数量") {
+      //   params = 1;
+      // } else {
+      //   params = "";
+      // }
+      // this.showUnitData = true;
+      // let param = {
+      //   url: api2.getUnit + this.IDS + "?readyStatus=" + params, //获取request_url.js文件的请求路径
+      //   method: "get"
+      // };
+      // let _this = this;
+      // this.sendReq(param, res => {
+      //   console.log("getUnit:", res);
+      //   this.UnitData = res.respBody.unitList;
+      //   // if (res.respBody.unitList.length > 0) {
+      //   //   res.respBody.unitList.forEach((item, idnex) => {
+      //   //     this.UnitData.push(item);
 
-        //   })
-        // }
-      });
+      //   //   })
+      //   // }
+      // });
     },
     setShowPane() {
       this.$parent.propsFlag = false;

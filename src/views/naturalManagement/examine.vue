@@ -78,15 +78,16 @@
                 <div class="sarkMsg">
                   <div class="left"><img :src="cabinetIcon" alt="" /></div>
                   <div class="right">
-                    <h2 class="rightH">服务器机柜</h2>
-                    <p class="rightP">申请专业</p>
+                    <h2 class="rightH">申请专业</h2>
+                    <p class="rightP" v-if="formatterNumber === 1">标准机架</p>
+                    <p class="rightP" v-if="formatterNumber === 2">BBU</p>
                   </div>
                 </div>
                 <div class="sarkMsg">
                   <div class="left"><img :src="conditionerIco" alt="" /></div>
                   <div class="right">
-                    <h2 class="rightH">服务器</h2>
-                    <p class="rightP">机柜规划专业</p>
+                    <h2 class="rightH">机柜规划专业</h2>
+                    <p class="rightP">服务器</p>
                   </div>
                 </div>
               </div>

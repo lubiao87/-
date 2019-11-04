@@ -50,7 +50,7 @@
       <!-- 微机楼统计 -->
       <div style="margin-top: 20px;">
         <h5 class="ui-city-title ui-height48">
-          <span class="ui-linebg"></span>微机楼统计
+          <span class="ui-linebg"></span>机楼统计
         </h5>
         <div class="clearfix module-statis" style="padding-left: 0;">
           <div
@@ -117,10 +117,18 @@
           @mouseover="mapMousemoveLi"
           @mouseleave="mapMοuseοutLi()"
           @click="showMarker3Fn"
+          :data="3"
         >
-          5G BBU <span>4</span>
+          5G BBU <span>3</span>
         </li>
-        <li>综合接入间 <span>0</span></li>
+        <li
+          @mouseover="mapMousemoveLi"
+          @mouseleave="mapMοuseοutLi()"
+          @click="showMarker3Fn"
+          :data="1"
+        >
+          综合接入间 <span>1</span>
+        </li>
         <li>其它 <span>0</span></li>
       </ul>
       <div class="close-btn" @click="hineMenuFn" v-show="MarkerClick">X</div>
@@ -588,14 +596,14 @@ export default {
         }
       ],
       moduleStatistics: [
-        { name: "机楼数", value: 3, class: "right_building" },
-        { name: "接入间数", value: 10, class: "right_module" },
+        { name: "机楼数", value: 132, class: "right_building" },
+        { name: "接入间数", value: 2837, class: "right_module" },
         // { name: "核心DC数", value: 15, class: "right_planning" },
         // { name: "接入局所数", value: 150, class: "right_cabinet" },
-        { name: "机房占用空间", value: "30%", class: "right_mokuai" },
+        { name: "空间利用率", value: "30%", class: "right_mokuai" },
         {
-          name: "已用/未用功率",
-          value: "80/70kw",
+          name: "功率利用率",
+          value: "63%",
           class: "right_delivery"
         }
       ],
@@ -1045,87 +1053,97 @@ export default {
       }
       this.$router.push({ path: this.item.path, query: this.item.query });
     },
-    mapMousemoveLi() {
+    mapMousemoveLi(e) {
+      console.log(e);
       const that = this;
       if (that.objIndex === null) {
         return;
       }
+      let numberIndex = [];
+      const textLi = e.target.innerText;
+      if (textLi === "综合接入间 1") {
+        numberIndex = [0, 5, 5, 5];
+      } else {
+        numberIndex = [5, 1, 2, 3];
+      }
       that.markers = [];
       var img = "./Assets/img/search-map-icon.png";
       that.modelData[that.objIndex].iconLocation.forEach((item, index) => {
-        var deepX =
-          (item.location[0] - that.modelData[that.objIndex].modeLocation[0]) /
-          4;
-        var deepY =
-          (item.location[1] - that.modelData[that.objIndex].modeLocation[1]) /
-          4;
-        var points = [
-          new AMap.LngLat(
-            JSON.parse(that.modelData[that.objIndex].modeLocation[0]),
-            JSON.parse(that.modelData[that.objIndex].modeLocation[1])
-          ),
-          new AMap.LngLat(
-            JSON.parse(that.modelData[that.objIndex].modeLocation[0]) + deepX,
-            JSON.parse(that.modelData[that.objIndex].modeLocation[1]) + deepY
-          ),
-          new AMap.LngLat(
-            JSON.parse(that.modelData[that.objIndex].modeLocation[0]) +
-              deepX * 2,
-            JSON.parse(that.modelData[that.objIndex].modeLocation[1]) +
-              deepY * 2
-          ),
-          new AMap.LngLat(
-            JSON.parse(item.location[0]),
-            JSON.parse(item.location[1])
-          )
-        ];
-        var numberOfPoints = 180;
-        var minHeight = 5;
-        if (item.meshLine) {
-          that.object3Dlayer.remove(item.meshLine);
-        }
-        that.modelData[that.objIndex].iconLocation[
-          index
-        ].meshLine = new AMap.Object3D.MeshLine({
-          path: that.computeBezier(points, numberOfPoints, minHeight),
-          height: that.getEllipseHeight(numberOfPoints, 2000, minHeight),
-          color: "rgba(55,129,240, 0.9)",
-          width: 2
-        });
-        that.modelData[that.objIndex].iconLocation[
-          index
-        ].meshLine.transparent = true;
-        that.modelData[that.objIndex].iconLocation[index].meshLine[
-          "backOrFront"
-        ] = "both";
-        that.object3Dlayer.add(
-          that.modelData[that.objIndex].iconLocation[index].meshLine
-        );
+        if (index === numberIndex[index]) {
+          var deepX =
+            (item.location[0] - that.modelData[that.objIndex].modeLocation[0]) /
+            4;
+          var deepY =
+            (item.location[1] - that.modelData[that.objIndex].modeLocation[1]) /
+            4;
+          var points = [
+            new AMap.LngLat(
+              JSON.parse(that.modelData[that.objIndex].modeLocation[0]),
+              JSON.parse(that.modelData[that.objIndex].modeLocation[1])
+            ),
+            new AMap.LngLat(
+              JSON.parse(that.modelData[that.objIndex].modeLocation[0]) + deepX,
+              JSON.parse(that.modelData[that.objIndex].modeLocation[1]) + deepY
+            ),
+            new AMap.LngLat(
+              JSON.parse(that.modelData[that.objIndex].modeLocation[0]) +
+                deepX * 2,
+              JSON.parse(that.modelData[that.objIndex].modeLocation[1]) +
+                deepY * 2
+            ),
+            new AMap.LngLat(
+              JSON.parse(item.location[0]),
+              JSON.parse(item.location[1])
+            )
+          ];
+          var numberOfPoints = 180;
+          var minHeight = 5;
+          if (item.meshLine) {
+            that.object3Dlayer.remove(item.meshLine);
+          }
+          that.modelData[that.objIndex].iconLocation[
+            index
+          ].meshLine = new AMap.Object3D.MeshLine({
+            path: that.computeBezier(points, numberOfPoints, minHeight),
+            height: that.getEllipseHeight(numberOfPoints, 2000, minHeight),
+            color: "rgba(55,129,240, 0.9)",
+            width: 2
+          });
+          that.modelData[that.objIndex].iconLocation[
+            index
+          ].meshLine.transparent = true;
+          that.modelData[that.objIndex].iconLocation[index].meshLine[
+            "backOrFront"
+          ] = "both";
+          that.object3Dlayer.add(
+            that.modelData[that.objIndex].iconLocation[index].meshLine
+          );
 
-        // 图标
-        var marker2 = new AMap.Marker({
-          position: new AMap.LngLat(
-            JSON.parse(item.location[0]),
-            JSON.parse(item.location[1])
-          ),
-          icon: img,
-          //  animation: "AMAP_ANIMATION_BOUNCE",
-          extData: {
-            id: index + 1
-          },
-          offset: new AMap.Pixel(-20, -30)
-        });
-        // marker2.setTitle(item.name);
-        marker2.setLabel({
-          offset: new AMap.Pixel(0, 40), //设置文本标注偏移量
-          content: `<div class="lb-label2" style="width:${
-            item.name.length
-          }em; margin-left: -${(item.name.length - 4) / 2}em;">${
-            item.name
-          }</div>` //设置文本标注内容
-          // direction: 'right' //设置文本标注方位
-        });
-        that.markers.push(marker2);
+          // 图标
+          var marker2 = new AMap.Marker({
+            position: new AMap.LngLat(
+              JSON.parse(item.location[0]),
+              JSON.parse(item.location[1])
+            ),
+            icon: img,
+            //  animation: "AMAP_ANIMATION_BOUNCE",
+            extData: {
+              id: index + 1
+            },
+            offset: new AMap.Pixel(-20, -30)
+          });
+          // marker2.setTitle(item.name);
+          marker2.setLabel({
+            offset: new AMap.Pixel(0, 40), //设置文本标注偏移量
+            content: `<div class="lb-label2" style="width:${
+              item.name.length
+            }em; margin-left: -${(item.name.length - 4) / 2}em;">${
+              item.name
+            }</div>` //设置文本标注内容
+            // direction: 'right' //设置文本标注方位
+          });
+          that.markers.push(marker2);
+        }
       });
       if (!that.overlayGroups) {
         that.overlayGroups = new AMap.OverlayGroup(that.markers);
@@ -1417,7 +1435,7 @@ export default {
 .menu li span {
   float: right;
 }
-.menu li:nth-child(1):hover {
+.menu li:hover {
   background: rgba(113, 135, 240, 0.4);
 }
 .module-statis .modal {

@@ -197,21 +197,21 @@ export default {
       UweiData: [
         {
           name: "总U位",
-          value: 20,
+          value: 46,
           class: "lb-c7589F0",
           img: "./Assets/img/right_module_ico@2x.png",
           imgClass: "lb-52"
         },
         {
           name: "已使用U位",
-          value: 15,
+          value: 25,
           class: "lb-c3AB1C7",
           img: "./Assets/img/right_planning_ico@2x.png",
           imgClass: "lb-49"
         },
         {
           name: "空闲U位",
-          value: 1,
+          value: 21,
           class: "lb-c54B4E0",
           img: "./Assets/img/right_cabinet_ico@2x.png",
           imgClass: "lb-52"

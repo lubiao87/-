@@ -1008,7 +1008,7 @@ import * as THREE from "three";
         if (intersect) {
           event.preventDefault();
           event.stopPropagation();
-          console.log(intersect.object.name);
+          console.log(intersect.object.name); // -----------------------------------------------------------------
           if (intersect.object.name.search("Z") > -1) {
             return;
           }

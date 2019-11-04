@@ -129,7 +129,7 @@
       <ul>
         <li><label for="">名称：</label> RSS02-04</li>
         <li><label for="">位置：</label> 07行09列</li>
-        <li><label for="">已用/未用：</label> 2U/8U</li>
+        <li><label for="">已用/未用：</label> 20U/26U</li>
       </ul>
     </div>
   </div>
@@ -188,7 +188,7 @@ export default {
       activeIndex: 0,
       moduleStatistics: [
         { name: "空间利用率", value: "30%", class: "right_planning" },
-        { name: "功率比例", value: "362kw", class: "right_module" },
+        { name: "功率利用率", value: "56%", class: "right_module" },
         { name: "非专业机柜总数", value: "7个", class: "right_planning" },
         { name: "专业机柜总数", value: "8个", class: "right_cabinet" },
         {
@@ -1825,9 +1825,9 @@ export default {
           break;
         case 1:
           this.barData = [
-            { value: 1000, name: "未用" },
-            { value: 362, name: "已用" },
-            { value: 400, name: "预占" }
+            { value: 400, name: "未用" },
+            { value: 560, name: "已用" },
+            { value: 40, name: "预占" }
           ];
           this.newMap();
           break;
@@ -2439,6 +2439,7 @@ export default {
       //阻止本来的默认事件，比如浏览器的默认右键事件是弹出浏览器的选项
       event.preventDefault();
       const self = this;
+
       this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
       this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
       this.raycaster.setFromCamera(this.mouse, this.camera);
@@ -2450,7 +2451,9 @@ export default {
         if (this.border) {
           self.scene.remove(this.border);
         }
-
+        if (this.showMenu2) {
+          return;
+        }
         if (intersects[0].object.name !== "擎天柱") {
           const geometry = intersects[0].object.geometry;
           const material = intersects[0].object.material;
@@ -2640,9 +2643,10 @@ export default {
       const intersects = this.raycaster.intersectObjects(
         self.listGroup.children
       );
-      if (intersects) {
+      if (intersects.length) {
         this.freezeShowMenu2 = true;
         // this.showMenu2 = true;
+        console.log("点击了啥", intersects);
       } else {
         if (this.transformControls) {
           this.scene.remove(this.transformControls);
@@ -2791,7 +2795,7 @@ export default {
             let str = "kw";
             console.log("$this.moduleStatistics", $this.moduleStatistics);
             if ($this.moduleStatistics[0].select) {
-              str = "%";
+              str = " ㎡";
             } else if ($this.moduleStatistics[1].select) {
               str = "kw";
             } else if ($this.moduleStatistics[2].select) {
@@ -3144,7 +3148,7 @@ export default {
   display: none;
 }
 .menu3 {
-  width: 146px;
+  width: 154px;
   background: rgba(22, 36, 74, 0.6);
   color: #fff;
 }
@@ -3185,7 +3189,7 @@ export default {
   float: left;
 }
 .module-statis .number {
-  font-size: 24px;
+  font-size: 22px;
   font-family: "MicrosoftYaHei";
   font-weight: 400;
   color: rgb(255, 255, 255);

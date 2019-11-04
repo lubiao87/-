@@ -1725,17 +1725,7 @@ export default {
       this.FBXloader.load("./Assets/fbx/lietou.FBX", self.loaderLieTou);
       this.FBXloader.load("./Assets/fbx/ODF.FBX", self.loaderODF);
       this.FBXloader.load("./Assets/fbx/peixian.FBX", self.loaderPeixian);
-      // this.FBXloader.load("./Assets/fbx/dog.FBX", self.loaderDog);
-      // this.FBXloader.load("./Assets/fbx/floorTwo.FBX", self.loaderFloor2);
-      // this.FBXloader.load("./Assets/fbx/floorThree.FBX", self.loaderFloor3);
       this.FBXloader.load("./Assets/fbx/floorFour.FBX", self.loaderFloor4);
-      this.FBXloader.load("./Assets/fbx/air.FBX", self.loaderAir);
-      this.FBXloader.load("./Assets/fbx/device1.FBX", self.loaderDevice1);
-      this.FBXloader.load("./Assets/fbx/device2.FBX", self.loaderDevice2);
-      this.FBXloader.load("./Assets/fbx/device3.FBX", self.loaderDevice3);
-      this.FBXloader.load("./Assets/fbx/device4.FBX", self.loaderDevice4);
-      this.FBXloader.load("./Assets/fbx/jigui.FBX", self.loaderJIGUI);
-      this.FBXloader.load("./Assets/fbx/guankonggui.FBX", self.loaderGKG);
       this.ambient = new THREE.AmbientLight(0xffffff); // 环境光
       this.renderer = new THREE.WebGLRenderer(); // 渲染器
       this.scene.add(this.ambient);
@@ -1993,11 +1983,11 @@ export default {
     loaderCabinet3(obj) {
       this.cabinet3 = obj;
     },
-    loaderAir(obj) {
-      this.Air = obj;
-      // console.log(obj)
-      this.Air.name = "空调柜";
-    },
+    // loaderAir(obj) {
+    //   this.Air = obj;
+    //   // console.log(obj)
+    //   this.Air.name = "空调柜";
+    // },
     loaderDevice1(obj) {
       this.device1 = obj;
       this.device1.name = "配电柜呢1";
@@ -2024,12 +2014,12 @@ export default {
       this.JIGUI.name = "机柜类型all";
       // this.scene.add(this.JIGUI);
     },
-    loaderGKG(obj) {
-      // obj.children[0].material[0].color.set("#1e222b"); // 设置材质颜色
-      this.GKGModel = obj;
-      this.GKGModel.name = "机柜类型j";
-      // this.scene.add(this.GKGModel);
-    },
+    // loaderGKG(obj) {
+    //   // obj.children[0].material[0].color.set("#1e222b"); // 设置材质颜色
+    //   this.GKGModel = obj;
+    //   this.GKGModel.name = "机柜类型j";
+    //   // this.scene.add(this.GKGModel);
+    // },
     setCamera() {
       let width = document.body.clientWidth; // 窗口宽度
       let height = document.body.clientHeight; // 窗口高度
@@ -2147,7 +2137,7 @@ export default {
       self.scene.remove(this.FloorOne);
       self.scene.remove(this.FloorThree);
       self.scene.remove(this.FloorFour);
-      self.scene.remove(this.JIGUI);
+      // self.scene.remove(this.JIGUI);
     },
     removeMan() {
       // 删除人物
@@ -2298,57 +2288,57 @@ export default {
         let mesh = self.addMeth(item, index);
         self.listGroup.add(mesh);
       });
-      for (let index = 0; index < 4; index++) {
-        let air = self.Air.clone();
-        air.name = "空调柜呢" + index;
-        switch (index) {
-          case 0:
-            // air.translateZ(-17200); //沿着z轴平移
-            air.translateX(-600); //沿着x轴平移
-            air.translateY(-3900); //沿着y轴平移
-            break;
-          case 1:
-            // air.translateZ(-17200); //沿着z轴平移
-            air.translateX(2500); //沿着x轴平移
-            air.translateY(-3900); //沿着y轴平移
-            break;
-          case 2:
-            // air.translateZ(-17200); //沿着z轴平移
-            air.translateX(5500); //沿着x轴平移
-            air.translateY(-3900); //沿着y轴平移
-            break;
-          case 3:
-            air.translateZ(17000); //沿着z轴平移
-            air.translateX(9000); //沿着x轴平移
-            air.translateY(-3900); //沿着y轴平移
-            air.rotateY(Math.PI); //每次绕y轴旋转180弧度
-            break;
+      // for (let index = 0; index < 4; index++) {
+      //   let air = self.Air.clone();
+      //   air.name = "空调柜呢" + index;
+      //   switch (index) {
+      //     case 0:
+      //       // air.translateZ(-17200); //沿着z轴平移
+      //       air.translateX(-600); //沿着x轴平移
+      //       air.translateY(-3900); //沿着y轴平移
+      //       break;
+      //     case 1:
+      //       // air.translateZ(-17200); //沿着z轴平移
+      //       air.translateX(2500); //沿着x轴平移
+      //       air.translateY(-3900); //沿着y轴平移
+      //       break;
+      //     case 2:
+      //       // air.translateZ(-17200); //沿着z轴平移
+      //       air.translateX(5500); //沿着x轴平移
+      //       air.translateY(-3900); //沿着y轴平移
+      //       break;
+      //     case 3:
+      //       air.translateZ(17000); //沿着z轴平移
+      //       air.translateX(9000); //沿着x轴平移
+      //       air.translateY(-3900); //沿着y轴平移
+      //       air.rotateY(Math.PI); //每次绕y轴旋转180弧度
+      //       break;
 
-          default:
-            break;
-        }
-        self.listGroup.add(air);
-      }
-      self.listGroup.add(self.device1);
-      self.listGroup.add(self.device2);
-      let device22 = self.device2.clone();
-      device22.translateX(1700);
-      let device222 = self.device2.clone();
-      device222.translateX(2550);
-      self.listGroup.add(device22);
-      self.listGroup.add(device222);
-      self.listGroup.add(self.device3);
-      self.listGroup.add(self.device4);
-      let geometry = new THREE.BoxGeometry(700, 4000, 740); //创建一个立方体几何对象Geometry
-      let material = new THREE.MeshLambertMaterial({
-        color: "#ccc"
-      }); //材质对象Material
-      let mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
-      mesh.name = "擎天柱";
-      mesh.translateX(10000);
-      mesh.translateZ(7800);
-      mesh.translateY(-2000);
-      this.listGroup.add(mesh); //网格模型添加到场景中
+      //     default:
+      //       break;
+      //   }
+      //   self.listGroup.add(air);
+      // }
+      // self.listGroup.add(self.device1);
+      // self.listGroup.add(self.device2);
+      // let device22 = self.device2.clone();
+      // device22.translateX(1700);
+      // let device222 = self.device2.clone();
+      // device222.translateX(2550);
+      // self.listGroup.add(device22);
+      // self.listGroup.add(device222);
+      // self.listGroup.add(self.device3);
+      // self.listGroup.add(self.device4);
+      // let geometry = new THREE.BoxGeometry(700, 4000, 740); //创建一个立方体几何对象Geometry
+      // let material = new THREE.MeshLambertMaterial({
+      //   color: "#ccc"
+      // }); //材质对象Material
+      // let mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
+      // mesh.name = "擎天柱";
+      // mesh.translateX(10000);
+      // mesh.translateZ(7800);
+      // mesh.translateY(-2000);
+      // this.listGroup.add(mesh); //网格模型添加到场景中
       this.scene.add(this.listGroup);
 
       // 整流器

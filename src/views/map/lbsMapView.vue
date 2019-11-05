@@ -806,8 +806,8 @@ export default {
         zoom: 13,
         zooms: [11, 20],
         center: [113.370565, 23.122751],
-        mapStyle: "amap://styles/macaron",
-        // showIndoorMap: false,
+        // mapStyle: "amap://styles/macaron",
+        showIndoorMap: true,
         // features: ['road', 'bg'],
         defaultCursor: "pointer",
         turboMode: true,
@@ -1331,8 +1331,9 @@ export default {
   margin: auto;
   width: 40px;
   padding: 0;
-  /* font-weight: 600; */
-  text-shadow: 0 0 0.5em #359cdf, -0 -0 0.5em #359cdf;
+  font-weight: 600;
+  font-size: 14px;
+  /* text-shadow: 0 0 0.5em #359cdf, -0 -0 0.5em #359cdf; */
 }
 .cesiumContainer2 .amap-icon img {
   height: 2.6rem;

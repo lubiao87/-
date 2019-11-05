@@ -1,12 +1,11 @@
 import Vue from "vue";
 import Router from "vue-router";
-import resourcePlanList from './views/resourcePlanning/resourcePlanList' // 资源管理 /资源规划
-import maintainList from './views/maintainList/maintainList' // 资源管理 /可维护列表
+import resourcePlanList from "./views/resourcePlanning/resourcePlanList"; // 资源管理 /资源规划
+import maintainList from "./views/maintainList/maintainList"; // 资源管理 /可维护列表
 
-import preemptMessage from './views/preemptMessage/preemptMessage'//资源管理 /预占设备信息
-import userManagement from './views/naturalManagement/application' // 资源管理 /申请单信息
-import requestMsg from './views/naturalManagement/requestMsg' // 资源管理 /详情
-
+import preemptMessage from "./views/preemptMessage/preemptMessage"; //资源管理 /预占设备信息
+import userManagement from "./views/naturalManagement/application"; // 资源管理 /申请单信息
+import requestMsg from "./views/naturalManagement/requestMsg"; // 资源管理 /详情
 
 Vue.use(Router);
 
@@ -55,8 +54,8 @@ const routes = [
         }
       },
       {
-        path: '/resourcePlanList',
-        name: 'resourcePlanList',
+        path: "/resourcePlanList",
+        name: "resourcePlanList",
         component: resourcePlanList,
         meta: {
           auth: false, // 这里设置，当前路由需要校验
@@ -64,8 +63,8 @@ const routes = [
         }
       },
       {
-        path: '/maintainList',
-        name: 'maintainList',
+        path: "/maintainList",
+        name: "maintainList",
         component: maintainList,
         meta: {
           auth: false, // 这里设置，当前路由需要校验
@@ -78,37 +77,37 @@ const routes = [
         component: () => import("./views/webGL/build-model.vue"),
         meta: {
           auth: false,
-          keepAlive: true
+          keepAlive: false
         }
-      }
-	  //  资源管理模块
-      ,{
-        path: '/application',
-        name: 'application',
+      },
+      //  资源管理模块
+      {
+        path: "/application",
+        name: "application",
         component: userManagement,
         meta: {
           auth: false, // 这里设置，当前路由需要校验
           keepAlive: true
         }
-      }
-      ,{
-        path: '/requestMsg',
-        name: 'requestMsg',
+      },
+      {
+        path: "/requestMsg",
+        name: "requestMsg",
         component: requestMsg,
         meta: {
           auth: false, // 这里设置，当前路由需要校验
           keepAlive: false
         }
-      }
-	  //预占设备信息
-	  ,{
-          path: '/preemptMessage',
-          name: 'preemptMessage',
-          component: preemptMessage,
-          meta: {
-            auth: false, // 这里设置，当前路由需要校验
-            keepAlive: true
-          }
+      },
+      //预占设备信息
+      {
+        path: "/preemptMessage",
+        name: "preemptMessage",
+        component: preemptMessage,
+        meta: {
+          auth: false, // 这里设置，当前路由需要校验
+          keepAlive: true
+        }
       }
     ]
   },

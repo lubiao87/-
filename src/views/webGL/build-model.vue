@@ -7,7 +7,48 @@
     element-loading-background="rgba(0, 0, 0, 0.8)"
   >
     <div style="width: 100%;height:100%;" id="buildModel"></div>
+    <!-- 右键html -->
+    <div class="menu" v-show="showMenu" ref="menu">
+      <ul>
+        <li @click="deleteMeth">删除机架</li>
+        <li @click="setMethPositon">修改位置</li>
+        <li @click="showProps">查看详情</li>
+      </ul>
+    </div>
+    <!-- 列头柜鼠标悬停html -->
+    <div class="menu menu2" v-show="showMenu2" ref="menu2">
+      <ul>
+        <li
+          v-for="(item, index) in dataMeth"
+          :key="index"
+          @click="zlLiFn(item)"
+        >
+          <span class="raius"></span>
+          <span class="dowon"></span>
+          {{ item }}
+        </li>
+      </ul>
+      <div class="close-btn" @click="hineMenu2" v-show="freezeShowMenu2">X</div>
+    </div>
+    <!-- 机柜悬停html -->
+    <div class="menu menu3" v-show="showMenu3" ref="menu3">
+      <ul>
+        <li><label for="">名称：</label> RSS02-04</li>
+        <li><label for="">位置：</label> 07行09列</li>
+        <li><label for="">已用/未用：</label> 20U/26U</li>
+      </ul>
+    </div>
     <div class="lable-title">{{ floorName }}</div>
+    <!-- 机柜容量视图 -->
+    <el-switch
+      v-show="floorIndex > -1"
+      style="display: block"
+      v-model="capacityViewBtn"
+      class="capacity-btn"
+      active-text="机柜容量图"
+      inactive-text="模块间视图"
+    >
+    </el-switch>
     <!-- 右边收缩栏开始 -->
     <div
       class="ui-shrinkBar"
@@ -62,7 +103,7 @@
         class="show2"
         v-show="moduleStatistics[4].select"
       >
-        <h5 class="ui-city-title ui-height48 none-hover">
+        <h5 class="ui-city-title ui-height48" @click="showBuilding">
           <span class="ui-linebg"></span>{{ boxTitle }}
         </h5>
         <div class="clearfix module-statis" style="padding-left: 0;">
@@ -92,7 +133,7 @@
       placeholder="请选择机柜类型"
       class="model-select"
       size="large"
-      v-show="floorIndex > -1"
+      v-show="floorIndex > -1 && !capacityViewBtn"
     >
       <el-option
         v-for="item in cabinetType"
@@ -104,34 +145,6 @@
       </el-option>
     </el-select>
     <popup :propsFlag="propsFlag" />
-    <div class="menu" v-show="showMenu" ref="menu">
-      <ul>
-        <li @click="deleteMeth">删除机架</li>
-        <li @click="setMethPositon">修改位置</li>
-        <li @click="showProps">查看详情</li>
-      </ul>
-    </div>
-    <div class="menu menu2" v-show="showMenu2" ref="menu2">
-      <ul>
-        <li
-          v-for="(item, index) in dataMeth"
-          :key="index"
-          @click="zlLiFn(item)"
-        >
-          <span class="raius"></span>
-          <span class="dowon"></span>
-          {{ item }}
-        </li>
-      </ul>
-      <div class="close-btn" @click="hineMenu2" v-show="freezeShowMenu2">X</div>
-    </div>
-    <div class="menu menu3" v-show="showMenu3" ref="menu3">
-      <ul>
-        <li><label for="">名称：</label> RSS02-04</li>
-        <li><label for="">位置：</label> 07行09列</li>
-        <li><label for="">已用/未用：</label> 20U/26U</li>
-      </ul>
-    </div>
   </div>
   <!-- 右边收缩栏结束 -->
 </template>
@@ -164,6 +177,7 @@ export default {
   },
   data() {
     return {
+      capacityViewBtn: false,
       freezeShowMenu2: false,
       showMenu3: false,
       boxTitle: "机房列表",
@@ -281,7 +295,7 @@ export default {
         },
         {
           name: "DDF机架 - 12个", // 机柜类型
-          size: [0.6, 0.24, 2.6], // 长宽高
+          size: [0.3, 0.24, 2.6], // 长宽高
           index: 4
         },
         {
@@ -296,12 +310,12 @@ export default {
         },
         {
           name: "ODF机架 - 32个", // 机柜类型
-          size: [0.6, 0.6, 2.6], // 长宽高
+          size: [0.3, 0.84, 2.6], // 长宽高
           index: 7
         },
         {
           name: "配线机架 - 12个", // 机柜类型
-          size: [0.5, 0.3, 2.6], // 长宽高
+          size: [0.6, 0.6, 2.6], // 长宽高
           index: 8
         }
       ],
@@ -324,42 +338,48 @@ export default {
           posX: "0.9",
           posY: "0",
           type: "标准机架",
-          name: "RSS02-02"
+          name: "RSS02-02",
+          capacity: 0.6
         },
         {
           index: 2,
           posX: "1.5",
           posY: "0",
           type: "标准机架",
-          name: "RSS01-04"
+          name: "RSS01-04",
+          capacity: 0.6
         },
         {
           index: 2,
           posX: "2.2",
           posY: "0",
           type: "标准机架",
-          name: "RSS01-05"
+          name: "RSS01-05",
+          capacity: 0.5
         },
         {
           index: 2,
           posX: "2.9",
           posY: "0",
           type: "标准机架",
-          name: "RSS01-01"
+          name: "RSS01-01",
+          capacity: 0.6
         },
         {
           index: 2,
           posX: "3.5",
           posY: "0",
           type: "标准机架",
-          name: "RSS01-03"
+          name: "RSS01-03",
+          capacity: 0.6
         },
         {
           index: 2,
           posX: "4.1",
           posY: "0",
           type: "标准机架",
-          name: "RSS01-02"
+          name: "RSS01-02",
+          capacity: 0.6
         },
 
         {
@@ -367,24 +387,48 @@ export default {
           posX: "8.6",
           posY: "0",
           type: "标准机架",
-          name: "RSS02-01"
+          name: "RSS02-01",
+          capacity: 0.6
         },
-        { index: 2, posX: "9.2", posY: "0", type: "标准机架", name: "ZTE03" },
-        { index: 2, posX: "9.8", posY: "0", type: "标准机架", name: "HW05-03" },
+        {
+          index: 2,
+          posX: "9.2",
+          posY: "0",
+          type: "标准机架",
+          name: "ZTE03",
+          capacity: 0.75
+        },
+        {
+          index: 2,
+          posX: "9.8",
+          posY: "0",
+          type: "标准机架",
+          name: "HW05-03",
+          capacity: 0.9
+        },
         {
           index: 2,
           posX: "10.4",
           posY: "0",
           type: "标准机架",
-          name: "HW05-03"
+          name: "HW05-03",
+          capacity: 0.5
         },
-        { index: 2, posX: "11", posY: "0", type: "标准机架", name: "HW05-03" },
+        {
+          index: 2,
+          posX: "11",
+          posY: "0",
+          type: "标准机架",
+          name: "HW05-03",
+          capacity: 0.6
+        },
         {
           index: 2,
           posX: "11.6",
           posY: "0",
           type: "标准机架",
-          name: "HW05-03"
+          name: "HW05-03",
+          capacity: 0.3
         },
         {
           index: 6,
@@ -407,266 +451,304 @@ export default {
           posX: "0.6",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF02-01"
+          name: "DDF02-01",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "0.9",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-02"
+          name: "DDF03-02",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "1.2",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-01"
+          name: "DDF03-01",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "1.5",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-04"
+          name: "DDF03-04",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "1.8",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-05"
+          name: "DDF03-05",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "2.1",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-06"
+          name: "DDF03-06",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "2.4",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-07"
+          name: "DDF03-07",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "2.7",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-08"
+          name: "DDF03-08",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "3",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-09"
+          name: "DDF03-09",
+          capacity: 0.6
         },
         {
           index: 4,
           posX: "3.3",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-10"
+          name: "DDF03-10",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "3.6",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-11"
+          name: "DDF03-11",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "3.9",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-12"
+          name: "DDF03-12",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "4.2",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-13"
+          name: "DDF03-13",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "4.5",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-14"
+          name: "DDF03-14",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "4.8",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-15"
+          name: "DDF03-15",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "5.1",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-16"
+          name: "DDF03-16",
+          capacity: 0.6
         },
         {
           index: 4,
           posX: "5.4",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-17"
+          name: "DDF03-17",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "5.7",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-18"
+          name: "DDF03-18",
+          capacity: 0.6
         },
         {
           index: 4,
           posX: "6",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-19"
+          name: "DDF03-19",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "6.3",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-20"
+          name: "DDF03-20",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "6.6",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-21"
+          name: "DDF03-21",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "6.9",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-22"
+          name: "DDF03-22",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "7.2",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-21"
+          name: "DDF03-21",
+          capacity: 0.7
         },
         {
           index: 4,
           posX: "7.5",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-22"
+          name: "DDF03-22",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "7.8",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-23"
+          name: "DDF03-23",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "8.1",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-24"
+          name: "DDF03-24",
+          capacity: 0.4
         },
         {
           index: 4,
           posX: "8.4",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-25"
+          name: "DDF03-25",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "8.7",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-26"
+          name: "DDF03-26",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "9",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-27"
+          name: "DDF03-27",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "9.3",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-28"
+          name: "DDF03-28",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "9.6",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-28"
+          name: "DDF03-28",
+          capacity: 0.4
         },
         {
           index: 4,
           posX: "9.9",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-29"
+          name: "DDF03-29",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "10.2",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-30"
+          name: "DDF03-30",
+          capacity: 0.3
         },
         {
           index: 4,
           posX: "10.5",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-31"
+          name: "DDF03-31",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "10.8",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-32"
+          name: "DDF03-32",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "11.1",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-33"
+          name: "DDF03-33",
+          capacity: 0.6
         },
         {
           index: 4,
           posX: "11.4",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-36"
+          name: "DDF03-36",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "11.7",
           posY: "2.2",
           type: "DDF机架",
-          name: "DDF03-37"
+          name: "DDF03-37",
+          capacity: 0.5
         },
         {
           index: 6,
@@ -681,273 +763,312 @@ export default {
           posX: "0.6",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF02-07"
+          name: "DDF02-07",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "0.9",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-08"
+          name: "DDF03-08",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "1.2",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-09"
+          name: "DDF03-09",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "1.5",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-11"
+          name: "DDF03-11",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "1.8",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-12"
+          name: "DDF03-12",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "2.1",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-13"
+          name: "DDF03-13",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "2.4",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-14"
+          name: "DDF03-14",
+          capacity: 0.7
         },
         {
           index: 4,
           posX: "2.7",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-15"
+          name: "DDF03-15",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "3",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-16"
+          name: "DDF03-16",
+          capacity: 0.8
         },
         {
           index: 4,
           posX: "3.3",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-17"
+          name: "DDF03-17",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "3.6",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-18"
+          name: "DDF03-18",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "3.9",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-19"
+          name: "DDF03-19",
+          capacity: 0.6
         },
         {
           index: 4,
           posX: "4.2",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-20"
+          name: "DDF03-20",
+          capacity: 0.8
         },
         {
           index: 4,
           posX: "4.5",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-21"
+          name: "DDF03-21",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "4.8",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-22"
+          name: "DDF03-22",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "5.1",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-23"
+          name: "DDF03-23",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "5.4",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-24"
+          name: "DDF03-24",
+          capacity: 0.6
         },
         {
           index: 4,
           posX: "5.7",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-25"
+          name: "DDF03-25",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "6",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-26"
+          name: "DDF03-26",
+          capacity: 0.4
         },
         {
           index: 4,
           posX: "6.3",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-27"
+          name: "DDF03-27",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "6.6",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-28"
+          name: "DDF03-28",
+          capacity: 0.7
         },
         {
           index: 4,
           posX: "6.9",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-29"
+          name: "DDF03-29",
+          capacity: 0.8
         },
         {
           index: 4,
           posX: "7.2",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-30"
+          name: "DDF03-30",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "7.5",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-31"
+          name: "DDF03-31",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "7.8",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-32"
+          name: "DDF03-32",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "8.1",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-33"
+          name: "DDF03-33",
+          capacity: 0.6
         },
         {
           index: 4,
           posX: "8.4",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-34"
+          name: "DDF03-34",
+          capacity: 0.4
         },
         {
           index: 4,
           posX: "8.7",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-35"
+          name: "DDF03-35",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "9",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-36"
+          name: "DDF03-36",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "9.3",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-36"
+          name: "DDF03-36",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "9.6",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-37"
+          name: "DDF03-37",
+          capacity: 0.6
         },
         {
           index: 4,
           posX: "9.9",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-38"
+          name: "DDF03-38",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "9.9",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-39"
+          name: "DDF03-39",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "10.2",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-40"
+          name: "DDF03-40",
+          capacity: 0.9
         },
         {
           index: 4,
           posX: "10.5",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-41"
+          name: "DDF03-41",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "10.8",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-42"
+          name: "DDF03-42",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "11.1",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-43"
+          name: "DDF03-43",
+          capacity: 0.5
         },
         {
           index: 4,
           posX: "11.4",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-44"
+          name: "DDF03-44",
+          capacity: 0.7
         },
         {
           index: 4,
           posX: "11.7",
           posY: "2.6",
           type: "DDF机架",
-          name: "DDF03-45"
+          name: "DDF03-45",
+          capacity: 0.5
         },
 
         // 第四排
@@ -963,161 +1084,184 @@ export default {
           posX: "0.6",
           posY: "4.0",
           type: "空调",
-          name: "DDF03-04"
+          name: "DDF03-04",
+          capacity: 0.8
         },
         {
           index: 5,
           posX: "1.1",
           posY: "4.0",
           type: "空调",
-          name: "DDF03-05"
+          name: "DDF03-05",
+          capacity: 0.5
         },
         {
           index: 5,
           posX: "1.6",
           posY: "4.0",
           type: "空调",
-          name: "DDF03-06"
+          name: "DDF03-06",
+          capacity: 0.5
         },
         {
           index: 5,
           posX: "2.1",
           posY: "4.0",
           type: "空调",
-          name: "DDF03-07"
+          name: "DDF03-07",
+          capacity: 0.5
         },
         {
           index: 5,
           posX: "2.6",
           posY: "4.0",
           type: "空调",
-          name: "DDF03-08"
+          name: "DDF03-08",
+          capacity: 0.6
         },
         {
           index: 5,
           posX: "3.1",
           posY: "4.0",
           type: "空调",
-          name: "DDF03-09"
+          name: "DDF03-09",
+          capacity: 0.5
         },
         {
           index: 5,
           posX: "3.6",
           posY: "4.0",
           type: "空调",
-          name: "DDF03-10"
+          name: "DDF03-10",
+          capacity: 0.5
         },
         {
           index: 5,
           posX: "4.1",
           posY: "4.0",
           type: "空调",
-          name: "DDF03-11"
+          name: "DDF03-11",
+          capacity: 0.5
         },
         {
           index: 5,
           posX: "4.6",
           posY: "4.0",
           type: "空调",
-          name: "DDF03-12"
+          name: "DDF03-12",
+          capacity: 0.5
         },
         {
           index: 5,
           posX: "5.1",
           posY: "4.0",
           type: "空调",
-          name: "DDF03-13"
+          name: "DDF03-13",
+          capacity: 0.5
         },
         {
           index: 5,
           posX: "5.6",
           posY: "4.0",
           type: "空调",
-          name: "DDF03-14"
+          name: "DDF03-14",
+          capacity: 0.5
         },
         {
           index: 5,
           posX: "6.1",
           posY: "4.0",
           type: "空调",
-          name: "DDF03-15"
+          name: "DDF03-15",
+          capacity: 0.5
         },
         {
           index: 5,
           posX: "6.6",
           posY: "4.0",
           type: "空调",
-          name: "DDF03-16"
+          name: "DDF03-16",
+          capacity: 0.5
         },
         {
           index: 5,
           posX: "7.1",
           posY: "4.0",
           type: "空调",
-          name: "DDF03-17"
+          name: "DDF03-17",
+          capacity: 0.5
         },
         {
           index: 5,
           posX: "7.6",
           posY: "4.0",
           type: "空调",
-          name: "DDF03-18"
+          name: "DDF03-18",
+          capacity: 0.5
         },
         {
           index: 5,
           posX: "8.1",
           posY: "4.0",
           type: "空调",
-          name: "DDF03-19"
+          name: "DDF03-19",
+          capacity: 0.5
         },
         {
           index: 5,
           posX: "8.6",
           posY: "4.0",
           type: "空调",
-          name: "DDF03-20"
+          name: "DDF03-20",
+          capacity: 0.5
         },
         {
           index: 5,
           posX: "9.1",
           posY: "4.0",
           type: "空调",
-          name: "DDF03-21"
+          name: "DDF03-21",
+          capacity: 0.5
         },
         {
           index: 5,
           posX: "9.6",
           posY: "4.0",
           type: "空调",
-          name: "DDF03-22"
+          name: "DDF03-22",
+          capacity: 0.5
         },
         {
           index: 5,
           posX: "10.1",
           posY: "4.0",
           type: "空调",
-          name: "DDF03-23"
+          name: "DDF03-23",
+          capacity: 0.5
         },
         {
           index: 5,
           posX: "10.6",
           posY: "4.0",
           type: "空调",
-          name: "DDF03-24"
+          name: "DDF03-24",
+          capacity: 0.5
         },
         {
           index: 5,
           posX: "11.1",
           posY: "4.0",
           type: "空调",
-          name: "DDF03-25"
+          name: "DDF03-25",
+          capacity: 0.5
         },
         {
           index: 5,
           posX: "11.6",
           posY: "4.0",
           type: "空调",
-          name: "DDF03-26"
+          name: "DDF03-26",
+          capacity: 0.5
         },
         {
           index: 6,
@@ -1140,98 +1284,112 @@ export default {
           posX: "0.85",
           posY: "6.0",
           type: "ODF机架",
-          name: "ODF-02"
+          name: "ODF-02",
+          capacity: 0.5
         },
         {
           index: 7,
           posX: "1.7",
           posY: "6.0",
           type: "ODF机架",
-          name: "ODF-03"
+          name: "ODF-03",
+          capacity: 0.5
         },
         {
           index: 7,
           posX: "2.55",
           posY: "6.0",
           type: "ODF机架",
-          name: "ODF-04"
+          name: "ODF-04",
+          capacity: 0.5
         },
         {
           index: 7,
           posX: "3.4",
           posY: "6.0",
           type: "ODF机架",
-          name: "ODF-05"
+          name: "ODF-05",
+          capacity: 0.5
         },
         {
           index: 7,
           posX: "4.25",
           posY: "6.0",
           type: "ODF机架",
-          name: "ODF-06"
+          name: "ODF-06",
+          capacity: 0.5
         },
         {
           index: 7,
           posX: "5.1",
           posY: "6.0",
           type: "ODF机架",
-          name: "ODF-07"
+          name: "ODF-07",
+          capacity: 0.5
         },
         {
           index: 7,
           posX: "5.95",
           posY: "6.0",
           type: "ODF机架",
-          name: "ODF-08"
+          name: "ODF-08",
+          capacity: 0.5
         },
         {
           index: 7,
           posX: "6.8",
           posY: "6.0",
           type: "ODF机架",
-          name: "ODF-09"
+          name: "ODF-09",
+          capacity: 0.5
         },
         {
           index: 7,
           posX: "7.65",
           posY: "6.0",
           type: "ODF机架",
-          name: "ODF-10"
+          name: "ODF-10",
+          capacity: 0.5
         },
         {
           index: 7,
           posX: "8.4",
           posY: "6.0",
           type: "ODF机架",
-          name: "ODF-10"
+          name: "ODF-10",
+          capacity: 0.5
         },
         {
           index: 7,
           posX: "9.25",
           posY: "6.0",
           type: "ODF机架",
-          name: "ODF-11"
+          name: "ODF-11",
+          capacity: 0.5
         },
         {
           index: 7,
           posX: "10.1",
           posY: "6.0",
           type: "ODF机架",
-          name: "ODF-12"
+          name: "ODF-12",
+          capacity: 0.5
         },
         {
           index: 7,
           posX: "10.95",
           posY: "6.0",
           type: "ODF机架",
-          name: "ODF-13"
+          name: "ODF-13",
+          capacity: 0.5
         },
         {
           index: 6,
           posX: "11.8",
           posY: "6.0",
           type: "配线机架",
-          name: "ZTE-23"
+          name: "ZTE-23",
+          capacity: 0.5
         },
         // 第六排
         {
@@ -1239,63 +1397,72 @@ export default {
           posX: "0",
           posY: "8.0",
           type: "配线机架",
-          name: "ZTE-01"
+          name: "ZTE-01",
+          capacity: 0.5
         },
         {
           index: 8,
           posX: "0.6",
           posY: "8.0",
           type: "配线机架",
-          name: "ZTE-02"
+          name: "ZTE-02",
+          capacity: 0.5
         },
         {
           index: 8,
           posX: "1.2",
           posY: "8.0",
           type: "配线机架",
-          name: "ZTE-03"
+          name: "ZTE-03",
+          capacity: 0.5
         },
         {
           index: 8,
           posX: "1.8",
           posY: "8.0",
           type: "配线机架",
-          name: "ZTE-04"
+          name: "ZTE-04",
+          capacity: 0.5
         },
         {
           index: 8,
           posX: "2.4",
           posY: "8.0",
           type: "配线机架",
-          name: "ZTE-05"
+          name: "ZTE-05",
+          capacity: 0.5
         },
         {
           index: 8,
           posX: "3",
           posY: "8.0",
           type: "配线机架",
-          name: "ZTE-06"
+          name: "ZTE-06",
+          capacity: 0.5
         },
         {
           index: 8,
           posX: "3.6",
           posY: "8.0",
           type: "配线机架",
-          name: "ZTE-07"
+          name: "ZTE-07",
+          capacity: 0.5
         },
         {
           index: 8,
           posX: "4.2",
           posY: "8.0",
           type: "配线机架",
-          name: "ZTE-08"
+          name: "ZTE-08",
+          capacity: 0.5
         },
         {
           index: 8,
           posX: "4.8",
           posY: "8.0",
           type: "配线机架",
-          name: "ZTE-09"
+          name: "ZTE-09",
+          capacity: 0.5
         },
 
         {
@@ -1303,70 +1470,80 @@ export default {
           posX: "6.6",
           posY: "8.0",
           type: "配线机架",
-          name: "ZTE-13"
+          name: "ZTE-13",
+          capacity: 0.5
         },
         {
           index: 8,
           posX: "7.2",
           posY: "8.0",
           type: "配线机架",
-          name: "ZTE-14"
+          name: "ZTE-14",
+          capacity: 0.5
         },
         {
           index: 8,
           posX: "7.8",
           posY: "8.0",
           type: "配线机架",
-          name: "ZTE-15"
+          name: "ZTE-15",
+          capacity: 0.5
         },
         {
           index: 8,
           posX: "8.4",
           posY: "8.0",
           type: "配线机架",
-          name: "ZTE-16"
+          name: "ZTE-16",
+          capacity: 0.5
         },
         {
           index: 8,
           posX: "9",
           posY: "8.0",
           type: "配线机架",
-          name: "ZTE-17"
+          name: "ZTE-17",
+          capacity: 0.5
         },
         {
           index: 8,
           posX: "9.6",
           posY: "8.0",
           type: "配线机架",
-          name: "ZTE-19"
+          name: "ZTE-19",
+          capacity: 0.5
         },
         {
           index: 8,
           posX: "10.2",
           posY: "8.0",
           type: "配线机架",
-          name: "ZTE-20"
+          name: "ZTE-20",
+          capacity: 0.5
         },
         {
           index: 8,
           posX: "10.8",
           posY: "8.0",
           type: "配线机架",
-          name: "ZTE-21"
+          name: "ZTE-21",
+          capacity: 0.5
         },
         {
           index: 8,
           posX: "11.4",
           posY: "8.0",
           type: "配线机架",
-          name: "ZTE-22"
+          name: "ZTE-22",
+          capacity: 0.5
         },
         {
           index: 6,
           posX: "12",
           posY: "8.0",
           type: "列头机架",
-          name: "ZTE-23"
+          name: "ZTE-23",
+          capacity: 0.5
         },
 
         // 第七排
@@ -1384,7 +1561,8 @@ export default {
           posY: "10",
           type: "标准机架",
           name: "RSS02-02",
-          parentId: 22
+          parentId: 22,
+          capacity: 0.7
         },
         {
           index: 1,
@@ -1392,7 +1570,8 @@ export default {
           posY: "10",
           type: "标准机架",
           name: "RSS02-03",
-          parentId: 22
+          parentId: 22,
+          capacity: 0.6
         },
         {
           index: 1,
@@ -1400,7 +1579,8 @@ export default {
           posY: "10",
           type: "标准机架",
           name: "RSS02-04",
-          parentId: 22
+          parentId: 22,
+          capacity: 0.9
         },
         {
           index: 1,
@@ -1408,7 +1588,8 @@ export default {
           posY: "10",
           type: "标准机架",
           name: "RSS02-05",
-          parentId: 22
+          parentId: 22,
+          capacity: 0.5
         },
         {
           index: 1,
@@ -1416,7 +1597,8 @@ export default {
           posY: "10",
           type: "标准机架",
           name: "RSS02-06",
-          parentId: 22
+          parentId: 22,
+          capacity: 0.6
         },
         {
           index: 1,
@@ -1424,98 +1606,112 @@ export default {
           posY: "10",
           type: "标准机架",
           name: "RSS02-07",
-          parentId: 22
+          parentId: 22,
+          capacity: 0.6
         },
         {
           index: 1,
           posX: "4.2",
           posY: "10",
           type: "标准机架",
-          name: "RSS02-08"
+          name: "RSS02-08",
+          capacity: 0.6
         },
         {
           index: 1,
           posX: "4.8",
           posY: "10",
           type: "标准机架",
-          name: "RSS02-09"
+          name: "RSS02-09",
+          capacity: 0.6
         },
         {
           index: 1,
           posX: "5.4",
           posY: "10",
           type: "标准机架",
-          name: "RSS02-10"
+          name: "RSS02-10",
+          capacity: 0.5
         },
         {
           index: 1,
           posX: "6",
           posY: "10",
           type: "标准机架",
-          name: "RSS02-11"
+          name: "RSS02-11",
+          capacity: 0.6
         },
         {
           index: 1,
           posX: "6.6",
           posY: "10",
           type: "标准机架",
-          name: "RSS02-12"
+          name: "RSS02-12",
+          capacity: 0.6
         },
         {
           index: 1,
           posX: "7.2",
           posY: "10",
           type: "标准机架",
-          name: "RSS02-13*07行09列*2U*8U"
+          name: "RSS02-13*07行09列*2U*8U",
+          capacity: 0.6
         },
         {
           index: 1,
           posX: "7.8",
           posY: "10",
           type: "标准机架",
-          name: "RSS02-14"
+          name: "RSS02-14",
+          capacity: 0.6
         },
         {
           index: 1,
           posX: "8.4",
           posY: "10",
           type: "标准机架",
-          name: "RSS02-15"
+          name: "RSS02-15",
+          capacity: 0.6
         },
         {
           index: 1,
           posX: "9",
           posY: "10",
           type: "标准机架",
-          name: "RSS02-16"
+          name: "RSS02-16",
+          capacity: 0.6
         },
         {
           index: 1,
           posX: "9.6",
           posY: "10",
           type: "标准机架",
-          name: "RSS02-17"
+          name: "RSS02-17",
+          capacity: 0.6
         },
         {
           index: 1,
           posX: "10.2",
           posY: "10",
           type: "标准机架",
-          name: "RSS02-18"
+          name: "RSS02-18",
+          capacity: 0.6
         },
         {
           index: 1,
           posX: "10.8",
           posY: "10",
           type: "标准机架",
-          name: "RSS02-19"
+          name: "RSS02-19",
+          capacity: 0.6
         },
         {
           index: 1,
           posX: "11.4",
           posY: "10",
           type: "标准机架",
-          name: "RSS02-20"
+          name: "RSS02-20",
+          capacity: 0.6
         },
         {
           index: 6,
@@ -1537,133 +1733,152 @@ export default {
           posX: "0.6",
           posY: "12",
           type: "标准机架",
-          name: "RSS02-02"
+          name: "RSS02-02",
+          capacity: 0.6
         },
         {
           index: 3,
           posX: "1.2",
           posY: "12",
           type: "标准机架",
-          name: "RSS02-03"
+          name: "RSS02-03",
+          capacity: 0.3
         },
         {
           index: 3,
           posX: "1.8",
           posY: "12",
           type: "标准机架",
-          name: "RSS02-04"
+          name: "RSS02-04",
+          capacity: 0.6
         },
         {
           index: 3,
           posX: "2.4",
           posY: "12",
           type: "标准机架",
-          name: "RSS02-06"
+          name: "RSS02-06",
+          capacity: 0.6
         },
         {
           index: 3,
           posX: "3",
           posY: "12",
           type: "标准机架",
-          name: "RSS02-07"
+          name: "RSS02-07",
+          capacity: 0.6
         },
         {
           index: 3,
           posX: "3.6",
           posY: "12",
           type: "标准机架",
-          name: "RSS02-08"
+          name: "RSS02-08",
+          capacity: 0.8
         },
         {
           index: 3,
           posX: "4.2",
           posY: "12",
           type: "标准机架",
-          name: "RSS02-09"
+          name: "RSS02-09",
+          capacity: 0.6
         },
         {
           index: 3,
           posX: "4.8",
           posY: "12",
           type: "标准机架",
-          name: "RSS02-10"
+          name: "RSS02-10",
+          capacity: 0.6
         },
         {
           index: 3,
           posX: "5.4",
           posY: "12",
           type: "标准机架",
-          name: "RSS02-11"
+          name: "RSS02-11",
+          capacity: 0.6
         },
         {
           index: 3,
           posX: "6",
           posY: "12",
           type: "标准机架",
-          name: "RSS02-12"
+          name: "RSS02-12",
+          capacity: 0.6
         },
         {
           index: 3,
           posX: "6.6",
           posY: "12",
           type: "标准机架",
-          name: "RSS02-13*07行09列*2U*8U"
+          name: "RSS02-13*07行09列*2U*8U",
+          capacity: 0.5
         },
         {
           index: 3,
           posX: "7.2",
           posY: "12",
           type: "标准机架",
-          name: "RSS02-13*07行09列*2U*8U"
+          name: "RSS02-13*07行09列*2U*8U",
+          capacity: 0.6
         },
         {
           index: 3,
           posX: "7.8",
           posY: "12",
           type: "标准机架",
-          name: "RSS02-13*07行09列*2U*8U"
+          name: "RSS02-13*07行09列*2U*8U",
+          capacity: 0.6
         },
         {
           index: 3,
           posX: "8.4",
           posY: "12",
           type: "标准机架",
-          name: "RSS02-13*07行09列*2U*8U"
+          name: "RSS02-13*07行09列*2U*8U",
+          capacity: 0.6
         },
         {
           index: 3,
           posX: "9",
           posY: "12",
           type: "标准机架",
-          name: "RSS02-13*07行09列*2U*8U"
+          name: "RSS02-13*07行09列*2U*8U",
+          capacity: 0.6
         },
         {
           index: 3,
           posX: "9.6",
           posY: "12",
           type: "标准机架",
-          name: "RSS02-13*07行09列*2U*8U"
+          name: "RSS02-13*07行09列*2U*8U",
+          capacity: 0.7
         },
         {
           index: 3,
           posX: "10.2",
           posY: "12",
           type: "标准机架",
-          name: "RSS02-13*07行09列*2U*8U"
+          name: "RSS02-13*07行09列*2U*8U",
+          capacity: 0.6
         },
         {
           index: 3,
           posX: "10.8",
           posY: "12",
           type: "标准机架",
-          name: "RSS02-13*07行09列*2U*8U"
+          name: "RSS02-13*07行09列*2U*8U",
+          capacity: 0.7
         },
         {
           index: 3,
           posX: "11.4",
           posY: "12",
           type: "标准机架",
-          name: "RSS02-13*07行09列*2U*8U"
+          name: "RSS02-13*07行09列*2U*8U",
+          capacity: 0.6
         },
         {
           index: 6,
@@ -1765,9 +1980,9 @@ export default {
     zlLiFn(item) {
       const that = this;
       if (item === "整流器01") {
-        console.log("你想看整流器？");
-        console.log("this.meshZL.position", this.meshZL);
-        this.camera.lookAt(this.meshZL.position);
+        // console.log("你想看整流器？");
+        // console.log("this.meshZL.position", this.meshZL);
+        // this.camera.lookAt(this.meshZL.position);
         this.scene.position.set(
           -this.meshZL.position.x,
           -this.meshZL.position.y,
@@ -1983,43 +2198,12 @@ export default {
     loaderCabinet3(obj) {
       this.cabinet3 = obj;
     },
-    // loaderAir(obj) {
-    //   this.Air = obj;
-    //   // console.log(obj)
-    //   this.Air.name = "空调柜";
-    // },
-    loaderDevice1(obj) {
-      this.device1 = obj;
-      this.device1.name = "配电柜呢1";
-      this.device1.translateY(-3900);
-    },
-    loaderDevice2(obj) {
-      this.device2 = obj;
-      this.device2.name = "配电柜呢2";
-      this.device2.translateY(-3900);
-    },
-    loaderDevice3(obj) {
-      this.device3 = obj;
-      this.device3.name = "配电柜呢3";
-      this.device3.translateY(-3900);
-    },
-    loaderDevice4(obj) {
-      this.device4 = obj;
-      this.device4.name = "配电柜呢4";
-      this.device4.translateY(-3900);
-    },
     loaderJIGUI(obj) {
       // obj.children[0].material[0].color.set("#1e222b"); // 设置材质颜色
       this.JIGUI = obj;
       this.JIGUI.name = "机柜类型all";
       // this.scene.add(this.JIGUI);
     },
-    // loaderGKG(obj) {
-    //   // obj.children[0].material[0].color.set("#1e222b"); // 设置材质颜色
-    //   this.GKGModel = obj;
-    //   this.GKGModel.name = "机柜类型j";
-    //   // this.scene.add(this.GKGModel);
-    // },
     setCamera() {
       let width = document.body.clientWidth; // 窗口宽度
       let height = document.body.clientHeight; // 窗口高度
@@ -2122,7 +2306,7 @@ export default {
     },
     removeObjAll() {
       const self = this;
-      this.removeMan();
+      // this.removeMan();
       const list = this.scene.getObjectByName("设备集合");
       if (list) {
         self.scene.remove(list);
@@ -2137,13 +2321,6 @@ export default {
       self.scene.remove(this.FloorOne);
       self.scene.remove(this.FloorThree);
       self.scene.remove(this.FloorFour);
-      // self.scene.remove(this.JIGUI);
-    },
-    removeMan() {
-      // 删除人物
-      if (this.scene.getObjectByName("跳舞人")) {
-        this.scene.remove(this.personPre);
-      }
     },
     // 右键查看机架详情
     showProps() {
@@ -2242,7 +2419,8 @@ export default {
       mesh.rotateX(-Math.PI / 2);
       // let positionY = -2700
       // if (this.cabinetType[item.index].size[2] < 2500) {
-      let positionY = -2700 + (this.cabinetType[item.index].size[2] - 2500) / 2;
+      // let positionY = -2700 + (this.cabinetType[item.index].size[2] - 2500) / 2;
+      let positionY = -3600 + this.cabinetType[item.index].size[2] / 2;
       // }
       mesh.position.set(
         -item.position[1] + 11200,
@@ -2280,6 +2458,8 @@ export default {
       // if (!this.listGroup) {
       this.listGroup = new THREE.Group();
       this.listGroup.name = "设备集合";
+      this.capacityGroup = new THREE.Group();
+      this.capacityGroup.name = "容量集合";
       // this.listGroup.material.transparent = true
       // this.listGroup.material.opacity = 0
       // this.borderGroup = new THREE.Group();
@@ -2287,60 +2467,12 @@ export default {
       this.cabinetplaced.forEach((item, index) => {
         let mesh = self.addMeth(item, index);
         self.listGroup.add(mesh);
+        if (item.capacity) {
+          self.addBox(item);
+        }
       });
-      // for (let index = 0; index < 4; index++) {
-      //   let air = self.Air.clone();
-      //   air.name = "空调柜呢" + index;
-      //   switch (index) {
-      //     case 0:
-      //       // air.translateZ(-17200); //沿着z轴平移
-      //       air.translateX(-600); //沿着x轴平移
-      //       air.translateY(-3900); //沿着y轴平移
-      //       break;
-      //     case 1:
-      //       // air.translateZ(-17200); //沿着z轴平移
-      //       air.translateX(2500); //沿着x轴平移
-      //       air.translateY(-3900); //沿着y轴平移
-      //       break;
-      //     case 2:
-      //       // air.translateZ(-17200); //沿着z轴平移
-      //       air.translateX(5500); //沿着x轴平移
-      //       air.translateY(-3900); //沿着y轴平移
-      //       break;
-      //     case 3:
-      //       air.translateZ(17000); //沿着z轴平移
-      //       air.translateX(9000); //沿着x轴平移
-      //       air.translateY(-3900); //沿着y轴平移
-      //       air.rotateY(Math.PI); //每次绕y轴旋转180弧度
-      //       break;
-
-      //     default:
-      //       break;
-      //   }
-      //   self.listGroup.add(air);
-      // }
-      // self.listGroup.add(self.device1);
-      // self.listGroup.add(self.device2);
-      // let device22 = self.device2.clone();
-      // device22.translateX(1700);
-      // let device222 = self.device2.clone();
-      // device222.translateX(2550);
-      // self.listGroup.add(device22);
-      // self.listGroup.add(device222);
-      // self.listGroup.add(self.device3);
-      // self.listGroup.add(self.device4);
-      // let geometry = new THREE.BoxGeometry(700, 4000, 740); //创建一个立方体几何对象Geometry
-      // let material = new THREE.MeshLambertMaterial({
-      //   color: "#ccc"
-      // }); //材质对象Material
-      // let mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
-      // mesh.name = "擎天柱";
-      // mesh.translateX(10000);
-      // mesh.translateZ(7800);
-      // mesh.translateY(-2000);
-      // this.listGroup.add(mesh); //网格模型添加到场景中
       this.scene.add(this.listGroup);
-
+      this.controls.addEventListener("change", this.tag);
       // 整流器
       var geometryZL = new THREE.BoxGeometry(1000, 600, 400); //创建一个立方体几何对象Geometry
       var materialZL = new THREE.MeshLambertMaterial({
@@ -2361,9 +2493,38 @@ export default {
       document.oncontextmenu = function() {
         return false;
       };
-      self.renderer.domElement.removeEventListener("mousemove", null);
-      self.renderer.domElement.removeEventListener("dblclick", null);
-      self.renderer.domElement.removeEventListener("mousedown", null);
+      this.removeEventListenerFn();
+      this.addEventListenerFn();
+      // }, 2000);
+
+      // console.log(this.listGroup)
+      // }
+    },
+    removeEventListenerFn() {
+      const self = this;
+      self.renderer.domElement.removeEventListener(
+        "mousemove",
+        self.onDocumentMouseMove,
+        false
+      );
+      self.renderer.domElement.removeEventListener(
+        "dblclick",
+        self.onDocumentDblclick,
+        false
+      );
+      self.renderer.domElement.removeEventListener(
+        "click",
+        self.onDocumentClick,
+        false
+      );
+      self.renderer.domElement.removeEventListener(
+        "mousedown",
+        self.onDocumentMusedown,
+        false
+      );
+    },
+    addEventListenerFn() {
+      const self = this;
       self.renderer.domElement.addEventListener(
         "mousemove",
         self.onDocumentMouseMove,
@@ -2385,10 +2546,73 @@ export default {
         self.onDocumentMusedown,
         false
       );
-      // }, 2000);
+    },
+    addBox(item) {
+      // console.log("addBox", item);
+      let geometry = new THREE.BoxGeometry(
+        this.cabinetType[item.index].size[0],
+        this.cabinetType[item.index].size[2],
+        this.cabinetType[item.index].size[1]
+      ); //创建一个立方体几何对象Geometry
+      let material = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.3
+      }); //材质对象Material
+      let geometry1 = new THREE.BoxGeometry(
+        this.cabinetType[item.index].size[0],
+        item.capacity * this.cabinetType[item.index].size[2],
+        this.cabinetType[item.index].size[1]
+      ); //创建一个立方体几何对象Geometry
+      let material1 = new THREE.MeshBasicMaterial({
+        color: 0x0000ff
+      }); //材质对象Material
+      if (item.capacity > 0.7) {
+        material1 = new THREE.MeshBasicMaterial({
+          color: 0xff3030
+        }); //材质对象Material
+      }
 
-      // console.log(this.listGroup)
-      // }
+      let mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
+      let mesh1 = new THREE.Mesh(geometry1, material1); //网格模型对象Mesh
+
+      let positionY = -3600 + this.cabinetType[item.index].size[2] / 2;
+      let positionY1 =
+        -3600 + (this.cabinetType[item.index].size[2] * item.capacity) / 2;
+
+      mesh.position.set(
+        -item.position[1] + 11200,
+        positionY,
+        item.position[0] + 2300
+      );
+      mesh1.position.set(
+        -item.position[1] + 11200,
+        positionY1,
+        item.position[0] + 2300
+      );
+      this.capacityGroup.add(mesh); //网格模型添加到场景中
+      this.capacityGroup.add(mesh1); //网格模型添加到场景中
+    },
+    tag() {
+      //创建一个三维向量作为世界坐标
+      var worldVector = new THREE.Vector3();
+      //获取网格模型boxMesh的世界坐标，赋值给worldVector
+      if (this.intersectsObj) {
+        this.intersectsObj.getWorldPosition(worldVector);
+        //世界坐标转标准设备坐标，standardVector是WebGL设备坐标
+        var standardVector = worldVector.project(this.camera);
+        // 根据WebGL标准设备坐标standardVector计算div标签在浏览器页面的坐标
+        var a = window.innerWidth / 2;
+        var b = window.innerHeight / 2;
+        var x = Math.round(standardVector.x * a + a); //标准设备坐标转屏幕坐标
+        var y = Math.round(-standardVector.y * b + b); //标准设备坐标转屏幕坐标
+        /**
+         * 设置标签元素的位置
+         */
+        this.$refs.menu2.style.left = x + "px";
+        this.$refs.menu2.style.top = y - 200 + "px";
+        //这里的130px主要是为了标签和模型有一定偏移，当然也可以不设置，两者叠加在一起
+      }
     },
     onDocumentMusedown(ev) {
       if (ev.button === 2) {
@@ -2633,8 +2857,9 @@ export default {
       const intersects = this.raycaster.intersectObjects(
         self.listGroup.children
       );
-      if (intersects.length) {
+      if (intersects.length && intersects[0].object.name === "列头机架") {
         this.freezeShowMenu2 = true;
+        this.intersectsObj = intersects[0].object;
         // this.showMenu2 = true;
         console.log("点击了啥", intersects);
       } else {
@@ -2876,7 +3101,7 @@ export default {
       // console.log(val)
       if (this.floorIndex < 0) return;
       const self = this;
-      this.removeMan();
+      // this.removeMan();
       this.removeObjAll();
       this.addBuilding();
       this.animationTime = Date.now();
@@ -2956,6 +3181,18 @@ export default {
           }
         });
       }
+    },
+    capacityViewBtn(val) {
+      if (val) {
+        this.removeEventListenerFn();
+        const list = this.scene.getObjectByName("设备集合");
+        this.scene.remove(list);
+        this.scene.add(this.capacityGroup);
+      } else {
+        this.scene.remove(this.capacityGroup);
+        this.scene.add(this.listGroup);
+        this.addEventListenerFn();
+      }
     }
   }
 };
@@ -2983,14 +3220,14 @@ export default {
   width: 100%;
   padding-left: 15px;
   /* padding-bottom: 15px; */
-  /* height: 30px; */
+  height: 26px;
   /* line-height: 30px; */
 }
 .stip-formatter > div:last-child {
   padding-bottom: 15px;
 }
 .stip-formatter div .span {
-  width: 40%;
+  width: 28%;
   text-align: left;
 }
 .stip-formatter div span {
@@ -3007,6 +3244,14 @@ export default {
   .lb-module-list {
     height: 160px;
   }
+}
+.capacity-btn {
+  position: absolute;
+  top: 86px;
+  font-size: 14px;
+  padding: 5px;
+  right: 330px;
+  height: 34px;
 }
 .lable-title {
   width: 100%;

@@ -1810,3 +1810,9 @@ body {
 .el-button--text:focus, .el-button--text:hover {
   background-color: #7187F0;
 }
+.el-switch__label {
+  color: #fff;
+}
+.el-switch__label.is-active {
+  font-weight: bolder;
+}

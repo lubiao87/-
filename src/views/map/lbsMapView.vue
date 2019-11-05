@@ -113,20 +113,13 @@
     <!-- 右边收缩栏结束 -->
     <div class="menu" v-show="showMenu" ref="menu">
       <ul>
-        <li
-          @mouseover="mapMousemoveLi"
-          @mouseleave="mapMοuseοutLi()"
-          @click="showMarker3Fn"
-          :data="3"
-        >
+        <li @mouseover="mapMousemoveLi" @mouseleave="mapMοuseοutLi()" :data="3">
+          <!-- @click="showMarker3Fn" -->
           5G BBU <span>3</span>
         </li>
-        <li
-          @mouseover="mapMousemoveLi"
-          @mouseleave="mapMοuseοutLi()"
-          @click="showMarker3Fn"
-          :data="1"
-        >
+
+        <li @mouseover="mapMousemoveLi" @mouseleave="mapMοuseοutLi()" :data="1">
+          <!-- @click="showMarker3Fn" -->
           综合接入间 <span>1</span>
         </li>
         <li>其它 <span>0</span></li>
@@ -813,16 +806,16 @@ export default {
         zoom: 13,
         zooms: [11, 20],
         center: [113.370565, 23.122751],
-        // mapStyle: 'amap://styles/macaron',
+        mapStyle: "amap://styles/macaron",
         // showIndoorMap: false,
         // features: ['road', 'bg'],
         defaultCursor: "pointer",
-        // turboMode:false,
-        // showBuildingBlock:false,
+        turboMode: true,
+        showBuildingBlock: true,
         forceVector: true,
-        // showLabel:false,
-        resizeEnable: true,
-        mapStyle: "amap://styles/f92fafd270beb106283db716d8da5234" //设置地图的显示样式
+        showLabel: true,
+        resizeEnable: true
+        // mapStyle: "amap://styles/f92fafd270beb106283db716d8da5234" //设置地图的显示样式
       });
       // 创建Object3DLayer图层
       that.object3Dlayer = new AMap.Object3DLayer({
@@ -856,7 +849,7 @@ export default {
                 // imageSize:[24,24],
                 fitZoom: 12, //最合适的级别
                 scaleFactor: 2, //地图放大一级的缩放比例系数
-                maxScale: 2, //最大放大比例
+                maxScale: 1.5, //最大放大比例
                 minScale: 1 //最小放大比例
               },
               label: {
@@ -877,8 +870,8 @@ export default {
                 ancher: [20, 20],
                 fitZoom: 13,
                 scaleFactor: 2,
-                maxScale: 2,
-                minScale: 0.125
+                maxScale: 1.5,
+                minScale: 0.5
               },
               label: {
                 content: `<div class="lb-label2" style="width:${
@@ -1061,7 +1054,7 @@ export default {
       }
       let numberIndex = [];
       const textLi = e.target.innerText;
-      if (textLi === "综合接入间 1") {
+      if (textLi.indexOf("综合接入间") > -1) {
         numberIndex = [0, 5, 5, 5];
       } else {
         numberIndex = [5, 1, 2, 3];
@@ -1250,7 +1243,7 @@ export default {
               path: bounds[i],
               fillOpacity: 0,
               fillColor: "#80d8ff",
-              strokeColor: "#ffc088"
+              strokeColor: "#4c66c7"
             });
             polygon.on("click", that.clickHandler);
             that.polygons.push(polygon);
@@ -1334,7 +1327,7 @@ export default {
 .cesiumContainer2 .amap-marker-label {
   border: 0px solid transparent;
   background-color: transparent;
-  color: #fff;
+  color: #4c66c7;
   margin: auto;
   width: 40px;
   padding: 0;

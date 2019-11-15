@@ -7,6 +7,18 @@
     element-loading-background="rgba(0, 0, 0, 0.8)"
   >
     <div style="width: 100%;height:100%;" id="buildModel"></div>
+    <!-- 机房 2d页面 -->
+    <div
+      class="cad-img ui-busin-ul"
+      v-show="isCollapse === '2D平面图'"
+      ref="isCollapse2d"
+    >
+      <build-model2d
+        ref="buildModel2d"
+        class="img-box2  ui-busin-ul"
+        :foremostData="cabinetplaced"
+      ></build-model2d>
+    </div>
     <!-- 右键html -->
     <div class="menu" v-show="showMenu" ref="menu">
       <ul>
@@ -15,7 +27,7 @@
         <li @click="showProps">查看详情</li>
       </ul>
     </div>
-    <!-- 列头柜鼠标悬停html -->
+    <!-- 列头柜鼠标悬停html  -->
     <div class="menu menu2" v-show="showMenu2" ref="menu2">
       <ul>
         <li
@@ -39,16 +51,21 @@
       </ul>
     </div>
     <div class="lable-title">{{ floorName }}</div>
-    <!-- 机柜容量视图 -->
-    <el-switch
+    <!-- 按钮组 -->
+    <el-radio-group
+      class="capacity-btn2"
+      v-model="isCollapse"
+      style="margin-bottom: 20px;"
       v-show="floorIndex > -1"
-      style="display: block"
-      v-model="capacityViewBtn"
-      class="capacity-btn"
-      active-text="机柜容量图"
-      inactive-text="模块间视图"
     >
-    </el-switch>
+      <el-radio-button size="small" label="模块间视图"
+        >模块间视图</el-radio-button
+      >
+      <el-radio-button size="small" label="机柜容量图"
+        >机柜容量图</el-radio-button
+      >
+      <el-radio-button size="small" label="2D平面图">2D平面图</el-radio-button>
+    </el-radio-group>
     <!-- 右边收缩栏开始 -->
     <div
       class="ui-shrinkBar"
@@ -92,7 +109,7 @@
         </div> -->
         <!-- 通用搜索框开始 -->
       </div>
-      <div class="show1" v-show="boxTitle !== '机房列表'">
+      <div class="show1" v-show="boxTitle !== '工业园机楼'">
         <h5 class="ui-city-title ui-height48 none-hover">
           <span class="ui-linebg"></span>{{ boxTitle }}
         </h5>
@@ -106,7 +123,7 @@
         <h5 class="ui-city-title ui-height48" @click="showBuilding">
           <span class="ui-linebg"></span>{{ boxTitle }}
         </h5>
-        <div class="clearfix module-statis" style="padding-left: 0;">
+        <!-- <div class="clearfix module-statis" style="padding-left: 0;">
           <div class="lb-module-list ui-link-ul">
             <ul>
               <li
@@ -120,10 +137,18 @@
               </li>
             </ul>
           </div>
-        </div>
+        </div> -->
+        <el-tree
+          :data="floorTreeData"
+          :props="defaultProps"
+          @node-click="handleNodeClick"
+        ></el-tree>
       </div>
     </div>
     <div class="yhui-real-timeimg"></div>
+    <el-button class="model-select1" type="primary" v-show="floorIndex > -1">
+      <i class="el-icon-folder-add"></i> 增加模型
+    </el-button>
     <el-select
       v-model="selectValue"
       multiple
@@ -133,7 +158,7 @@
       placeholder="请选择机柜类型"
       class="model-select"
       size="large"
-      v-show="floorIndex > -1 && !capacityViewBtn"
+      v-show="floorIndex > -1"
     >
       <el-option
         v-for="item in cabinetType"
@@ -151,12 +176,15 @@
 
 <script>
 import echarts from "echarts"; // 引入echarts
-import { listSearchMixin } from "../../mixin"; //混淆请求
+// import { listSearchMixin } from "../../mixin"; //混淆请求
 import * as THREE from "three";
 // import "three-obj-mtl-loader";
+import { _debounce, _getTextCanvas } from "@/utils/public.js";
+import cabinetplaced from "@/json/dataList.js";
 import "@/utils/control/TrackballControls.js";
 import "@/utils/control/DragControls.js";
 import "@/utils/control/TransformControls.js";
+import "@/utils/renderers/CSS3DRenderer.js";
 // import "@/utils/renderers/CSS2DRenderer.js";
 
 // import "@/utils/postprocessing/EffectComposer.js";
@@ -167,20 +195,87 @@ import "@/utils/control/TransformControls.js";
 require("three-fbxloader-offical");
 import { OrbitControls } from "../../utils/OrbitControls";
 import popup from "../../components/popup/popup";
+import buildModel2d from "./build-model-2d";
 // import { api2 } from "../../api/api"; //api配置请求的路径
 export default {
   name: "olmap",
   props: ["coordinate"],
-  mixins: [listSearchMixin],
+  // mixins: [listSearchMixin],
   components: {
-    popup
+    popup,
+    buildModel2d
   },
   data() {
     return {
-      capacityViewBtn: false,
+      floorTreeData: [
+        {
+          label: "一楼楼层",
+          buildId: 111,
+          floor: 1,
+          children: [
+            {
+              label: "1楼101机房",
+              buildChildId: 111101,
+              floor: 1
+            }
+          ]
+        },
+        {
+          label: "二楼楼层",
+          buildId: 112,
+          floor: 2,
+          children: [
+            {
+              label: "二楼201机房",
+              buildChildId: 112101,
+              floor: 2
+            },
+            {
+              label: "二楼202机房",
+              buildChildId: 112102,
+              floor: 2
+            }
+          ]
+        },
+        {
+          label: "三楼楼层",
+          buildId: 113,
+          floor: 3,
+          children: [
+            {
+              label: "三楼301机房",
+              buildChildId: 113101,
+              floor: 3
+            }
+          ]
+        },
+        {
+          label: "四楼楼层",
+          buildId: 114,
+          floor: 4,
+          children: [
+            {
+              label: "四楼301机房",
+              buildChildId: 114101,
+              floor: 4
+            },
+            {
+              label: "四楼302机房",
+              buildChildId: 114102,
+              floor: 0
+            }
+          ]
+        }
+      ],
+      defaultProps: {
+        children: "children",
+        label: "label"
+      },
+      moderShow: true,
+      isCollapse: "模块间视图",
       freezeShowMenu2: false,
       showMenu3: false,
-      boxTitle: "机房列表",
+      boxTitle: "工业园机楼",
       showChartFlag: false,
       dataMeth: [
         "输出屏01",
@@ -230,46 +325,19 @@ export default {
       FloorFour: null,
       modernBuilding: null, // 楼层obj
       moderBuild: null, // 大楼obj
-      personPre: null, // 人obj
+      // personPre: null, // 人obj
       referenceModel: null, // 人网格模型
       AnimationAction: null, // 动画
-      intersects: null, // -----
+      // intersects: null, // -----
       timer: 20000,
       loading: true,
       panelShow: true,
       lookAround: false,
       floorIndex: -1,
-      cameraX: 40000,
-      cameraY: 10000,
-      cameraZ: -1000,
+      cameraX: 20000,
+      cameraY: 40000,
+      cameraZ: -20000,
       floorName: "工业园机楼",
-      dataList: [
-        {
-          name: "1楼101机房",
-          id: 111,
-          floor: 1
-        },
-        {
-          name: "2楼101机房",
-          id: 112,
-          floor: 2
-        },
-        {
-          name: "3楼101机房",
-          id: 113,
-          floor: 3
-        },
-        {
-          name: "4楼101机房",
-          id: 114,
-          floor: 4
-        },
-        {
-          name: "4楼102机房",
-          id: 115,
-          floor: 4
-        }
-      ],
       animationTime: 0,
       animationFlag: true,
       cabinetType: [
@@ -324,1568 +392,27 @@ export default {
         y: 0,
         z: 0
       },
-      cabinetplaced: [
-        // 第一排
+      cabinetplaced: [],
+      floorData: [
         {
-          index: 6,
-          posX: "0",
-          posY: "0",
-          type: "列头机架",
-          name: "HW05-03"
+          name: "空调机房",
+          center: [14000, 1000, 12000]
         },
         {
-          index: 2,
-          posX: "0.9",
-          posY: "0",
-          type: "标准机架",
-          name: "RSS02-02",
-          capacity: 0.6
+          name: "值班室",
+          center: [-7000, 1000, 5000]
         },
         {
-          index: 2,
-          posX: "1.5",
-          posY: "0",
-          type: "标准机架",
-          name: "RSS01-04",
-          capacity: 0.6
+          name: "省公司机房102",
+          center: [-10000, 1000, -10000]
         },
         {
-          index: 2,
-          posX: "2.2",
-          posY: "0",
-          type: "标准机架",
-          name: "RSS01-05",
-          capacity: 0.5
+          name: "男厕",
+          center: [-14000, 1000, -1000]
         },
         {
-          index: 2,
-          posX: "2.9",
-          posY: "0",
-          type: "标准机架",
-          name: "RSS01-01",
-          capacity: 0.6
-        },
-        {
-          index: 2,
-          posX: "3.5",
-          posY: "0",
-          type: "标准机架",
-          name: "RSS01-03",
-          capacity: 0.6
-        },
-        {
-          index: 2,
-          posX: "4.1",
-          posY: "0",
-          type: "标准机架",
-          name: "RSS01-02",
-          capacity: 0.6
-        },
-
-        {
-          index: 2,
-          posX: "8.6",
-          posY: "0",
-          type: "标准机架",
-          name: "RSS02-01",
-          capacity: 0.6
-        },
-        {
-          index: 2,
-          posX: "9.2",
-          posY: "0",
-          type: "标准机架",
-          name: "ZTE03",
-          capacity: 0.75
-        },
-        {
-          index: 2,
-          posX: "9.8",
-          posY: "0",
-          type: "标准机架",
-          name: "HW05-03",
-          capacity: 0.9
-        },
-        {
-          index: 2,
-          posX: "10.4",
-          posY: "0",
-          type: "标准机架",
-          name: "HW05-03",
-          capacity: 0.5
-        },
-        {
-          index: 2,
-          posX: "11",
-          posY: "0",
-          type: "标准机架",
-          name: "HW05-03",
-          capacity: 0.6
-        },
-        {
-          index: 2,
-          posX: "11.6",
-          posY: "0",
-          type: "标准机架",
-          name: "HW05-03",
-          capacity: 0.3
-        },
-        {
-          index: 6,
-          posX: "12.25",
-          posY: "0",
-          type: "列头机架",
-          name: "HW05-03"
-        },
-
-        // 第二排
-        {
-          index: 6,
-          posX: "0",
-          posY: "2.4",
-          type: "列头机架",
-          name: "DDF01-03"
-        },
-        {
-          index: 4,
-          posX: "0.6",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF02-01",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "0.9",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-02",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "1.2",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-01",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "1.5",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-04",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "1.8",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-05",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "2.1",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-06",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "2.4",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-07",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "2.7",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-08",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "3",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-09",
-          capacity: 0.6
-        },
-        {
-          index: 4,
-          posX: "3.3",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-10",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "3.6",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-11",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "3.9",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-12",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "4.2",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-13",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "4.5",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-14",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "4.8",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-15",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "5.1",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-16",
-          capacity: 0.6
-        },
-        {
-          index: 4,
-          posX: "5.4",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-17",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "5.7",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-18",
-          capacity: 0.6
-        },
-        {
-          index: 4,
-          posX: "6",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-19",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "6.3",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-20",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "6.6",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-21",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "6.9",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-22",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "7.2",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-21",
-          capacity: 0.7
-        },
-        {
-          index: 4,
-          posX: "7.5",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-22",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "7.8",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-23",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "8.1",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-24",
-          capacity: 0.4
-        },
-        {
-          index: 4,
-          posX: "8.4",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-25",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "8.7",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-26",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "9",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-27",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "9.3",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-28",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "9.6",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-28",
-          capacity: 0.4
-        },
-        {
-          index: 4,
-          posX: "9.9",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-29",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "10.2",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-30",
-          capacity: 0.3
-        },
-        {
-          index: 4,
-          posX: "10.5",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-31",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "10.8",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-32",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "11.1",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-33",
-          capacity: 0.6
-        },
-        {
-          index: 4,
-          posX: "11.4",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-36",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "11.7",
-          posY: "2.2",
-          type: "DDF机架",
-          name: "DDF03-37",
-          capacity: 0.5
-        },
-        {
-          index: 6,
-          posX: "12.3",
-          posY: "2.4",
-          type: "列头机架",
-          name: "DDF03-37"
-        },
-        // 第三排
-        {
-          index: 4,
-          posX: "0.6",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF02-07",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "0.9",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-08",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "1.2",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-09",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "1.5",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-11",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "1.8",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-12",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "2.1",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-13",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "2.4",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-14",
-          capacity: 0.7
-        },
-        {
-          index: 4,
-          posX: "2.7",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-15",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "3",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-16",
-          capacity: 0.8
-        },
-        {
-          index: 4,
-          posX: "3.3",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-17",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "3.6",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-18",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "3.9",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-19",
-          capacity: 0.6
-        },
-        {
-          index: 4,
-          posX: "4.2",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-20",
-          capacity: 0.8
-        },
-        {
-          index: 4,
-          posX: "4.5",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-21",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "4.8",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-22",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "5.1",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-23",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "5.4",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-24",
-          capacity: 0.6
-        },
-        {
-          index: 4,
-          posX: "5.7",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-25",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "6",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-26",
-          capacity: 0.4
-        },
-        {
-          index: 4,
-          posX: "6.3",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-27",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "6.6",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-28",
-          capacity: 0.7
-        },
-        {
-          index: 4,
-          posX: "6.9",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-29",
-          capacity: 0.8
-        },
-        {
-          index: 4,
-          posX: "7.2",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-30",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "7.5",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-31",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "7.8",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-32",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "8.1",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-33",
-          capacity: 0.6
-        },
-        {
-          index: 4,
-          posX: "8.4",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-34",
-          capacity: 0.4
-        },
-        {
-          index: 4,
-          posX: "8.7",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-35",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "9",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-36",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "9.3",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-36",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "9.6",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-37",
-          capacity: 0.6
-        },
-        {
-          index: 4,
-          posX: "9.9",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-38",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "9.9",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-39",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "10.2",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-40",
-          capacity: 0.9
-        },
-        {
-          index: 4,
-          posX: "10.5",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-41",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "10.8",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-42",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "11.1",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-43",
-          capacity: 0.5
-        },
-        {
-          index: 4,
-          posX: "11.4",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-44",
-          capacity: 0.7
-        },
-        {
-          index: 4,
-          posX: "11.7",
-          posY: "2.6",
-          type: "DDF机架",
-          name: "DDF03-45",
-          capacity: 0.5
-        },
-
-        // 第四排
-        {
-          index: 6,
-          posX: "0",
-          posY: "4.0",
-          type: "列头机架",
-          name: "DDF03-04"
-        },
-        {
-          index: 5,
-          posX: "0.6",
-          posY: "4.0",
-          type: "空调",
-          name: "DDF03-04",
-          capacity: 0.8
-        },
-        {
-          index: 5,
-          posX: "1.1",
-          posY: "4.0",
-          type: "空调",
-          name: "DDF03-05",
-          capacity: 0.5
-        },
-        {
-          index: 5,
-          posX: "1.6",
-          posY: "4.0",
-          type: "空调",
-          name: "DDF03-06",
-          capacity: 0.5
-        },
-        {
-          index: 5,
-          posX: "2.1",
-          posY: "4.0",
-          type: "空调",
-          name: "DDF03-07",
-          capacity: 0.5
-        },
-        {
-          index: 5,
-          posX: "2.6",
-          posY: "4.0",
-          type: "空调",
-          name: "DDF03-08",
-          capacity: 0.6
-        },
-        {
-          index: 5,
-          posX: "3.1",
-          posY: "4.0",
-          type: "空调",
-          name: "DDF03-09",
-          capacity: 0.5
-        },
-        {
-          index: 5,
-          posX: "3.6",
-          posY: "4.0",
-          type: "空调",
-          name: "DDF03-10",
-          capacity: 0.5
-        },
-        {
-          index: 5,
-          posX: "4.1",
-          posY: "4.0",
-          type: "空调",
-          name: "DDF03-11",
-          capacity: 0.5
-        },
-        {
-          index: 5,
-          posX: "4.6",
-          posY: "4.0",
-          type: "空调",
-          name: "DDF03-12",
-          capacity: 0.5
-        },
-        {
-          index: 5,
-          posX: "5.1",
-          posY: "4.0",
-          type: "空调",
-          name: "DDF03-13",
-          capacity: 0.5
-        },
-        {
-          index: 5,
-          posX: "5.6",
-          posY: "4.0",
-          type: "空调",
-          name: "DDF03-14",
-          capacity: 0.5
-        },
-        {
-          index: 5,
-          posX: "6.1",
-          posY: "4.0",
-          type: "空调",
-          name: "DDF03-15",
-          capacity: 0.5
-        },
-        {
-          index: 5,
-          posX: "6.6",
-          posY: "4.0",
-          type: "空调",
-          name: "DDF03-16",
-          capacity: 0.5
-        },
-        {
-          index: 5,
-          posX: "7.1",
-          posY: "4.0",
-          type: "空调",
-          name: "DDF03-17",
-          capacity: 0.5
-        },
-        {
-          index: 5,
-          posX: "7.6",
-          posY: "4.0",
-          type: "空调",
-          name: "DDF03-18",
-          capacity: 0.5
-        },
-        {
-          index: 5,
-          posX: "8.1",
-          posY: "4.0",
-          type: "空调",
-          name: "DDF03-19",
-          capacity: 0.5
-        },
-        {
-          index: 5,
-          posX: "8.6",
-          posY: "4.0",
-          type: "空调",
-          name: "DDF03-20",
-          capacity: 0.5
-        },
-        {
-          index: 5,
-          posX: "9.1",
-          posY: "4.0",
-          type: "空调",
-          name: "DDF03-21",
-          capacity: 0.5
-        },
-        {
-          index: 5,
-          posX: "9.6",
-          posY: "4.0",
-          type: "空调",
-          name: "DDF03-22",
-          capacity: 0.5
-        },
-        {
-          index: 5,
-          posX: "10.1",
-          posY: "4.0",
-          type: "空调",
-          name: "DDF03-23",
-          capacity: 0.5
-        },
-        {
-          index: 5,
-          posX: "10.6",
-          posY: "4.0",
-          type: "空调",
-          name: "DDF03-24",
-          capacity: 0.5
-        },
-        {
-          index: 5,
-          posX: "11.1",
-          posY: "4.0",
-          type: "空调",
-          name: "DDF03-25",
-          capacity: 0.5
-        },
-        {
-          index: 5,
-          posX: "11.6",
-          posY: "4.0",
-          type: "空调",
-          name: "DDF03-26",
-          capacity: 0.5
-        },
-        {
-          index: 6,
-          posX: "12.2",
-          posY: "4.0",
-          type: "列头机架",
-          name: "DDF03-27"
-        },
-
-        // 第五排
-        {
-          index: 6,
-          posX: "0",
-          posY: "6.0",
-          type: "列头机架",
-          name: "ZTE-01"
-        },
-        {
-          index: 7,
-          posX: "0.85",
-          posY: "6.0",
-          type: "ODF机架",
-          name: "ODF-02",
-          capacity: 0.5
-        },
-        {
-          index: 7,
-          posX: "1.7",
-          posY: "6.0",
-          type: "ODF机架",
-          name: "ODF-03",
-          capacity: 0.5
-        },
-        {
-          index: 7,
-          posX: "2.55",
-          posY: "6.0",
-          type: "ODF机架",
-          name: "ODF-04",
-          capacity: 0.5
-        },
-        {
-          index: 7,
-          posX: "3.4",
-          posY: "6.0",
-          type: "ODF机架",
-          name: "ODF-05",
-          capacity: 0.5
-        },
-        {
-          index: 7,
-          posX: "4.25",
-          posY: "6.0",
-          type: "ODF机架",
-          name: "ODF-06",
-          capacity: 0.5
-        },
-        {
-          index: 7,
-          posX: "5.1",
-          posY: "6.0",
-          type: "ODF机架",
-          name: "ODF-07",
-          capacity: 0.5
-        },
-        {
-          index: 7,
-          posX: "5.95",
-          posY: "6.0",
-          type: "ODF机架",
-          name: "ODF-08",
-          capacity: 0.5
-        },
-        {
-          index: 7,
-          posX: "6.8",
-          posY: "6.0",
-          type: "ODF机架",
-          name: "ODF-09",
-          capacity: 0.5
-        },
-        {
-          index: 7,
-          posX: "7.65",
-          posY: "6.0",
-          type: "ODF机架",
-          name: "ODF-10",
-          capacity: 0.5
-        },
-        {
-          index: 7,
-          posX: "8.4",
-          posY: "6.0",
-          type: "ODF机架",
-          name: "ODF-10",
-          capacity: 0.5
-        },
-        {
-          index: 7,
-          posX: "9.25",
-          posY: "6.0",
-          type: "ODF机架",
-          name: "ODF-11",
-          capacity: 0.5
-        },
-        {
-          index: 7,
-          posX: "10.1",
-          posY: "6.0",
-          type: "ODF机架",
-          name: "ODF-12",
-          capacity: 0.5
-        },
-        {
-          index: 7,
-          posX: "10.95",
-          posY: "6.0",
-          type: "ODF机架",
-          name: "ODF-13",
-          capacity: 0.5
-        },
-        {
-          index: 6,
-          posX: "11.8",
-          posY: "6.0",
-          type: "配线机架",
-          name: "ZTE-23",
-          capacity: 0.5
-        },
-        // 第六排
-        {
-          index: 6,
-          posX: "0",
-          posY: "8.0",
-          type: "配线机架",
-          name: "ZTE-01",
-          capacity: 0.5
-        },
-        {
-          index: 8,
-          posX: "0.6",
-          posY: "8.0",
-          type: "配线机架",
-          name: "ZTE-02",
-          capacity: 0.5
-        },
-        {
-          index: 8,
-          posX: "1.2",
-          posY: "8.0",
-          type: "配线机架",
-          name: "ZTE-03",
-          capacity: 0.5
-        },
-        {
-          index: 8,
-          posX: "1.8",
-          posY: "8.0",
-          type: "配线机架",
-          name: "ZTE-04",
-          capacity: 0.5
-        },
-        {
-          index: 8,
-          posX: "2.4",
-          posY: "8.0",
-          type: "配线机架",
-          name: "ZTE-05",
-          capacity: 0.5
-        },
-        {
-          index: 8,
-          posX: "3",
-          posY: "8.0",
-          type: "配线机架",
-          name: "ZTE-06",
-          capacity: 0.5
-        },
-        {
-          index: 8,
-          posX: "3.6",
-          posY: "8.0",
-          type: "配线机架",
-          name: "ZTE-07",
-          capacity: 0.5
-        },
-        {
-          index: 8,
-          posX: "4.2",
-          posY: "8.0",
-          type: "配线机架",
-          name: "ZTE-08",
-          capacity: 0.5
-        },
-        {
-          index: 8,
-          posX: "4.8",
-          posY: "8.0",
-          type: "配线机架",
-          name: "ZTE-09",
-          capacity: 0.5
-        },
-
-        {
-          index: 8,
-          posX: "6.6",
-          posY: "8.0",
-          type: "配线机架",
-          name: "ZTE-13",
-          capacity: 0.5
-        },
-        {
-          index: 8,
-          posX: "7.2",
-          posY: "8.0",
-          type: "配线机架",
-          name: "ZTE-14",
-          capacity: 0.5
-        },
-        {
-          index: 8,
-          posX: "7.8",
-          posY: "8.0",
-          type: "配线机架",
-          name: "ZTE-15",
-          capacity: 0.5
-        },
-        {
-          index: 8,
-          posX: "8.4",
-          posY: "8.0",
-          type: "配线机架",
-          name: "ZTE-16",
-          capacity: 0.5
-        },
-        {
-          index: 8,
-          posX: "9",
-          posY: "8.0",
-          type: "配线机架",
-          name: "ZTE-17",
-          capacity: 0.5
-        },
-        {
-          index: 8,
-          posX: "9.6",
-          posY: "8.0",
-          type: "配线机架",
-          name: "ZTE-19",
-          capacity: 0.5
-        },
-        {
-          index: 8,
-          posX: "10.2",
-          posY: "8.0",
-          type: "配线机架",
-          name: "ZTE-20",
-          capacity: 0.5
-        },
-        {
-          index: 8,
-          posX: "10.8",
-          posY: "8.0",
-          type: "配线机架",
-          name: "ZTE-21",
-          capacity: 0.5
-        },
-        {
-          index: 8,
-          posX: "11.4",
-          posY: "8.0",
-          type: "配线机架",
-          name: "ZTE-22",
-          capacity: 0.5
-        },
-        {
-          index: 6,
-          posX: "12",
-          posY: "8.0",
-          type: "列头机架",
-          name: "ZTE-23",
-          capacity: 0.5
-        },
-
-        // 第七排
-        {
-          index: 6,
-          posX: "0",
-          posY: "10",
-          type: "列头机架",
-          name: "列头机架",
-          setId: 22
-        },
-        {
-          index: 1,
-          posX: "0.6",
-          posY: "10",
-          type: "标准机架",
-          name: "RSS02-02",
-          parentId: 22,
-          capacity: 0.7
-        },
-        {
-          index: 1,
-          posX: "1.2",
-          posY: "10",
-          type: "标准机架",
-          name: "RSS02-03",
-          parentId: 22,
-          capacity: 0.6
-        },
-        {
-          index: 1,
-          posX: "1.8",
-          posY: "10",
-          type: "标准机架",
-          name: "RSS02-04",
-          parentId: 22,
-          capacity: 0.9
-        },
-        {
-          index: 1,
-          posX: "2.4",
-          posY: "10",
-          type: "标准机架",
-          name: "RSS02-05",
-          parentId: 22,
-          capacity: 0.5
-        },
-        {
-          index: 1,
-          posX: "3",
-          posY: "10",
-          type: "标准机架",
-          name: "RSS02-06",
-          parentId: 22,
-          capacity: 0.6
-        },
-        {
-          index: 1,
-          posX: "3.6",
-          posY: "10",
-          type: "标准机架",
-          name: "RSS02-07",
-          parentId: 22,
-          capacity: 0.6
-        },
-        {
-          index: 1,
-          posX: "4.2",
-          posY: "10",
-          type: "标准机架",
-          name: "RSS02-08",
-          capacity: 0.6
-        },
-        {
-          index: 1,
-          posX: "4.8",
-          posY: "10",
-          type: "标准机架",
-          name: "RSS02-09",
-          capacity: 0.6
-        },
-        {
-          index: 1,
-          posX: "5.4",
-          posY: "10",
-          type: "标准机架",
-          name: "RSS02-10",
-          capacity: 0.5
-        },
-        {
-          index: 1,
-          posX: "6",
-          posY: "10",
-          type: "标准机架",
-          name: "RSS02-11",
-          capacity: 0.6
-        },
-        {
-          index: 1,
-          posX: "6.6",
-          posY: "10",
-          type: "标准机架",
-          name: "RSS02-12",
-          capacity: 0.6
-        },
-        {
-          index: 1,
-          posX: "7.2",
-          posY: "10",
-          type: "标准机架",
-          name: "RSS02-13*07行09列*2U*8U",
-          capacity: 0.6
-        },
-        {
-          index: 1,
-          posX: "7.8",
-          posY: "10",
-          type: "标准机架",
-          name: "RSS02-14",
-          capacity: 0.6
-        },
-        {
-          index: 1,
-          posX: "8.4",
-          posY: "10",
-          type: "标准机架",
-          name: "RSS02-15",
-          capacity: 0.6
-        },
-        {
-          index: 1,
-          posX: "9",
-          posY: "10",
-          type: "标准机架",
-          name: "RSS02-16",
-          capacity: 0.6
-        },
-        {
-          index: 1,
-          posX: "9.6",
-          posY: "10",
-          type: "标准机架",
-          name: "RSS02-17",
-          capacity: 0.6
-        },
-        {
-          index: 1,
-          posX: "10.2",
-          posY: "10",
-          type: "标准机架",
-          name: "RSS02-18",
-          capacity: 0.6
-        },
-        {
-          index: 1,
-          posX: "10.8",
-          posY: "10",
-          type: "标准机架",
-          name: "RSS02-19",
-          capacity: 0.6
-        },
-        {
-          index: 1,
-          posX: "11.4",
-          posY: "10",
-          type: "标准机架",
-          name: "RSS02-20",
-          capacity: 0.6
-        },
-        {
-          index: 6,
-          posX: "12",
-          posY: "10",
-          type: "列头机架",
-          name: "RSS02-21"
-        },
-        // 第八排
-        {
-          index: 6,
-          posX: "0",
-          posY: "12",
-          type: "列头机架",
-          name: "RSS02-01"
-        },
-        {
-          index: 3,
-          posX: "0.6",
-          posY: "12",
-          type: "标准机架",
-          name: "RSS02-02",
-          capacity: 0.6
-        },
-        {
-          index: 3,
-          posX: "1.2",
-          posY: "12",
-          type: "标准机架",
-          name: "RSS02-03",
-          capacity: 0.3
-        },
-        {
-          index: 3,
-          posX: "1.8",
-          posY: "12",
-          type: "标准机架",
-          name: "RSS02-04",
-          capacity: 0.6
-        },
-        {
-          index: 3,
-          posX: "2.4",
-          posY: "12",
-          type: "标准机架",
-          name: "RSS02-06",
-          capacity: 0.6
-        },
-        {
-          index: 3,
-          posX: "3",
-          posY: "12",
-          type: "标准机架",
-          name: "RSS02-07",
-          capacity: 0.6
-        },
-        {
-          index: 3,
-          posX: "3.6",
-          posY: "12",
-          type: "标准机架",
-          name: "RSS02-08",
-          capacity: 0.8
-        },
-        {
-          index: 3,
-          posX: "4.2",
-          posY: "12",
-          type: "标准机架",
-          name: "RSS02-09",
-          capacity: 0.6
-        },
-        {
-          index: 3,
-          posX: "4.8",
-          posY: "12",
-          type: "标准机架",
-          name: "RSS02-10",
-          capacity: 0.6
-        },
-        {
-          index: 3,
-          posX: "5.4",
-          posY: "12",
-          type: "标准机架",
-          name: "RSS02-11",
-          capacity: 0.6
-        },
-        {
-          index: 3,
-          posX: "6",
-          posY: "12",
-          type: "标准机架",
-          name: "RSS02-12",
-          capacity: 0.6
-        },
-        {
-          index: 3,
-          posX: "6.6",
-          posY: "12",
-          type: "标准机架",
-          name: "RSS02-13*07行09列*2U*8U",
-          capacity: 0.5
-        },
-        {
-          index: 3,
-          posX: "7.2",
-          posY: "12",
-          type: "标准机架",
-          name: "RSS02-13*07行09列*2U*8U",
-          capacity: 0.6
-        },
-        {
-          index: 3,
-          posX: "7.8",
-          posY: "12",
-          type: "标准机架",
-          name: "RSS02-13*07行09列*2U*8U",
-          capacity: 0.6
-        },
-        {
-          index: 3,
-          posX: "8.4",
-          posY: "12",
-          type: "标准机架",
-          name: "RSS02-13*07行09列*2U*8U",
-          capacity: 0.6
-        },
-        {
-          index: 3,
-          posX: "9",
-          posY: "12",
-          type: "标准机架",
-          name: "RSS02-13*07行09列*2U*8U",
-          capacity: 0.6
-        },
-        {
-          index: 3,
-          posX: "9.6",
-          posY: "12",
-          type: "标准机架",
-          name: "RSS02-13*07行09列*2U*8U",
-          capacity: 0.7
-        },
-        {
-          index: 3,
-          posX: "10.2",
-          posY: "12",
-          type: "标准机架",
-          name: "RSS02-13*07行09列*2U*8U",
-          capacity: 0.6
-        },
-        {
-          index: 3,
-          posX: "10.8",
-          posY: "12",
-          type: "标准机架",
-          name: "RSS02-13*07行09列*2U*8U",
-          capacity: 0.7
-        },
-        {
-          index: 3,
-          posX: "11.4",
-          posY: "12",
-          type: "标准机架",
-          name: "RSS02-13*07行09列*2U*8U",
-          capacity: 0.6
-        },
-        {
-          index: 6,
-          posX: "12",
-          posY: "12",
-          type: "列头机架",
-          name: "RSS02-13*07行09列*2U*8U"
+          name: "女厕",
+          center: [-14000, 1000, -4000]
         }
       ]
     };
@@ -1897,6 +424,7 @@ export default {
   },
   created() {
     const self = this;
+    self.cabinetplaced = cabinetplaced;
     self.cabinetType = self.cabinetType.map(item => {
       let items = item;
       items.size = [
@@ -1922,6 +450,25 @@ export default {
     //  this.$parent.restaurants = this.$parent.loadAll();
   },
   methods: {
+    handleNodeClick(data) {
+      console.log(data);
+      // 查看楼层
+      // if (!this.lookAround) {
+      if (data.buildChildId) {
+        this.buildId = data.buildChildId;
+        this.floorIndex = 0;
+        this.floorName = "工业园机楼 - " + data.label;
+        this.scene.remove(this.FloorFour);
+        this.scene.add(this.roomModel);
+      } else {
+        this.floorIndex = data.floor;
+        this.animationFlag = true;
+        this.buildId = data.buildId;
+        this.floorName = "工业园机楼 - " + data.label;
+      }
+      this.isCollapse = "模块间视图";
+      // }
+    },
     createHtml() {
       const self = this;
       // console.log(GKG);
@@ -1941,13 +488,17 @@ export default {
       this.FBXloader.load("./Assets/fbx/ODF.FBX", self.loaderODF);
       this.FBXloader.load("./Assets/fbx/peixian.FBX", self.loaderPeixian);
       this.FBXloader.load("./Assets/fbx/floorFour.FBX", self.loaderFloor4);
+      this.FBXloader.load(
+        "./Assets/fbx/floorFourChilder.FBX",
+        self.floorFourChilder
+      );
       this.ambient = new THREE.AmbientLight(0xffffff); // 环境光
       this.renderer = new THREE.WebGLRenderer(); // 渲染器
       this.scene.add(this.ambient);
       this.clock = new THREE.Clock();
       this.setCamera();
 
-      this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+      this.controls = new OrbitControls(this.camera);
       this.controls.target = new THREE.Vector3(0, 0, 0);
       this.controls.type = "orbit";
       this.controls.staticMoving = false;
@@ -2096,10 +647,10 @@ export default {
       //   this.mixer.update(this.clock.getDelta());
       // }
       // var delta = this.clock.getDelta();
-      this.lookAroundFn(); // 楼房渐变
-      if (typeof this.selectBorder !== "undefined") {
-        this.lookCabinetfn();
-      }
+      // this.lookAroundFn(); // 楼房渐变
+      // if (typeof this.selectBorder !== "undefined") {
+      //   this.lookCabinetfn();
+      // }
       // this.composer.render(delta);
       window.requestAnimationFrame(this.render);
     },
@@ -2150,21 +701,8 @@ export default {
       this.FloorThree = obj;
       this.FloorFour = obj;
     },
-    // 够
-    loaderDog(obj) {
-      console.log("加载单身狗", obj);
-      obj.translateX(5000);
-      //加载纹理贴图
-      // var texture = new THREE.TextureLoader().load(
-      //   "./Assets/img/DiffuseFace.jpg"
-      // );
-      // // 基础Basic网格材质，不受光照影响   Phong网格材质受光照影响
-      // obj.children[0].material = new THREE.MeshBasicMaterial({
-      //   map: texture //设置颜色纹理贴图
-      // });
-      // obj.scale.set(15, 15, 15);
-      // obj.children[0].scale.set(5, 5, 5); //网格模型缩放
-      this.scene.add(obj);
+    floorFourChilder(obj) {
+      this.roomModel = obj;
     },
     // 4
     loaderDDF(obj) {
@@ -2205,34 +743,25 @@ export default {
       // this.scene.add(this.JIGUI);
     },
     setCamera() {
-      let width = document.body.clientWidth; // 窗口宽度
-      let height = document.body.clientHeight; // 窗口高度
-      // var k = width / height; //窗口宽高比
-      // var s = 20000; //三维场景显示范围控制系数，系数越大，显示的范围越大
-      // this.camera = new THREE.OrthographicCamera(
-      //   -s * k,
-      //   s * k,
-      //   s,
-      //   -s,
-      //   1,
-      //   1000000
-      // );
+      const self = this;
+      var width = window.innerWidth; //窗口宽度
+      var height = window.innerHeight; //窗口高度
       this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 1000000);
       this.camera.position.set(this.cameraX, this.cameraY, this.cameraZ);
       this.camera.lookAt(this.scene.position);
       this.renderer.setSize(width, height); // 设置渲染区域尺寸
       this.renderer.setClearColor("#16244a", 1); // 设置背景颜色
-      // document.getElementById('pos').removeChild(this.renderer.domElement)
       document
         .getElementById("buildModel")
         .appendChild(this.renderer.domElement); // body元素中插入canvas对象
       this.renderer.shadowMap.enabled = true;
-      // this.renderer.domElement.style.position = "absolute";
+      this.renderer.domElement.style.position = "absolute";
     },
     onWindowResize() {
       this.camera.aspect = window.innerWidth / window.innerHeight;
       this.camera.updateProjectionMatrix();
       this.renderer.setSize(window.innerWidth, window.innerHeight);
+      // this.CSS3Renderer.setSize(window.innerWidth, window.innerHeight);
     },
 
     lookAroundFn() {
@@ -2244,14 +773,13 @@ export default {
           if (this.cameraX > 0) {
             this.cameraX -= 500;
           }
-          if (this.cameraZ > -10000) {
+          if (this.cameraZ > -20000) {
             this.cameraZ -= 500;
           }
-          if (this.cameraY < 20000) {
-            this.cameraY += 500;
-          }
-          let number = 1 - (Date.now() - self.animationTime) / 4000;
-          // console.log(this.cameraX)
+          // if (this.cameraY < 20000) {
+          //   this.cameraY += 500;
+          // }
+          let number = 1 - (Date.now() - self.animationTime) / 2000;
           this.moderBuild.material.forEach((item, index) => {
             if (number < 0) {
               self.lookAround = false;
@@ -2264,18 +792,16 @@ export default {
           });
         } else {
           // 返回查看房子
-          if (this.cameraX < 40000) {
+          if (this.cameraX < 20000) {
             this.cameraX += 500;
           }
-          if (this.cameraZ < 0) {
+          if (this.cameraZ < -10000) {
             this.cameraZ += 500;
           }
-          if (this.cameraY > 10000) {
-            this.cameraY -= 500;
-          }
-          // console.log(this.cameraX);
+          // if (this.cameraY > 10000) {
+          //   this.cameraY -= 500;
+          // }
           let number = (Date.now() - self.animationTime) / 2000;
-          // console.log(this.cameraX)
           this.moderBuild.material.forEach((item, index) => {
             if (number > 1) {
               self.lookAround = false;
@@ -2289,19 +815,6 @@ export default {
         }
 
         this.camera.position.set(this.cameraX, this.cameraY, this.cameraZ);
-      }
-    },
-    lookFloor(item, index) {
-      // 查看楼层
-      if (!this.lookAround) {
-        this.floorIndex = item.floor;
-        this.animationFlag = true;
-        this.buildId = item.id;
-        this.dataList.forEach((items, i, arr) => {
-          arr[i].select = false;
-        });
-        this.dataList[index].select = true;
-        this.floorName = "工业园机楼 - " + this.dataList[index].name;
       }
     },
     removeObjAll() {
@@ -2321,6 +834,9 @@ export default {
       self.scene.remove(this.FloorOne);
       self.scene.remove(this.FloorThree);
       self.scene.remove(this.FloorFour);
+      self.scene.remove(this.meshZL);
+      self.scene.remove(this.roomModel);
+      self.scene.remove(this.spriteGroup);
     },
     // 右键查看机架详情
     showProps() {
@@ -2331,30 +847,28 @@ export default {
       if (this.buildId === 100) {
         return;
       }
-      if (!this.lookAround) {
-        // 动画中禁止事件
-        this.addBuilding();
-        this.floorIndex = -1;
-        this.animationFlag = false;
-        this.animationTime = Date.now();
-        this.lookAround = true; // 开启动画
-        // console.log(this.scene)
-        this.selectValue = ["全部"];
-        this.dataList.forEach((items, i, arr) => {
-          arr[i].select = false;
-        });
-        this.buildId = 100;
-      }
+      // if (!this.lookAround) {
+      this.removeObjAll();
+      this.removeEventListenerFn();
+      // 动画中禁止事件
+      this.addBuilding();
+      this.floorIndex = -1;
+      this.animationFlag = false;
+      this.animationTime = Date.now();
+      // this.lookAround = true; // 开启动画
+      // console.log(this.scene)
+      this.selectValue = ["全部"];
+      this.buildId = 100;
+      // }
     },
     addBuilding() {
       // 显示房子
-      if (!this.lookAround) {
-        // 动画中禁止增加
-        this.removeObjAll();
-        if (!this.scene.getObjectByName("整栋楼房")) {
-          this.scene.add(this.modernBuilding);
-        }
+      // if (!this.lookAround) {
+      // 动画中禁止增加
+      if (!this.scene.getObjectByName("整栋楼房")) {
+        this.scene.add(this.modernBuilding);
       }
+      // }
     },
     addMan() {
       // 显示人物
@@ -2423,9 +937,9 @@ export default {
       let positionY = -3600 + this.cabinetType[item.index].size[2] / 2;
       // }
       mesh.position.set(
-        -item.position[1] + 11200,
+        -item.position[1] + 11200 - this.cabinetType[item.index].size[0] / 2,
         positionY,
-        item.position[0] + 2300
+        item.position[0] + 2000 + this.cabinetType[item.index].size[1] / 2
       );
       // mesh.position.z = item.position[1]
       mesh.TYPE = this.cabinetType[item.index].name;
@@ -2435,9 +949,12 @@ export default {
         // 创建精灵图标
         this.newCSS3DSprite3(
           "子",
-          -item.position[1] + 11200,
+          -item.position[1] + 11200 - this.cabinetType[item.index].size[0] / 2,
           positionY + 1600,
-          item.position[0] + 2300
+          item.position[0] +
+            2000 +
+            this.cabinetType[item.index].size[1] / 2 -
+            10000
         );
       }
       if (item.setId) {
@@ -2448,22 +965,22 @@ export default {
     deleteMeth(event) {
       //阻止本来的默认事件，比如浏览器的默认右键事件是弹出浏览器的选项
       event.preventDefault();
-      console.log(this.selectedObject);
+      // console.log(this.selectedObject);
       this.listGroup.remove(this.selectedObject);
       this.showMenu = false;
       return false;
     },
     setCabinet() {
       const self = this;
-      // if (!this.listGroup) {
       this.listGroup = new THREE.Group();
       this.listGroup.name = "设备集合";
       this.capacityGroup = new THREE.Group();
       this.capacityGroup.name = "容量集合";
-      // this.listGroup.material.transparent = true
-      // this.listGroup.material.opacity = 0
-      // this.borderGroup = new THREE.Group();
+      this.spriteGroup = new THREE.Group();
+      this.spriteGroup.name = "图标集合";
+
       this.spriteArr = new THREE.Group();
+
       this.cabinetplaced.forEach((item, index) => {
         let mesh = self.addMeth(item, index);
         self.listGroup.add(mesh);
@@ -2471,7 +988,19 @@ export default {
           self.addBox(item);
         }
       });
-      this.scene.add(this.listGroup);
+      this.floorData.forEach((item, index) => {
+        var spriteMaterial = new THREE.SpriteMaterial({
+          map: new THREE.CanvasTexture(_getTextCanvas(item.name)) //设置精灵纹理贴图
+        });
+        var sprite = new THREE.Sprite(spriteMaterial);
+        sprite.scale.set(4000, 1200, 1); // 只需要设置x、y两个分量就可以
+        sprite.position.set(item.center[0], item.center[1], item.center[2]);
+        self.spriteGroup.add(sprite);
+      });
+      this.listGroup.position.z = -10000;
+      this.capacityGroup.position.z = -10000;
+      this.spriteGroup.position.z = -10000;
+      // this.scene.add(this.CSS3DSpriteGroup);
       this.controls.addEventListener("change", this.tag);
       // 整流器
       var geometryZL = new THREE.BoxGeometry(1000, 600, 400); //创建一个立方体几何对象Geometry
@@ -2479,12 +1008,14 @@ export default {
         color: "#666"
       }); //材质对象Material
       this.meshZL = new THREE.Mesh(geometryZL, materialZL); //网格模型对象Mesh
-      this.scene.add(this.meshZL); //网格模型添加到场景中
       this.meshZL.translateX(5000);
-      this.meshZL.translateZ(16000);
+      this.meshZL.translateZ(6000);
       this.meshZL.translateY(-2000);
-      // setTimeout(() => {
-
+      if (self.buildId === 114102 || self.buildId === 114) {
+        this.scene.add(this.listGroup);
+        this.scene.add(this.meshZL);
+        this.scene.add(this.spriteGroup);
+      }
       //创建一个屏幕和场景转换工具
       // self.projector = new THREE.Projector();
       self.mouse = new THREE.Vector2();
@@ -2495,16 +1026,17 @@ export default {
       };
       this.removeEventListenerFn();
       this.addEventListenerFn();
-      // }, 2000);
-
-      // console.log(this.listGroup)
-      // }
     },
+    // 改变场数
+    changefield: _debounce(function(e) {
+      // 模糊匹配，通过接口获取数据
+      this.onDocumentMouseMove(e);
+    }),
     removeEventListenerFn() {
       const self = this;
       self.renderer.domElement.removeEventListener(
         "mousemove",
-        self.onDocumentMouseMove,
+        self.changefield,
         false
       );
       self.renderer.domElement.removeEventListener(
@@ -2525,9 +1057,10 @@ export default {
     },
     addEventListenerFn() {
       const self = this;
+      // ----------------
       self.renderer.domElement.addEventListener(
         "mousemove",
-        self.onDocumentMouseMove,
+        self.changefield,
         false
       );
       self.renderer.domElement.addEventListener(
@@ -2581,14 +1114,14 @@ export default {
         -3600 + (this.cabinetType[item.index].size[2] * item.capacity) / 2;
 
       mesh.position.set(
-        -item.position[1] + 11200,
+        -item.position[1] + 11200 - this.cabinetType[item.index].size[0] / 2,
         positionY,
-        item.position[0] + 2300
+        item.position[0] + 2000 + this.cabinetType[item.index].size[1] / 2
       );
       mesh1.position.set(
-        -item.position[1] + 11200,
+        -item.position[1] + 11200 - this.cabinetType[item.index].size[0] / 2,
         positionY1,
-        item.position[0] + 2300
+        item.position[0] + 2000 + this.cabinetType[item.index].size[1] / 2
       );
       this.capacityGroup.add(mesh); //网格模型添加到场景中
       this.capacityGroup.add(mesh1); //网格模型添加到场景中
@@ -2611,6 +1144,16 @@ export default {
          */
         this.$refs.menu2.style.left = x + "px";
         this.$refs.menu2.style.top = y - 200 + "px";
+
+        this.selectedObject.getWorldPosition(worldVector);
+        var standardVector2 = worldVector.project(this.camera);
+        var a2 = window.innerWidth / 2;
+        var b2 = window.innerHeight / 2;
+        var x2 = Math.round(standardVector2.x * a2 + a2); //标准设备坐标转屏幕坐标
+        var y2 = Math.round(-standardVector2.y * b2 + b2); //标准设备坐标转屏幕坐标
+
+        this.$refs.menu.style.left = x2 + "px";
+        this.$refs.menu.style.top = y2 + "px";
         //这里的130px主要是为了标签和模型有一定偏移，当然也可以不设置，两者叠加在一起
       }
     },
@@ -2640,9 +1183,7 @@ export default {
             );
             this.transformControls.attach(intersects[0].object);
             this.transformControls.setSpace("local");
-            // this.scene.add(this.transformControls);
-
-            console.log("getMode", this.transformControls.getMode());
+            console.log("getMode", this.transformControls);
           }
         } else {
           this.showMenu = false;
@@ -2675,7 +1216,7 @@ export default {
           this.scene.updateMatrixWorld(true);
           const worldPosition = new THREE.Vector3();
           intersects[0].object.getWorldPosition(worldPosition);
-          // console.log('世界坐标',worldPosition);
+          // console.log("世界坐标", worldPosition);
           // console.log("intersects[0].object", intersects[0].object);
           mesh.position.set(worldPosition.x, worldPosition.y, worldPosition.z); //点光源位置
           // if (intersects[0].object.rotateY90) {
@@ -2685,25 +1226,18 @@ export default {
           this.border = new THREE.BoxHelper(mesh, "#5b78e7"); //设置边框，这个边框不会旋转
           this.border.name = "高亮显示柜";
           this.scene.add(this.border); //网格模型添加到场景中
+          var scrollTop =
+            document.documentElement.scrollTop || document.body.scrollTop;
           if (intersects[0].object.name === "列头机架") {
-            var scrollTop =
-              document.documentElement.scrollTop || document.body.scrollTop;
             this.$refs.menu2.style.left = event.clientX + 20 + "px";
             this.$refs.menu2.style.top = event.clientY + scrollTop - 200 + "px";
             this.showMenu2 = true;
             this.showMenu3 = false;
           } else {
-            // 创建精灵图标
-            // this.newCSS3DSprite(
-            //   intersects,
-            //   worldPosition.x,
-            //   worldPosition.y + 2800,
-            //   worldPosition.z
-            // );
             var scrollTop =
               document.documentElement.scrollTop || document.body.scrollTop;
-            this.$refs.menu3.style.left = event.clientX + 20 + "px";
-            this.$refs.menu3.style.top = event.clientY + scrollTop - 120 + "px";
+            this.$refs.menu3.style.left = event.clientX - 77 + "px";
+            this.$refs.menu3.style.top = event.clientY + scrollTop - 130 + "px";
             this.showMenu3 = true;
             if (!this.freezeShowMenu2) {
               this.showMenu2 = false;
@@ -2734,69 +1268,15 @@ export default {
           this.showMenu2 = false;
         }
         this.showMenu3 = false;
+        this.showMenu = false;
       }
     },
     setMethPositon() {
       this.scene.add(this.transformControls);
       this.showMenu = false;
     },
-    // 创建精灵图标
-    newCSS3DSprite(obj, x, y, z) {
-      let arrText = obj[0].object.name;
-      let splitText = arrText.split("*");
-      let width = 3000,
-        height = splitText.length * 500 + 500;
-      splitText.forEach(item => {
-        if (item.length > 8) {
-          width = 4000;
-        }
-      });
-
-      let canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
-      let ctx = canvas.getContext("2d");
-
-      ctx.fillStyle = "rgba(22, 36, 74, 0.9)";
-      ctx.fillRect(0, 0, width, height);
-      // this.drawRoundRect(ctx, 0, 0, width, height, 200);
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      const titleArr = ["名称：", "位置：", "已用：", "未用："];
-      splitText.forEach((item, index) => {
-        ctx.font = 300 + 'px " bold';
-        ctx.fillStyle = "#666";
-        ctx.fillText(
-          titleArr[index],
-          160 * titleArr[index].length + 240,
-          (index + 1) * 500
-        );
-        ctx.font = 300 + 'px " bold';
-        ctx.fillStyle = "#fff";
-        let leftP = 1500;
-        if (index === 0) {
-          leftP = 2000;
-        } else if (index === 1) {
-          leftP = 2000;
-        }
-        ctx.fillText(item, leftP, (index + 1) * 500);
-      });
-      ctx.stroke();
-      this.spriteMaterial = new THREE.SpriteMaterial({
-        map: new THREE.CanvasTexture(canvas) //设置精灵纹理贴图
-      });
-      if (this.sprite) {
-        this.scene.remove(this.sprite);
-      }
-      this.sprite = new THREE.Sprite(this.spriteMaterial);
-      this.scene.add(this.sprite);
-      this.sprite.scale.set(width, height, 1); // 只需要设置x、y两个分量就可以
-      this.sprite.position.set(x, y, z);
-    },
     // 创建朔源精灵图标3
     newCSS3DSprite3(name, x, y, z) {
-      // let width = 2000,
-      //   height = 800;
       let canvas = document.createElement("canvas");
       canvas.width = 400;
       canvas.height = 400;
@@ -2849,7 +1329,7 @@ export default {
     onDocumentClick(event) {
       const self = this;
       event.preventDefault();
-      this.showMenu = false;
+      // this.showMenu = false;
       //阻止本来的默认事件，比如浏览器的默认右键事件是弹出浏览器的选项
       this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
       this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -2861,7 +1341,7 @@ export default {
         this.freezeShowMenu2 = true;
         this.intersectsObj = intersects[0].object;
         // this.showMenu2 = true;
-        console.log("点击了啥", intersects);
+        // console.log("点击了啥", intersects);
       } else {
         if (this.transformControls) {
           this.scene.remove(this.transformControls);
@@ -2914,13 +1394,13 @@ export default {
         } else {
           flagArr[0] = true;
         }
-        if (this.camera.position.y - this.cameraY > 500) {
-          this.cameraPosition2.y -= 500;
-        } else if (this.camera.position.y - this.cameraY < -500) {
-          this.cameraPosition2.y += 500;
-        } else {
-          flagArr[1] = true;
-        }
+        // if (this.camera.position.y - this.cameraY > 500) {
+        //   this.cameraPosition2.y -= 500;
+        // } else if (this.camera.position.y - this.cameraY < -500) {
+        //   this.cameraPosition2.y += 500;
+        // } else {
+        //   flagArr[1] = true;
+        // }
         if (this.camera.position.z - this.cameraZ > 500) {
           this.cameraPosition2.z -= 500;
         } else if (this.camera.position.z - this.cameraZ < -500) {
@@ -3103,9 +1583,9 @@ export default {
       const self = this;
       // this.removeMan();
       this.removeObjAll();
-      this.addBuilding();
+      // this.addBuilding();
       this.animationTime = Date.now();
-      this.lookAround = true;
+      self.listGroup = {};
       switch (this.floorIndex) {
         case 1:
           self.scene.add(self.FloorOne);
@@ -3122,21 +1602,28 @@ export default {
         case 4:
           self.scene.add(self.FloorFour);
           this.FloorOne.position.y = -4000;
-
+          this.FloorOne.position.z = -10000;
           break;
 
         default:
+          self.scene.add(self.roomModel);
+          this.roomModel.position.y = -4000;
+          this.roomModel.position.z = -10000;
           break;
       }
-      self.listGroup = {};
-      if (val === 114) {
-        self.getCabinetType(); // 对接口
-      }
+      // this.lookAround = true;
+
+      // if (val === 114) {
+      self.getCabinetType(); // 对接口
+      // }
       // console.log(this.scene)
     },
     selectValue(val) {
       console.log("selectValue", val);
       if (val.length >= 0 && this.floorIndex) {
+        if (!this.listGroup.traverse) {
+          return;
+        }
         if (val.indexOf("全部") > -1) {
           this.listGroup.traverse(function(child) {
             if (child.isMesh && child.TYPE) {
@@ -3182,16 +1669,20 @@ export default {
         });
       }
     },
-    capacityViewBtn(val) {
-      if (val) {
+    isCollapse(val) {
+      if (val === "机柜容量图") {
         this.removeEventListenerFn();
         const list = this.scene.getObjectByName("设备集合");
         this.scene.remove(list);
         this.scene.add(this.capacityGroup);
-      } else {
+        this.controls.enabled = true;
+      } else if (val === "模块间视图") {
         this.scene.remove(this.capacityGroup);
         this.scene.add(this.listGroup);
         this.addEventListenerFn();
+        this.controls.enabled = true;
+      } else {
+        this.controls.enabled = false;
       }
     }
   }
@@ -3237,17 +1728,74 @@ export default {
 .el-select__tags {
   max-width: 440px !important;
 }
+.capacity-btn {
+  position: absolute;
+  top: 140px;
+  font-size: 12px;
+  padding: 5px;
+  right: 330px;
+  height: 34px;
+}
+.capacity-btn span {
+  font-size: 12px;
+}
+.capacity-btn .el-switch__core {
+  height: 14px;
+  width: 30px !important;
+}
+.capacity-btn .el-switch__core:after {
+  width: 10px;
+  height: 10px;
+}
+.capacity-btn.el-switch.is-checked .el-switch__core::after {
+  margin-left: -12px;
+}
 </style>
 <style scoped lang="scss">
+.cad-img {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background-color: #16244a;
+  left: 0;
+  top: 0;
+  padding-right: 300px;
+  padding-top: 70px;
+  .img-box {
+    height: 705px;
+    width: 700px;
+    margin: 110px auto;
+    background: url("../../assets/common/image/weimojian/cad-img.png") no-repeat
+      center;
+    background-size: 100%;
+  }
+  .img-box2 {
+    height: 700px;
+    width: 700px;
+    margin: 120px auto;
+    background: url("../../assets/common/image/weimojian/floor.png") repeat;
+    border: 10px solid #ced9e5;
+    overflow: hidden;
+  }
+}
+
 // @import "@/assets/theme/common.scss";
 @media screen and (max-height: 769px) {
   .lb-module-list {
     height: 160px;
   }
+  .cad-img {
+    overflow-y: scroll;
+    .img-box {
+      height: 505px;
+      width: 500px;
+    }
+  }
 }
-.capacity-btn {
+
+.capacity-btn2 {
   position: absolute;
-  top: 86px;
+  top: 83px;
   font-size: 14px;
   padding: 5px;
   right: 330px;
@@ -3278,37 +1826,6 @@ export default {
   color: #fff;
   cursor: pointer;
 }
-// .gl-tongji {
-//   cursor: pointer;
-// }
-// .gl-tongji + div {
-//   height: 0;
-//   overflow: hidden;
-// }
-// .gl-tongji:hover .el-icon-arrow-down {
-//   display: none;
-// }
-// .gl-tongji .el-icon-arrow-up {
-//   display: none;
-// }
-// .gl-tongji:hover .el-icon-arrow-up {
-//   display: inline-block;
-// }
-// .gl-tongji.active {
-//   background-color: #8a9eff;
-// }
-// .gl-tongji:hover + div {
-//   height: 176px;
-// }
-// .gl-tongji.active + div {
-//   height: 176px;
-// }
-// .gl-tongji.active .el-icon-arrow-up {
-//   display: inline-block;
-// }
-// .gl-tongji.active .el-icon-arrow-down {
-//   display: none;
-// }
 .powerCharts {
   height: 116px;
   width: 270px;
@@ -3390,6 +1907,18 @@ export default {
 .menu3 li label {
   color: rgba(255, 255, 255, 0.4);
 }
+.menu3::after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 50%;
+  margin-left: -5px;
+  bottom: -20px;
+  width: 0;
+  height: 0;
+  border: 10px solid transparent;
+  border-top-color: rgba(22, 36, 74, 0.6);
+}
 .none-hover.ui-height48:hover {
   background-color: inherit;
   cursor: inherit;
@@ -3449,6 +1978,12 @@ export default {
   top: 140px;
   left: 50px;
   min-width: 240px;
+}
+.model-select1 {
+  position: absolute;
+  top: 140px;
+  left: 320px;
+  min-width: 100px;
 }
 .ui-city-tabbar-ul {
   display: flex;

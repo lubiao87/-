@@ -88,6 +88,7 @@
         ><i class="el-icon-delete"></i>删除</el-button
       >
       <el-button type="primary"><i class="el-icon-download"></i>导出</el-button>
+      <el-button type="primary"><i class="el-icon-upload"></i>导入机房设备</el-button>
     </el-row>
   </div>
 </template>

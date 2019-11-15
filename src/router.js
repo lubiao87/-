@@ -33,16 +33,6 @@ const routes = [
       auth: false // 这里设置，当前路由需要校验
     },
     children: [
-      //百度地图页面
-      {
-        path: "/mapView",
-        name: "mapView",
-        component: () => import("./views/map/mapView.vue"),
-        meta: {
-          auth: false, // 这里设置，当前路由需要校验
-          keepAlive: true // 缓存
-        }
-      },
       //高德地图页面
       {
         path: "/lbsMapView",

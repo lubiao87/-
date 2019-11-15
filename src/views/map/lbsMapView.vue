@@ -729,7 +729,7 @@ export default {
     handleSelect(item) {
       console.log(item);
       this.state = item.modelName;
-      this.map.setZoomAndCenter(13, [
+      this.map.setZoomAndCenter(12.9, [
         parseFloat(item.modeLocation[0]),
         parseFloat(item.modeLocation[1])
       ]); //同时设置地图层级与中心点
@@ -740,7 +740,7 @@ export default {
     },
     rountGo(item) {
       this.state = item.modelName;
-      this.map.setZoomAndCenter(13, [
+      this.map.setZoomAndCenter(12.9, [
         parseFloat(item.modeLocation[0]),
         parseFloat(item.modeLocation[1])
       ]); //同时设置地图层级与中心点
@@ -803,7 +803,7 @@ export default {
         viewMode: "3D",
         pitch: 30,
         rotation: 25,
-        zoom: 13,
+        zoom: 12.9,
         zooms: [11, 20],
         center: [113.370565, 23.122751],
         // mapStyle: "amap://styles/macaron",
@@ -1269,22 +1269,22 @@ export default {
       switch (this.selectValueName) {
         case "番禺区":
           setTimeout(() => {
-            that.map.setZoom(13);
+            that.map.setZoom(12.9);
           }, 400);
           break;
         case "荔湾区":
           setTimeout(() => {
-            that.map.setZoom(13);
+            that.map.setZoom(12.9);
           }, 400);
           break;
         case "海珠区":
           setTimeout(() => {
-            that.map.setZoom(13);
+            that.map.setZoom(12.9);
           }, 400);
           break;
         case "天河区":
           setTimeout(() => {
-            that.map.setZoom(13);
+            that.map.setZoom(12.9);
           }, 400);
           break;
         case "越秀区":

@@ -817,6 +817,14 @@ export default {
         resizeEnable: true
         // mapStyle: "amap://styles/f92fafd270beb106283db716d8da5234" //设置地图的显示样式
       });
+      // var toolbar = new AMap.ToolBar();
+      // that.map.plugin(toolbar);
+      AMap.plugin(["AMap.ControlBar"], function() {
+        // 添加 3D 罗盘控制
+        that.map.addControl(
+          new AMap.ControlBar({ position: { top: "100px", right: "300px" } })
+        );
+      });
       // 创建Object3DLayer图层
       that.object3Dlayer = new AMap.Object3DLayer({
         zIndex: 110,

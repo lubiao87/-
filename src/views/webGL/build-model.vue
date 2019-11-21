@@ -16,6 +16,7 @@
       <build-model2d
         ref="buildModel2d"
         class="img-box2  ui-busin-ul"
+        @propsFlag="propsFlagFn"
         :foremostData="cabinetplaced"
       ></build-model2d>
     </div>
@@ -45,9 +46,9 @@
     <!-- 机柜悬停html -->
     <div class="menu menu3" v-show="showMenu3" ref="menu3">
       <ul>
-        <li><label for="">名称：</label> RSS02-04</li>
-        <li><label for="">位置：</label> 07行09列</li>
-        <li><label for="">已用/未用：</label> 20U/26U</li>
+        <li><label for="">名称：</label> {{ methName || "-" }}</li>
+        <li><label for="">位置：</label> {{ location || "-" }}</li>
+        <li><label for="">已用/未用：</label> {{ occuRate || "-" }}</li>
       </ul>
     </div>
     <div class="lable-title">{{ floorName }}</div>
@@ -109,7 +110,7 @@
         </div> -->
         <!-- 通用搜索框开始 -->
       </div>
-      <div class="show1" v-show="boxTitle !== '工业园机楼'">
+      <div class="show1" v-show="!moduleStatistics[4].select">
         <h5 class="ui-city-title ui-height48 none-hover">
           <span class="ui-linebg"></span>{{ boxTitle }}
         </h5>
@@ -142,6 +143,9 @@
           :data="floorTreeData"
           :props="defaultProps"
           @node-click="handleNodeClick"
+          node-key="buildId"
+          :default-expanded-keys="expandedKeys"
+          :default-checked-keys="checkedKeys"
         ></el-tree>
       </div>
     </div>
@@ -207,6 +211,11 @@ export default {
   },
   data() {
     return {
+      methName: "", // 鼠标悬停字段1
+      location: "", // 鼠标悬停字段2
+      occuRate: "", // 鼠标悬停字段2
+      expandedKeys: [],
+      checkedKeys: [],
       floorTreeData: [
         {
           label: "一楼楼层",
@@ -215,7 +224,7 @@ export default {
           children: [
             {
               label: "1楼101机房",
-              buildChildId: 111101,
+              buildId: 111101,
               floor: 1
             }
           ]
@@ -227,12 +236,12 @@ export default {
           children: [
             {
               label: "二楼201机房",
-              buildChildId: 112101,
+              buildId: 112101,
               floor: 2
             },
             {
               label: "二楼202机房",
-              buildChildId: 112102,
+              buildId: 112102,
               floor: 2
             }
           ]
@@ -244,7 +253,7 @@ export default {
           children: [
             {
               label: "三楼301机房",
-              buildChildId: 113101,
+              buildId: 113101,
               floor: 3
             }
           ]
@@ -255,14 +264,14 @@ export default {
           floor: 4,
           children: [
             {
-              label: "四楼301机房",
-              buildChildId: 114101,
+              label: "四楼401机房",
+              buildId: 114101,
               floor: 4
             },
             {
-              label: "四楼302机房",
-              buildChildId: 114102,
-              floor: 0
+              label: "四楼402机房",
+              buildId: 114102,
+              floor: 4
             }
           ]
         }
@@ -449,19 +458,26 @@ export default {
     });
     //  this.$parent.restaurants = this.$parent.loadAll();
   },
+  activated() {
+    // console.log("$route.params", this.$route.params);
+    // console.log("this.$route.params", this.checkedKeys);
+    if (this.$route.params.buildId === 114101) {
+      this.scene.add(this.listGroup);
+      sessionStorage.setItem("buildId", 114101);
+    }
+  },
   methods: {
     handleNodeClick(data) {
       console.log(data);
       // 查看楼层
       // if (!this.lookAround) {
-      if (data.buildChildId) {
-        this.buildId = data.buildChildId;
-        this.floorIndex = 0;
+      this.floorIndex = data.floor;
+      if (data.buildId > 114) {
+        this.buildId = data.buildId;
         this.floorName = "工业园机楼 - " + data.label;
         this.scene.remove(this.FloorFour);
         this.scene.add(this.roomModel);
       } else {
-        this.floorIndex = data.floor;
         this.animationFlag = true;
         this.buildId = data.buildId;
         this.floorName = "工业园机楼 - " + data.label;
@@ -526,6 +542,10 @@ export default {
       // window.requestAnimationFrame(this.render);
       this.render();
       this.raycaster = new THREE.Raycaster();
+    },
+    propsFlagFn(e) {
+      console.log("propsFlag-------", e);
+      this.propsFlag = e;
     },
     // 整流器
     zlLiFn(item) {
@@ -837,6 +857,7 @@ export default {
       self.scene.remove(this.meshZL);
       self.scene.remove(this.roomModel);
       self.scene.remove(this.spriteGroup);
+      self.scene.remove(this.capacityGroup);
     },
     // 右键查看机架详情
     showProps() {
@@ -944,6 +965,7 @@ export default {
       // mesh.position.z = item.position[1]
       mesh.TYPE = this.cabinetType[item.index].name;
       mesh.name = item.name;
+      mesh.dataInfo = item;
       if (item.parentId) {
         mesh.parentId = item.parentId;
         // 创建精灵图标
@@ -1011,9 +1033,14 @@ export default {
       this.meshZL.translateX(5000);
       this.meshZL.translateZ(6000);
       this.meshZL.translateY(-2000);
-      if (self.buildId === 114102 || self.buildId === 114) {
+      if (self.buildId === 114102) {
         this.scene.add(this.listGroup);
         this.scene.add(this.meshZL);
+      } else if (sessionStorage.getItem("buildId") && self.buildId === 114101) {
+        this.scene.add(this.listGroup);
+        this.scene.add(this.meshZL);
+      }
+      if (self.buildId <= 114) {
         this.scene.add(this.spriteGroup);
       }
       //创建一个屏幕和场景转换工具
@@ -1218,6 +1245,9 @@ export default {
           intersects[0].object.getWorldPosition(worldPosition);
           // console.log("世界坐标", worldPosition);
           // console.log("intersects[0].object", intersects[0].object);
+          this.methName = intersects[0].object.name;
+          this.location = intersects[0].object.dataInfo.location;
+          this.occuRate = intersects[0].object.dataInfo.occuRate;
           mesh.position.set(worldPosition.x, worldPosition.y, worldPosition.z); //点光源位置
           // if (intersects[0].object.rotateY90) {
           //   mesh.rotateY(-Math.PI / 2);
@@ -1588,27 +1618,48 @@ export default {
       self.listGroup = {};
       switch (this.floorIndex) {
         case 1:
-          self.scene.add(self.FloorOne);
-          this.FloorOne.position.y = -16000;
+          if (val > 114) {
+            self.scene.add(self.roomModel);
+            this.roomModel.position.y = -4000;
+            this.roomModel.position.z = -10000;
+          } else {
+            self.scene.add(self.FloorOne);
+            this.FloorOne.position.y = -16000;
+          }
           break;
         case 2:
-          self.scene.add(self.FloorTwo);
-          this.FloorOne.position.y = -12000;
+          if (val > 114) {
+            self.scene.add(self.roomModel);
+            this.roomModel.position.y = -4000;
+            this.roomModel.position.z = -10000;
+          } else {
+            self.scene.add(self.FloorTwo);
+            this.FloorOne.position.y = -12000;
+          }
           break;
         case 3:
-          self.scene.add(self.FloorThree);
-          this.FloorOne.position.y = -8000;
+          if (val > 114) {
+            self.scene.add(self.roomModel);
+            this.roomModel.position.y = -4000;
+            this.roomModel.position.z = -10000;
+          } else {
+            self.scene.add(self.FloorThree);
+            this.FloorOne.position.y = -8000;
+          }
           break;
         case 4:
-          self.scene.add(self.FloorFour);
-          this.FloorOne.position.y = -4000;
-          this.FloorOne.position.z = -10000;
+          if (val > 114) {
+            self.scene.add(self.roomModel);
+            this.roomModel.position.y = -4000;
+            this.roomModel.position.z = -10000;
+          } else {
+            self.scene.add(self.FloorFour);
+            this.FloorOne.position.y = -4000;
+            this.FloorOne.position.z = -10000;
+          }
           break;
 
         default:
-          self.scene.add(self.roomModel);
-          this.roomModel.position.y = -4000;
-          this.roomModel.position.z = -10000;
           break;
       }
       // this.lookAround = true;

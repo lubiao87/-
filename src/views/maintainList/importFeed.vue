@@ -88,14 +88,50 @@
         ><i class="el-icon-delete"></i>删除</el-button
       >
       <el-button type="primary"><i class="el-icon-download"></i>导出</el-button>
-      <el-button type="primary"><i class="el-icon-upload"></i>导入机房设备</el-button>
+      <el-button type="primary" @click="dialogFormVisible = true"
+        ><i class="el-icon-upload"></i>导入机房设备</el-button
+      >
+      <el-button type="primary" @click.native="locationHref"
+        ><i class="el-icon-mobile"></i>采集工具</el-button
+      >
     </el-row>
+    <el-dialog title="上传文件" :visible.sync="dialogFormVisible">
+      <el-upload
+        class="upload-demo"
+        :action="actionUrl"
+        :on-preview="handlePreview"
+        :on-remove="handleRemove"
+        :before-remove="beforeRemove"
+        :on-success="uploadSuccess"
+        multiple
+        :data="uploadParams"
+        ref="upload"
+        accept=".xlsx"
+        :limit="1"
+        :on-exceed="handleExceed"
+        :file-list="fileList"
+        :auto-upload="false"
+        :on-progress="uploadProgress"
+      >
+        <el-button size="small" type="primary">点击上传</el-button>
+        <div slot="tip" class="el-upload__tip">
+          只能上传xlsx文件，且不超过500kb
+        </div>
+      </el-upload>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitUpload">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import { listSearchMixin } from "../../mixin"; //混淆请求
+import { api } from "../../api/api"; //api配置请求的路径
 export default {
   name: "importFeed",
+  mixins: [listSearchMixin],
   props: {
     datePacleholder: {
       type: String,
@@ -155,6 +191,8 @@ export default {
   },
   data() {
     return {
+      // actionUrl: api.login, //上传文件接口
+      actionUrl: "https://jsonplaceholder.typicode.com/posts/", //上传文件接口
       formInline: {
         sourceType: 1, // 第一个值
         status: "",
@@ -162,10 +200,24 @@ export default {
         buildId: "",
         dateVal: "", // 时间选择器
         sourceName: "" // 输入框的值
+      },
+      dialogFormVisible: false,
+      form: {
+        name: "",
+        region: ""
+      },
+      formLabelWidth: "120px",
+      fileList: [],
+      uploadParams: {
+        // 上传文件的参数
+        a: 123
       }
     };
   },
   methods: {
+    locationHref() {
+      window.open("http://hztxfw.gdyuhui.net/AccessData/");
+    },
     onSubmit() {
       this.$emit("onSubmit", this.formInline);
     },
@@ -180,6 +232,37 @@ export default {
     },
     deleteSource() {
       this.$emit("deleteSource");
+    },
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    handlePreview(file) {
+      console.log(file);
+    },
+    handleExceed(files, fileList) {
+      this.$message.warning(
+        `当前限制选择 1 个文件，本次选择了 ${
+          files.length
+        } 个文件，共选择了 ${files.length + fileList.length} 个文件`
+      );
+    },
+    beforeRemove(file, fileList) {
+      return this.$confirm(`确定移除 ${file.name}？`);
+    },
+    submitUpload() {
+      this.dialogFormVisible = false;
+      this.$refs.upload.submit();
+    },
+    uploadSuccess(e) {
+      console.log("上传成功返回的数据", e);
+      this.$emit("loadingFn", false);
+      this.$router.push({
+        name: "buildModel",
+        params: { data: e, buildId: 114101 }
+      });
+    },
+    uploadProgress() {
+      this.$emit("loadingFn", true);
     }
   }
 };

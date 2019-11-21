@@ -1,5 +1,11 @@
 <template>
-  <div class="principal">
+  <div
+    class="principal"
+    v-loading="loading"
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"
+  >
     <div class="principalHeader"></div>
     <div class="principalContent">
       <!-- 指示栏 -->
@@ -25,6 +31,7 @@
             @addCabinet="addCabinet"
             @editSource="editSource"
             @deleteSource="deleteSource"
+            @loadingFn="loadingFn"
           >
           </import-Feed>
           <!-- 申请信息table数据 -->
@@ -215,6 +222,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       barNames: "可维护资源列表", // 指示栏名称
       nabarCation: imagesSrc.nabarCation, // 图片
       applicationStatus: "请选择资源类型",
@@ -679,6 +687,10 @@ export default {
       console.log("addCabinet");
       this.cabinetHandleType = 1;
       this.cabinetUpdateBar(null);
+    },
+    loadingFn(e) {
+      console.log("loading", e);
+      this.loading = e;
     },
     editSource() {
       console.log("editSource");

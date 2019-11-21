@@ -5,14 +5,17 @@ const cabinetplaced = [
     posX: "0",
     posY: "0",
     type: "列头机架",
-    name: "HW05-03"
+    name: "HW05-03",
+    location: "01列"
   },
   {
     index: 2,
     posX: "0.9",
     posY: "0",
     type: "标准机架",
-    name: "RSS02-02",
+    name: "ZTE01-01",
+    location: "01列01位",
+    occuRate: "28U/20U",
     capacity: 0.6
   },
   {
@@ -20,7 +23,9 @@ const cabinetplaced = [
     posX: "1.5",
     posY: "0",
     type: "标准机架",
-    name: "RSS01-04",
+    name: "HW01-02",
+    location: "01列02位",
+    occuRate: "26U/20U",
     capacity: 0.6
   },
   {
@@ -28,7 +33,9 @@ const cabinetplaced = [
     posX: "2.2",
     posY: "0",
     type: "标准机架",
-    name: "RSS01-05",
+    name: "ZTE01-03",
+    location: "01列03位",
+    occuRate: "23U/23U",
     capacity: 0.5
   },
   {
@@ -36,7 +43,9 @@ const cabinetplaced = [
     posX: "2.9",
     posY: "0",
     type: "标准机架",
-    name: "RSS01-01",
+    name: "ZTE01-04",
+    location: "01列04位",
+    occuRate: "26U/20U",
     capacity: 0.6
   },
   {
@@ -44,7 +53,9 @@ const cabinetplaced = [
     posX: "3.5",
     posY: "0",
     type: "标准机架",
-    name: "RSS01-03",
+    name: "ZTE 01－05",
+    location: "01列05位",
+    occuRate: "26U/20U",
     capacity: 0.6
   },
   {
@@ -52,7 +63,9 @@ const cabinetplaced = [
     posX: "4.1",
     posY: "0",
     type: "标准机架",
-    name: "RSS01-02",
+    name: "ZTE04",
+    location: "01列06位",
+    occuRate: "26U/20U",
     capacity: 0.6
   },
 
@@ -61,7 +74,9 @@ const cabinetplaced = [
     posX: "8.6",
     posY: "0",
     type: "标准机架",
-    name: "RSS02-01",
+    name: "ZTE 01－07",
+    location: "01列07位",
+    occuRate: "26U/20U",
     capacity: 0.6
   },
   {
@@ -69,7 +84,9 @@ const cabinetplaced = [
     posX: "9.2",
     posY: "0",
     type: "标准机架",
-    name: "ZTE03",
+    name: "ZTE 01－08",
+    location: "01列08位",
+    occuRate: "36U/12U",
     capacity: 0.75
   },
   {
@@ -77,7 +94,9 @@ const cabinetplaced = [
     posX: "9.8",
     posY: "0",
     type: "标准机架",
-    name: "HW05-03",
+    name: "ZTE 01－09",
+    location: "01列09位",
+    occuRate: "45U/5U",
     capacity: 0.9
   },
   {
@@ -85,7 +104,9 @@ const cabinetplaced = [
     posX: "10.4",
     posY: "0",
     type: "标准机架",
-    name: "HW05-03",
+    name: "ZLG05",
+    location: "01列10位",
+    occuRate: "23U/23U",
     capacity: 0.5
   },
   {
@@ -93,7 +114,9 @@ const cabinetplaced = [
     posX: "11",
     posY: "0",
     type: "标准机架",
-    name: "HW05-03",
+    name: "HW15",
+    location: "01列11位",
+    occuRate: "26U/20U",
     capacity: 0.6
   },
   {
@@ -101,7 +124,9 @@ const cabinetplaced = [
     posX: "11.6",
     posY: "0",
     type: "标准机架",
-    name: "HW05-03",
+    name: "WR03-02",
+    location: "01列12位",
+    occuRate: "15U/35U",
     capacity: 0.3
   },
   {
@@ -109,7 +134,8 @@ const cabinetplaced = [
     posX: "12.25",
     posY: "0",
     type: "列头机架",
-    name: "HW05-03"
+    name: "HW05-03",
+    location: "01列"
   },
 
   // 第二排
@@ -1327,7 +1353,7 @@ const cabinetplaced = [
     posX: "7.2",
     posY: "10",
     type: "标准机架",
-    name: "RSS02-13*07行09列*2U*8U",
+    name: "RSS02-13",
     capacity: 0.6
   },
   {
@@ -1518,7 +1544,7 @@ const cabinetplaced = [
     posX: "9",
     posY: "12",
     type: "标准机架",
-    name: "RSS02-13*07行09列*2U*8U",
+    name: "RSS02-13",
     capacity: 0.6
   },
   {
@@ -1526,7 +1552,7 @@ const cabinetplaced = [
     posX: "9.6",
     posY: "12",
     type: "标准机架",
-    name: "RSS02-13*07行09列*2U*8U",
+    name: "RSS02-13",
     capacity: 0.7
   },
   {
@@ -1534,7 +1560,7 @@ const cabinetplaced = [
     posX: "10.2",
     posY: "12",
     type: "标准机架",
-    name: "RSS02-13*07行09列*2U*8U",
+    name: "RSS02-13",
     capacity: 0.6
   },
   {
@@ -1542,7 +1568,7 @@ const cabinetplaced = [
     posX: "10.8",
     posY: "12",
     type: "标准机架",
-    name: "RSS02-13*07行09列*2U*8U",
+    name: "RSS02-13",
     capacity: 0.7
   },
   {
@@ -1550,7 +1576,7 @@ const cabinetplaced = [
     posX: "11.4",
     posY: "12",
     type: "标准机架",
-    name: "RSS02-13*07行09列*2U*8U",
+    name: "RSS02-13*07",
     capacity: 0.6
   },
   {

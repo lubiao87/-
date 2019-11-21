@@ -9,8 +9,10 @@
         @mousemove="changefield"
         @mouseleave="changefield2"
         @click="clickDiv"
+        @dblclick="dblclickDiv"
         :data-name="item.name"
-        :data-type="item.type"
+        :data-location="item.location"
+        :data-occuRate="item.occuRate"
         :data-setId="item.setId"
         :style="{
           bottom: item.position[0] / 23 + 50 + 'px',
@@ -40,9 +42,9 @@
     <!-- 机柜悬停html -->
     <div class="menu menu3" v-show="showMenu3" ref="menu3">
       <ul>
-        <li><label for="">名称：</label> RSS02-04</li>
-        <li><label for="">位置：</label> 07行09列</li>
-        <li><label for="">已用/未用：</label> 20U/26U</li>
+        <li><label for="">名称：</label> {{ methName || "-" }}</li>
+        <li><label for="">位置：</label> {{ location || "-" }}</li>
+        <li><label for="">已用/未用：</label> {{ occuRate || "-" }}</li>
       </ul>
     </div>
     <!-- <div class="lable-title">{{ floorName }}</div> -->
@@ -62,8 +64,10 @@ export default {
   },
   data() {
     return {
+      methName: "", // 鼠标悬停字段1
+      location: "", // 鼠标悬停字段2
+      occuRate: "", // 鼠标悬停字段2
       currentId: 1,
-      listName: "sdfsd",
       showMenu3: false,
       showMenu2: false,
       parentId: null,
@@ -74,7 +78,8 @@ export default {
         "低压系统开关01",
         "变压器1#",
         "变电站-天河F4"
-      ]
+      ],
+      methName: ""
     };
   },
   methods: {
@@ -96,6 +101,9 @@ export default {
       const scrollTopY = this.$parent.$refs.isCollapse2d.scrollTop;
       const type = event.target.getAttribute("data-type");
       const parentId = event.target.getAttribute("data-setId");
+      this.methName = event.target.getAttribute("data-name");
+      this.location = event.target.getAttribute("data-location");
+      this.occuRate = event.target.getAttribute("data-occuRate");
       if (parentId) {
         this.parentId = parentId;
         this.showMenu2 = true;
@@ -124,6 +132,10 @@ export default {
     },
     clickDiv() {
       this.freezeShowMenu2 = true;
+    },
+    dblclickDiv() {
+      // console.log("propsFlagFn");
+      this.$emit("propsFlag", true);
     }
   },
   created() {

@@ -100,14 +100,15 @@
             <div :class="item.class"></div>
           </div>
         </div>
-        <!-- <div class="ui-citytol">
+        <div class="ui-citytol" v-if="superman">
+          <!-- ヽ(ー_ー)ノ 没用的东西  (^_−)☆   -->
           <div class="scroll-wrap fn-mt10 regionName" @click="addMan">
-            增加人物
+            增加模型
           </div>
           <div class="scroll-wrap fn-mt10 regionName" @click="removeMan">
-            删除人物
+            删除模型
           </div>
-        </div> -->
+        </div>
         <!-- 通用搜索框开始 -->
       </div>
       <div class="show1" v-show="!moduleStatistics[4].select">
@@ -334,7 +335,7 @@ export default {
       FloorFour: null,
       modernBuilding: null, // 楼层obj
       moderBuild: null, // 大楼obj
-      // personPre: null, // 人obj
+      personPre: null, // 人obj
       referenceModel: null, // 人网格模型
       AnimationAction: null, // 动画
       // intersects: null, // -----
@@ -423,7 +424,9 @@ export default {
           name: "女厕",
           center: [-14000, 1000, -4000]
         }
-      ]
+      ],
+      analyser: null,
+      superman: false
     };
   },
   computed: {
@@ -433,6 +436,7 @@ export default {
   },
   created() {
     const self = this;
+
     self.cabinetplaced = cabinetplaced;
     self.cabinetType = self.cabinetType.map(item => {
       let items = item;
@@ -465,6 +469,9 @@ export default {
       this.scene.add(this.listGroup);
       sessionStorage.setItem("buildId", 114101);
     }
+    if (sessionStorage.getItem("username") === "lubiao87") {
+      this.superman = true;
+    }
   },
   methods: {
     handleNodeClick(data) {
@@ -494,7 +501,7 @@ export default {
       // this.Objloader = new THREE.OBJLoader();
       // this.Objloader.load("./Assets/obj/dog.obj", self.loaderDog);
       this.FBXloader.load("./Assets/fbx/building.FBX", self.loaderObj);
-      // this.FBXloader.load("./Assets/fbx/SambaDancing.FBX", self.loaderMan);
+      this.FBXloader.load("./Assets/fbx/SambaDancing.FBX", self.loaderMan);
       this.FBXloader.load("./Assets/fbx/1.FBX", self.loaderCabinet1);
       this.FBXloader.load("./Assets/fbx/2.FBX", self.loaderCabinet2);
       this.FBXloader.load("./Assets/fbx/3.FBX", self.loaderCabinet3);
@@ -508,6 +515,7 @@ export default {
         "./Assets/fbx/floorFourChilder.FBX",
         self.floorFourChilder
       );
+      this.addMusic();
       this.ambient = new THREE.AmbientLight(0xffffff); // 环境光
       this.renderer = new THREE.WebGLRenderer(); // 渲染器
       this.scene.add(this.ambient);
@@ -660,24 +668,60 @@ export default {
       //渲染场景和相机
       this.renderer.render(this.scene, this.camera);
       // this.CSS3Renderer.render(this.scene, this.camera); //执行渲染操作
-      // if (this.mixer !== null) {
-      //   // console.log(this.clock.getDelta())
-      //   //clock.getDelta()方法获得两帧的时间间隔
-      //   // 更新混合器相关的时间
-      //   this.mixer.update(this.clock.getDelta());
-      // }
+      if (this.mixer !== null) {
+        // console.log(this.clock.getDelta())
+        //clock.getDelta()方法获得两帧的时间间隔
+        // 更新混合器相关的时间
+        this.mixer.update(this.clock.getDelta());
+      }
       // var delta = this.clock.getDelta();
       // this.lookAroundFn(); // 楼房渐变
       // if (typeof this.selectBorder !== "undefined") {
       //   this.lookCabinetfn();
       // }
       // this.composer.render(delta);
+      if (this.analyser) {
+        // console.log(analyser)
+        // 获得频率数据N个
+        var arr = this.analyser.getFrequencyData();
+        // 遍历组对象，每个网格子对象设置一个对应的频率数据
+        this.musicGroup.children.forEach((elem, index) => {
+          elem.scale.y = arr[index] / 80;
+          elem.material.color.r = arr[index] / 200;
+        });
+      }
       window.requestAnimationFrame(this.render);
     },
+    addMusic() {
+      const self = this;
+      this.musicGroup = new THREE.Group();
+      let N = 128; //控制音频分析器返回频率数据数量
+      for (let i = 0; i < N / 2; i++) {
+        var box = new THREE.BoxGeometry(100, 1000, 100); //创建一个立方体几何对象
+        var material = new THREE.MeshPhongMaterial({
+          color: 0x0000ff
+        }); //材质对象
+        var mesh = new THREE.Mesh(box, material); //网格模型对象
+        // 长方体间隔20，整体居中
+        mesh.position.set(200 * i - (N / 2) * 100, 0, 0);
+        this.musicGroup.add(mesh);
+      }
+      var listener = new THREE.AudioListener(); //监听者
+      this.audio = new THREE.Audio(listener); //非位置音频对象
+      var audioLoader = new THREE.AudioLoader(); //音频加载器
+      // 加载音频文件
+      audioLoader.load("./Assets/music/DanceMonkey.mp3", function(AudioBuffer) {
+        self.audio.setBuffer(AudioBuffer); // 音频缓冲区对象关联到音频对象audio
+        self.audio.setLoop(true); //是否循环
+        self.audio.setVolume(0.5); //音量
+        // self.audio.play(); //播放
+        // 音频分析器和音频绑定，可以实时采集音频时域数据进行快速傅里叶变换
+        self.analyser = new THREE.AudioAnalyser(self.audio, 2 * N);
+      });
+    },
     loaderMan(obj) {
-      // console.log(obj)
       obj.name = "跳舞人";
-      obj.scale.set(15, 15, 15);
+      obj.scale.set(150, 150, 150);
       this.personPre = obj;
       this.referenceModel = obj.children[1];
       this.referenceModel2 = obj.children[2];
@@ -697,7 +741,7 @@ export default {
           child.receiveShadow = true;
         }
       });
-      // this.scene.add(obj)
+
       // console.log(obj)
     },
     loaderObj(obj) {
@@ -896,7 +940,16 @@ export default {
       if (!this.scene.getObjectByName("跳舞人")) {
         this.scene.add(this.personPre);
       }
+      this.audio.play(); //播放
+      // console.log(this.audio)
+      this.scene.add(this.musicGroup);
+      this.musicGroup.position.set(4000, 10000, 10000);
       // console.log(this.scene)
+    },
+    removeMan() {
+      this.scene.remove(this.personPre);
+      this.scene.remove(this.musicGroup);
+      this.audio.stop();
     },
     addMeth(item) {
       let geometry = new THREE.BoxGeometry(
@@ -1243,6 +1296,7 @@ export default {
           this.scene.updateMatrixWorld(true);
           const worldPosition = new THREE.Vector3();
           intersects[0].object.getWorldPosition(worldPosition);
+          // this.selectedObject = intersects[0].object;
           // console.log("世界坐标", worldPosition);
           // console.log("intersects[0].object", intersects[0].object);
           this.methName = intersects[0].object.name;
@@ -1370,6 +1424,7 @@ export default {
       if (intersects.length && intersects[0].object.name === "列头机架") {
         this.freezeShowMenu2 = true;
         this.intersectsObj = intersects[0].object;
+        this.selectedObject = intersects[0].object;
         // this.showMenu2 = true;
         // console.log("点击了啥", intersects);
       } else {
@@ -1824,9 +1879,10 @@ export default {
     height: 700px;
     width: 700px;
     margin: 120px auto;
-    background: url("../../assets/common/image/weimojian/floor.png") repeat;
-    border: 10px solid #ced9e5;
+    background: url("../../assets/common/image/weimojian/floor.png") no-repeat;
+    // border: 10px solid #ced9e5;
     overflow: hidden;
+    background-size: 100%;
   }
 }
 

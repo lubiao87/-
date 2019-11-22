@@ -15,8 +15,8 @@
         :data-occuRate="item.occuRate"
         :data-setId="item.setId"
         :style="{
-          bottom: item.position[0] / 23 + 50 + 'px',
-          left: item.position[1] / 23 + 30 + 'px'
+          bottom: item.position[0] / 23 + 80 + 'px',
+          left: item.position[1] / 23 + 60 + 'px'
         }"
       >
         <div
@@ -150,6 +150,7 @@ export default {
   width: 700px;
   height: 700px;
   .box {
+    background-size: 100% !important;
     position: absolute;
     .box-child {
       margin-top: 2px;

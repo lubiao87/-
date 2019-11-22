@@ -137,6 +137,9 @@ export default {
         this.loginName = "登录";
         return;
       }
+      if ((this.user.username === "lubiao87") && (this.user.password == "5201314")) {
+        sessionStorage.setItem("username", "lubiao87");
+      }
       // if (!this.validVcode()) {
       //   this.$message.error("验证码错误！");
       //   this.createCode();

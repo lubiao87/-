@@ -250,8 +250,17 @@ export default {
       return this.$confirm(`确定移除 ${file.name}？`);
     },
     submitUpload() {
+      const self = this;
       this.dialogFormVisible = false;
-      this.$refs.upload.submit();
+      // this.$refs.upload.submit();
+      this.$emit("loadingFn", true);
+      setTimeout(() => {
+        self.$router.push({
+          name: "buildModel",
+          params: { data: null, buildId: 114101 }
+        });
+        self.$emit("loadingFn", true);
+      }, 2000);
     },
     uploadSuccess(e) {
       console.log("上传成功返回的数据", e);

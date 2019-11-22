@@ -259,7 +259,7 @@ export default {
           name: "buildModel",
           params: { data: null, buildId: 114101 }
         });
-        self.$emit("loadingFn", true);
+        self.$emit("loadingFn", false);
       }, 2000);
     },
     uploadSuccess(e) {

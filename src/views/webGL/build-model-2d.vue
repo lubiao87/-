@@ -15,8 +15,8 @@
         :data-occuRate="item.occuRate"
         :data-setId="item.setId"
         :style="{
-          bottom: item.position[0] / 23 + 80 + 'px',
-          left: item.position[1] / 23 + 60 + 'px'
+          bottom: item.position[0] / 24 + 80 + 'px',
+          left: item.position[1] / 24 + 60 + 'px'
         }"
       >
         <div

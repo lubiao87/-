@@ -254,6 +254,7 @@ export default {
       this.dialogFormVisible = false;
       // this.$refs.upload.submit();
       this.$emit("loadingFn", true);
+      sessionStorage.setItem("buildId", 114101);
       setTimeout(() => {
         self.$router.push({
           name: "buildModel",
@@ -265,6 +266,7 @@ export default {
     uploadSuccess(e) {
       console.log("上传成功返回的数据", e);
       this.$emit("loadingFn", false);
+      sessionStorage.setItem("buildId", 114101);
       this.$router.push({
         name: "buildModel",
         params: { data: e, buildId: 114101 }

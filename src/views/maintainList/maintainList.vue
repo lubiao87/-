@@ -61,12 +61,12 @@
                 label="所在楼层"
                 :key="4"
               ></el-table-column>
-              <el-table-column
+              <!-- <el-table-column
                 v-if="sourceType == 1"
                 prop="aCPower"
                 label="所属机楼"
                 :key="5"
-              ></el-table-column>
+              ></el-table-column> -->
               <el-table-column
                 v-if="sourceType == 1"
                 prop="row"
@@ -99,12 +99,12 @@
                 label="所属机房"
                 :key="10"
               ></el-table-column>
-              <el-table-column
+              <!-- <el-table-column
                 v-if="sourceType == 2"
                 prop="buildName"
                 label="所属机楼"
                 :key="20"
-              ></el-table-column>
+              ></el-table-column> -->
               <el-table-column
                 v-if="sourceType == 2"
                 prop="area"
@@ -354,42 +354,6 @@ export default {
                 totalMachineCount: 100,
                 totalMachineTime: "2019年2月",
                 width: 20
-              },
-              {
-                aCPower: "跑马场机楼",
-                area: 150,
-                code: "003DC",
-                column: "1",
-                dCPower: "三楼",
-                height: 6,
-                longth: 15,
-                moduleId: 3,
-                moduleRoomName: "003",
-                name: "三楼003机房",
-                planStatus: 2,
-                roomId: 1,
-                row: "荔湾区",
-                totalMachineCount: 300,
-                totalMachineTime: "2019年3月",
-                width: 10
-              },
-              {
-                aCPower: "跑马场机楼",
-                area: 250,
-                code: "004DC",
-                column: "1",
-                dCPower: "四楼",
-                height: 6,
-                longth: 25,
-                moduleId: 4,
-                moduleRoomName: "004",
-                name: "四楼004机房",
-                planStatus: 0,
-                roomId: 1,
-                row: "白云区",
-                totalMachineCount: 300,
-                totalMachineTime: "2019年1月11日 12:00",
-                width: 10
               }
             ]
           },

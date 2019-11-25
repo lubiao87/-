@@ -67,7 +67,7 @@ const routes = [
         component: () => import("./views/webGL/build-model.vue"),
         meta: {
           auth: false,
-          keepAlive: true
+          keepAlive: false
         }
       },
       //  资源管理模块

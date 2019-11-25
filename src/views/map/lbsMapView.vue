@@ -50,7 +50,7 @@
       <!-- 微机楼统计 -->
       <div style="margin-top: 20px;">
         <h5 class="ui-city-title ui-height48">
-          <span class="ui-linebg"></span>机楼统计
+          <span class="ui-linebg"></span>接入间统计
         </h5>
         <div class="clearfix module-statis" style="padding-left: 0;">
           <div
@@ -68,13 +68,13 @@
         </div>
       </div>
 
-      <!-- 机楼列表 -->
-      <div style="margin-top: 20px;">
+      <!-- 接入间列表 -->
+      <div style="margin-top: 20px; ">
         <h5 class="ui-city-title ui-height48">
-          <span class="ui-linebg"></span>机楼列表
+          <span class="ui-linebg"></span>接入间列表
         </h5>
         <div class="clearfix module-statis" style="padding-left: 0;">
-          <el-autocomplete
+          <!-- <el-autocomplete
             popper-class="my-autocomplete"
             v-model="state"
             :fetch-suggestions="querySearch"
@@ -89,20 +89,30 @@
             </i>
             <template slot-scope="{ item }">
               <div class="name">{{ item.modelName }}</div>
-              <!-- <span class="addr">{{ item.address }}</span> -->
             </template>
-          </el-autocomplete>
+          </el-autocomplete> -->
           <div class="lb-module-list page-index" style="margin-top: 12px;">
             <ul>
-              <li
+              <!-- <li
                 v-for="(items, index) in modelData"
                 :key="index"
                 @click="rountGo(items)"
-                @dblclick="mapDbllickMarker"
               >
                 <span>{{ index + 1 }}. </span>
                 <span>{{ items.modelName }}</span>
                 <span class="lb-icon"></span>
+              </li> -->
+              <li
+                @click="rountGo(modelData[0])"
+                @dblclick="liClick(modelData[0].iconLocation[0])"
+              >
+                美林花园接入间
+              </li>
+              <li
+                @click="rountGo(modelData[0])"
+                @dblclick="liClick(modelData[0].iconLocation[1])"
+              >
+                棠下荷光路接入间
               </li>
             </ul>
           </div>
@@ -111,22 +121,20 @@
       <div class="yhui-real-timeimg"></div>
     </div>
     <!-- 右边收缩栏结束 -->
-    <div class="menu" v-show="showMenu" ref="menu">
+    <!-- <div class="menu" v-show="showMenu" ref="menu">
       <ul>
         <li @mouseover="mapMousemoveLi" @mouseleave="mapMοuseοutLi()" :data="3">
-          <!-- @click="showMarker3Fn" -->
           5G BBU <span>3</span>
         </li>
 
         <li @mouseover="mapMousemoveLi" @mouseleave="mapMοuseοutLi()" :data="1">
-          <!-- @click="showMarker3Fn" -->
           综合接入间 <span>1</span>
         </li>
         <li>其它 <span>0</span></li>
       </ul>
       <div class="close-btn" @click="hineMenuFn" v-show="MarkerClick">X</div>
       <div class="jianTou"></div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -144,7 +152,7 @@ export default {
     return {
       restaurants: [],
       state: "",
-      showMenu: false,
+      // showMenu: false,
       MarkerClick: false,
       modelData: [
         {
@@ -152,440 +160,16 @@ export default {
           iconLocation: [
             {
               location: ["113.377468854055", "23.114265554063"],
-              name: "美林花园远端机房"
+              name: "美林花园接入间",
+              buildId: 114102
             },
             {
               location: ["113.386872581306", "23.1477018208333"],
-              name: "棠下荷光路远端机房"
-            },
-            {
-              location: ["113.35224653287395", "23.115129095177218"],
-              name: "百合苑接入网机房"
-            },
-            {
-              location: ["113.345509061595", " 23.1469763309438"],
-              name: "职业技术师范接入网机房"
+              name: "棠下荷光路接入间",
+              buildId: 114101
             }
           ],
           modeLocation: ["113.366016977858", "23.1274220838625"]
-        },
-        {
-          modelName: "青云机楼",
-          iconLocation: [],
-          modeLocation: ["113.579681238758", "23.5409091642032"]
-        },
-        {
-          modelName: "大岗机楼",
-          iconLocation: [
-            {
-              name: "棠下解困小区远端机房",
-              location: ["113.377603832452", "23.1352856125418"]
-            }
-          ],
-          modeLocation: ["113.40083225568", "22.8025218558178"]
-        },
-        {
-          modelName: "荔城1机楼",
-          iconLocation: [],
-          modeLocation: ["113.830949516789", "23.2906952874569"]
-        },
-        {
-          modelName: "新街机楼",
-          iconLocation: [],
-          modeLocation: ["113.191544244205", "23.3772507477905"]
-        },
-        {
-          modelName: "大石机楼",
-          iconLocation: [],
-          modeLocation: ["113.313676378496", "23.0298473509556"]
-        },
-        {
-          modelName: "东涌机楼",
-          iconLocation: [],
-          modeLocation: ["113.449101157069", "22.8884343653125"]
-        },
-        {
-          modelName: "金洲机楼",
-          iconLocation: [],
-          modeLocation: ["113.534880146617", "22.799662636603"]
-        },
-        {
-          modelName: "洛溪机楼",
-          iconLocation: [],
-          modeLocation: ["113.294934554777", "23.0448418380042"]
-        },
-        {
-          modelName: "南村机楼",
-          iconLocation: [],
-          modeLocation: ["113.387651694508", "23.0059124095889"]
-        },
-        {
-          modelName: "沙湾机楼",
-          iconLocation: [],
-          modeLocation: ["113.340020995373", "22.9087718376512"]
-        },
-        {
-          modelName: "石基机楼",
-          iconLocation: [],
-          modeLocation: ["113.43089386113", "22.9555904621901"]
-        },
-        {
-          modelName: "石楼机楼",
-          iconLocation: [],
-          modeLocation: ["113.480928273369", "22.9622116377878"]
-        },
-        {
-          modelName: "荔城2机楼",
-          iconLocation: [],
-          modeLocation: ["113.822395828206", "23.2877681765868"]
-        },
-        {
-          modelName: "市桥北城机楼",
-          iconLocation: [],
-          modeLocation: ["113.353336759648", "22.9525827055048"]
-        },
-        {
-          modelName: "市桥东城机楼",
-          iconLocation: [],
-          modeLocation: ["113.372665332314", "22.9372857286179"]
-        },
-        {
-          modelName: "市桥南城机楼",
-          iconLocation: [],
-          modeLocation: ["113.359637577159", "22.9369643785506"]
-        },
-        {
-          modelName: "万顷沙机楼",
-          iconLocation: [],
-          modeLocation: ["113.544955511234", "22.7108461309779"]
-        },
-        {
-          modelName: "钟村机楼",
-          iconLocation: [],
-          modeLocation: ["113.31459669402", "22.9812953766368"]
-        },
-        {
-          modelName: "新华机楼",
-          iconLocation: [],
-          modeLocation: ["113.207801824893", "23.3801806773837"]
-        },
-        {
-          modelName: "江埔机楼",
-          iconLocation: [],
-          modeLocation: ["113.601800610504", "23.5334753206999"]
-        },
-        {
-          modelName: "新都机楼",
-          iconLocation: [],
-          modeLocation: ["113.196575769013", "23.4031489945134"]
-        },
-        {
-          modelName: "横沥2远端机房",
-          iconLocation: [],
-          modeLocation: ["113.492274447926", "22.7508688141883"]
-        },
-        {
-          modelName: "狮岭机楼",
-          iconLocation: [],
-          modeLocation: ["113.148738899118", "23.4636449292284"]
-        },
-        {
-          modelName: "花东机楼",
-          iconLocation: [],
-          modeLocation: ["113.319910161989", "23.439032781381"]
-        },
-        {
-          modelName: "化龙新局远端机房1",
-          iconLocation: [],
-          modeLocation: ["113.46093 ", "23.03086 "]
-        },
-        {
-          modelName: "炭步机楼",
-          iconLocation: [],
-          modeLocation: ["113.100435432984", "23.3370833760147"]
-        },
-        {
-          modelName: "赤坭机楼",
-          iconLocation: [
-            {
-              location: ["113.062194036127", "23.2592018599787"],
-              name: "文岗村接入网机房"
-            },
-            {
-              location: ["113.070178532914", "23.4414901309656"],
-              name: "瑞岭村接入网机房"
-            },
-            {
-              location: ["113.076640750871", "23.4724360247037"],
-              name: "花都碧桂园接入网机房"
-            },
-            {
-              location: ["113.086376629679", "23.4124907730316"],
-              name: "培正商学院接入网机房"
-            },
-            {
-              location: ["113.091310831131", "23.370640041006"],
-              name: "广州花都珠江轮胎厂远端机房"
-            },
-            {
-              location: ["113.099161093311", "23.3178317695214"],
-              name: "茶塘村远端机房"
-            }
-          ],
-          modeLocation: ["113.077061455655", "23.386938013166"]
-        },
-        {
-          modelName: "黄阁新局远端机房1",
-          iconLocation: [],
-          modeLocation: ["113.507626512954", "22.8255037304042"]
-        },
-        {
-          modelName: "榄核远端机房1",
-          iconLocation: [],
-          modeLocation: ["113.333259995406", "22.8396974547342"]
-        },
-        {
-          modelName: "福和机楼",
-          iconLocation: [],
-          modeLocation: ["113.630801660945", "23.3566438046483"]
-        },
-        {
-          modelName: "神岗机楼",
-          iconLocation: [],
-          modeLocation: ["113.528156168142", "23.4925483074673"]
-        },
-        {
-          modelName: "温泉机楼",
-          iconLocation: [],
-          modeLocation: ["113.652419923163", "23.6444805801455"]
-        },
-        {
-          modelName: "云星远端机房",
-          iconLocation: [],
-          modeLocation: ["113.62709612155", "23.6182741658251"]
-        },
-        {
-          modelName: "灌村机楼",
-          iconLocation: [],
-          modeLocation: ["113.706524389246", "23.5838858088288"]
-        },
-        {
-          modelName: "东明机楼",
-          iconLocation: [],
-          modeLocation: ["113.869628278424", "23.8948380945255"]
-        },
-        {
-          modelName: "良口机楼",
-          iconLocation: [],
-          modeLocation: ["113.730354231153", "23.7196950170441"]
-        },
-        {
-          modelName: "宁西机楼",
-          iconLocation: [],
-          modeLocation: ["113.654273909803", "23.2222905572254"]
-        },
-        {
-          modelName: "派潭机楼",
-          iconLocation: [],
-          modeLocation: ["113.776579814962", "23.4907345801742"]
-        },
-        {
-          modelName: "三江机楼",
-          iconLocation: [],
-          modeLocation: ["113.857250075124", "23.1883119651019"]
-        },
-        {
-          modelName: "吕田机楼",
-          iconLocation: [],
-          modeLocation: ["113.945869041863", "23.8119620582121"]
-        },
-        {
-          modelName: "沙埔机楼",
-          iconLocation: [],
-          modeLocation: ["113.656447321824", "23.1613136011562"]
-        },
-        {
-          modelName: "石滩机楼",
-          iconLocation: [],
-          modeLocation: ["113.790509634816", "23.1753139377989"]
-        },
-        {
-          modelName: "三江沙庄机楼",
-          iconLocation: [],
-          modeLocation: ["113.816945026087", "23.1365401375522"]
-        },
-        {
-          modelName: "鳌头机楼",
-          iconLocation: [],
-          modeLocation: ["113.42159626991", "23.6198951926465"]
-        },
-        {
-          modelName: "仙村机楼",
-          iconLocation: [],
-          modeLocation: ["113.712303517451", "23.1794840662287"]
-        },
-        {
-          modelName: "鹭江机楼",
-          iconLocation: [],
-          modeLocation: ["113.300799211289", "23.0974545083542"]
-        },
-        {
-          modelName: "五羊机楼",
-          iconLocation: [],
-          modeLocation: ["113.309214579526", "23.1215709732335"]
-        },
-        {
-          modelName: "北京路机楼",
-          iconLocation: [],
-          modeLocation: ["113.26293700695", "23.1275574748982"]
-        },
-        {
-          modelName: "广园机楼",
-          iconLocation: [],
-          modeLocation: ["113.2588905707", "23.1631942137906"]
-        },
-        {
-          modelName: "沙河机楼",
-          iconLocation: [],
-          modeLocation: ["113.318247631221", "23.1668891037351"]
-        },
-        {
-          modelName: "东圃机楼",
-          iconLocation: [],
-          modeLocation: ["113.397066790398", "23.1262448064755"]
-        },
-        {
-          modelName: "槎龙机楼",
-          iconLocation: [],
-          modeLocation: ["113.220571369841", "23.1754895477239"]
-        },
-        // {
-        //   "modelName": "同德机楼",
-        //   "iconLocation": [],
-        //   "modeLocation": ["113.229344598812", "23.1598128219894"]
-        // },
-        {
-          modelName: "石井机楼",
-          iconLocation: [],
-          modeLocation: ["113.228914359268", "23.2070672776627"]
-        },
-        {
-          modelName: "新市机楼",
-          iconLocation: [],
-          modeLocation: ["113.253088508792", "23.1884384542777"]
-        },
-        {
-          modelName: "汇侨机楼",
-          iconLocation: [],
-          modeLocation: ["113.253549620509", "23.2002157632738"]
-        },
-        {
-          modelName: "西华机楼",
-          iconLocation: [],
-          modeLocation: ["113.244095244852", "23.1339103884079"]
-        },
-        {
-          modelName: "观绿机楼",
-          iconLocation: [],
-          modeLocation: ["113.24818118014", "23.1214301091517"]
-        },
-        {
-          modelName: "荔枝湾机楼",
-          iconLocation: [],
-          modeLocation: ["113.228948766471", "23.1277350411807"]
-        },
-        {
-          modelName: "淘金机楼",
-          iconLocation: [],
-          modeLocation: ["113.279778246568", "23.1469971902575"]
-        },
-        {
-          modelName: "花地机楼",
-          iconLocation: [],
-          modeLocation: ["113.229650379432", "23.0839844338088"]
-        },
-        {
-          modelName: "芳村机楼",
-          iconLocation: [],
-          modeLocation: ["113.232654269309", "23.10085492864"]
-        },
-        {
-          modelName: "宝岗机楼",
-          iconLocation: [],
-          modeLocation: ["113.259682931142", "23.1011571442131"]
-        },
-        {
-          modelName: "大沙东机楼",
-          iconLocation: [],
-          modeLocation: ["113.451864294394", "23.108291882949"]
-        },
-        {
-          modelName: "人和机楼",
-          iconLocation: [],
-          modeLocation: ["113.293783464267", "23.332282780761"]
-        },
-        {
-          modelName: "江村机楼",
-          iconLocation: [
-            {
-              location: ["113.225772731228", "23.4053855533015"],
-              name: "南航花园接入网机房"
-            },
-            {
-              location: ["113.225710927119", "23.1635179440987"],
-              name: "岭南花园接入网机房"
-            },
-            {
-              location: ["113.228370418461", "23.2586382224769"],
-              name: "驿迅物流接入网机房"
-            }
-          ],
-          modeLocation: ["113.2266314506", "23.2777316928436"]
-        },
-        {
-          modelName: "克山机楼",
-          iconLocation: [],
-          modeLocation: ["113.241687222271", "23.1507193675631"]
-        },
-        {
-          modelName: "新港机楼",
-          iconLocation: [],
-          modeLocation: ["113.520933824758", "23.0650753873621"]
-        },
-        {
-          modelName: "新机场机楼",
-          iconLocation: [],
-          modeLocation: ["113.296988871003", "23.3760298753955"]
-        },
-        {
-          modelName: "广州番禺东涌（德昇）数据中心",
-          iconLocation: [],
-          modeLocation: ["113.42394", "22.896573"]
-        },
-        {
-          modelName: "广州永顺（腾讯定制）数据中心",
-          iconLocation: [],
-          modeLocation: ["113.532977", "23.214335"]
-        },
-        {
-          modelName: "广州南沙云谷（百度定制）数据中心（一期）",
-          iconLocation: [],
-          modeLocation: ["113.526514", "22.725144"]
-        },
-        {
-          modelName: "中国电信广州莲花山数据中心",
-          iconLocation: [],
-          modeLocation: ["113.483263", "22.985223"]
-        },
-        {
-          modelName: "广州番禺化龙（中鼎）数据中心",
-          iconLocation: [],
-          modeLocation: ["113.467007", "23.02233"]
-        },
-        {
-          modelName: "中国电信广州起云数据中心",
-          iconLocation: [],
-          modeLocation: ["113.42760", "23.16764"]
         }
       ],
       moduleStatistics: [
@@ -602,7 +186,7 @@ export default {
       ],
       panelShow: true,
       item: {
-        path: "/buildModel",
+        path: "buildModel",
         query: {
           id: 123
         }
@@ -902,16 +486,17 @@ export default {
         spots.push(marker);
         // 绑定事件
         // marker.on("mouseover", that.mapMοuseοutMarker);
-        marker.on("mousemove", that.mapMοuseοutMarker);
+        // marker.on("mousemove", that.mapMοuseοutMarker);
 
         marker.on("click", that.mapClickMarker);
-        marker.on("dblclick", that.mapDbllickMarker);
+        // marker.on("dblclick", that.mapDbllickMarker);
       });
       that.map.add(spots);
       // this.$refs.cesiumContainer2.addEventListener("click", this.hiddenMapImg);
       // 缩放事件
       // that.map.on('zoomstart', that.mapZoomstart);
       that.map.on("zoomchange", that.mapZoom);
+      that.mapMousemoveLi();
       // that.map.on('zoomend', that.mapZoomend);
     },
     showMarker3Fn(event) {
@@ -976,7 +561,7 @@ export default {
       // }
     },
     hineMenuFn() {
-      this.showMenu = false;
+      // this.showMenu = false;
       this.MarkerClick = false;
       this.showMarker3 = false;
       this.mapMοuseοutLi();
@@ -996,28 +581,6 @@ export default {
           that.objIndex = i;
         }
       });
-      this.showMenu = true;
-      // if (!that.points3D) {
-      //   that.points3D = new AMap.Object3D.Points();
-      //   that.object3Dlayer.add(that.points3D);
-      //   that.points3D.borderColor = [0.6, 0.8, 1, 0.8];
-      //   that.points3D.borderWeight = 0;
-      //   var geometry = that.points3D.geometry;
-      //   var center = that.lnglatToG20(
-      //     that.modelData[that.objIndex].modeLocation
-      //   );
-      //   this.zoom = that.map.getZoom(); //获取当前地图级别
-      //   var size = 60 + (this.zoom - 13) * 20;
-      //   if (size < 30) {
-      //     size = 30;
-      //   }
-      //   console.log("盒子大小", size);
-      //   // 高度为 0
-      //   geometry.vertices.push(center.x, center.y, 0);
-      //   geometry.pointSizes.push(size);
-      //   geometry.vertexColors.push(0.45, 0.53, 0.87, 1);
-      //   that.object3Dlayer.add(that.points3D);
-      // }
       ev.target.on("mouseout", that.mouseleveMarker);
     },
     mapClickMarker(ev) {
@@ -1041,110 +604,108 @@ export default {
             that.objIndex = i;
           }
         });
-        that.showMenu = true;
+        // that.showMenu = true;
       }, 300); //延时300毫秒执行
 
       return false;
     },
-    mapDbllickMarker() {
-      console.log("双击");
+    mapDbllickMarker(e) {
+      console.log("双击", e.target.getExtData());
       if (this.clickFlag) {
         //取消上次延时未执行的方法
         this.clickFlag = clearTimeout(this.clickFlag);
       }
-      this.$router.push({ path: this.item.path, query: this.item.query });
+      this.$router.push({ name: "buildModel", params: e.target.getExtData() });
     },
-    mapMousemoveLi(e) {
+    liClick(e) {
       console.log(e);
+      if (this.clickFlag) {
+        //取消上次延时未执行的方法
+        this.clickFlag = clearTimeout(this.clickFlag);
+      }
+      this.$router.push({ name: "buildModel", params: e });
+    },
+    mapMousemoveLi() {
+      // console.log(e);
       const that = this;
-      if (that.objIndex === null) {
-        return;
-      }
-      let numberIndex = [];
-      const textLi = e.target.innerText;
-      if (textLi.indexOf("综合接入间") > -1) {
-        numberIndex = [0, 5, 5, 5];
-      } else {
-        numberIndex = [5, 1, 2, 3];
-      }
+      // if (that.objIndex === null) {
+      //   return;
+      // }
+      // let numberIndex = [];
+      // const textLi = e.target.innerText;
+      // if (textLi.indexOf("综合接入间") > -1) {
+      //   numberIndex = [0, 5, 5, 5];
+      // } else {
+      //   numberIndex = [5, 1, 2, 3];
+      // }
       that.markers = [];
       var img = "./Assets/img/search-map-icon.png";
-      that.modelData[that.objIndex].iconLocation.forEach((item, index) => {
-        if (index === numberIndex[index]) {
-          var deepX =
-            (item.location[0] - that.modelData[that.objIndex].modeLocation[0]) /
-            4;
-          var deepY =
-            (item.location[1] - that.modelData[that.objIndex].modeLocation[1]) /
-            4;
-          var points = [
-            new AMap.LngLat(
-              JSON.parse(that.modelData[that.objIndex].modeLocation[0]),
-              JSON.parse(that.modelData[that.objIndex].modeLocation[1])
-            ),
-            new AMap.LngLat(
-              JSON.parse(that.modelData[that.objIndex].modeLocation[0]) + deepX,
-              JSON.parse(that.modelData[that.objIndex].modeLocation[1]) + deepY
-            ),
-            new AMap.LngLat(
-              JSON.parse(that.modelData[that.objIndex].modeLocation[0]) +
-                deepX * 2,
-              JSON.parse(that.modelData[that.objIndex].modeLocation[1]) +
-                deepY * 2
-            ),
-            new AMap.LngLat(
-              JSON.parse(item.location[0]),
-              JSON.parse(item.location[1])
-            )
-          ];
-          var numberOfPoints = 180;
-          var minHeight = 5;
-          if (item.meshLine) {
-            that.object3Dlayer.remove(item.meshLine);
-          }
-          that.modelData[that.objIndex].iconLocation[
-            index
-          ].meshLine = new AMap.Object3D.MeshLine({
-            path: that.computeBezier(points, numberOfPoints, minHeight),
-            height: that.getEllipseHeight(numberOfPoints, 2000, minHeight),
-            color: "rgba(55,129,240, 0.9)",
-            width: 2
-          });
-          that.modelData[that.objIndex].iconLocation[
-            index
-          ].meshLine.transparent = true;
-          that.modelData[that.objIndex].iconLocation[index].meshLine[
-            "backOrFront"
-          ] = "both";
-          that.object3Dlayer.add(
-            that.modelData[that.objIndex].iconLocation[index].meshLine
-          );
-
-          // 图标
-          var marker2 = new AMap.Marker({
-            position: new AMap.LngLat(
-              JSON.parse(item.location[0]),
-              JSON.parse(item.location[1])
-            ),
-            icon: img,
-            //  animation: "AMAP_ANIMATION_BOUNCE",
-            extData: {
-              id: index + 1
-            },
-            offset: new AMap.Pixel(-20, -30)
-          });
-          // marker2.setTitle(item.name);
-          marker2.setLabel({
-            offset: new AMap.Pixel(0, 40), //设置文本标注偏移量
-            content: `<div class="lb-label2" style="width:${
-              item.name.length
-            }em; margin-left: -${(item.name.length - 4) / 2}em;">${
-              item.name
-            }</div>` //设置文本标注内容
-            // direction: 'right' //设置文本标注方位
-          });
-          that.markers.push(marker2);
+      that.modelData[0].iconLocation.forEach((item, index) => {
+        // if (index === numberIndex[index]) {
+        var deepX = (item.location[0] - that.modelData[0].modeLocation[0]) / 4;
+        var deepY = (item.location[1] - that.modelData[0].modeLocation[1]) / 4;
+        var points = [
+          new AMap.LngLat(
+            JSON.parse(that.modelData[0].modeLocation[0]),
+            JSON.parse(that.modelData[0].modeLocation[1])
+          ),
+          new AMap.LngLat(
+            JSON.parse(that.modelData[0].modeLocation[0]) + deepX,
+            JSON.parse(that.modelData[0].modeLocation[1]) + deepY
+          ),
+          new AMap.LngLat(
+            JSON.parse(that.modelData[0].modeLocation[0]) + deepX * 2,
+            JSON.parse(that.modelData[0].modeLocation[1]) + deepY * 2
+          ),
+          new AMap.LngLat(
+            JSON.parse(item.location[0]),
+            JSON.parse(item.location[1])
+          )
+        ];
+        var numberOfPoints = 180;
+        var minHeight = 5;
+        if (item.meshLine) {
+          that.object3Dlayer.remove(item.meshLine);
         }
+        that.modelData[0].iconLocation[
+          index
+        ].meshLine = new AMap.Object3D.MeshLine({
+          path: that.computeBezier(points, numberOfPoints, minHeight),
+          height: that.getEllipseHeight(numberOfPoints, 2000, minHeight),
+          color: "rgba(55,129,240, 0.9)",
+          width: 2
+        });
+        that.modelData[0].iconLocation[index].meshLine.transparent = true;
+        that.modelData[0].iconLocation[index].meshLine["backOrFront"] = "both";
+        that.object3Dlayer.add(that.modelData[0].iconLocation[index].meshLine);
+
+        // 图标
+        var marker2 = new AMap.Marker({
+          position: new AMap.LngLat(
+            JSON.parse(item.location[0]),
+            JSON.parse(item.location[1])
+          ),
+          icon: img,
+          //  animation: "AMAP_ANIMATION_BOUNCE",
+          extData: {
+            buildId: item.buildId,
+            name: item.name
+          },
+          offset: new AMap.Pixel(-20, -30)
+        });
+        // marker2.setTitle(item.name);
+        marker2.setLabel({
+          offset: new AMap.Pixel(0, 40), //设置文本标注偏移量
+          content: `<div class="lb-label2" style="width:${
+            item.name.length
+          }em; margin-left: -${(item.name.length - 4) / 2}em;">${
+            item.name
+          }</div>` //设置文本标注内容
+          // direction: 'right' //设置文本标注方位
+        });
+        that.markers.push(marker2);
+        marker2.on("dblclick", that.mapDbllickMarker);
+        // }
       });
       if (!that.overlayGroups) {
         that.overlayGroups = new AMap.OverlayGroup(that.markers);
@@ -1184,9 +745,9 @@ export default {
       const that = this;
       // var pixel = ev.pixel;
       console.log("鼠标离开Marker");
-      if (!this.MarkerClick) {
-        this.showMenu = false;
-      }
+      // if (!this.MarkerClick) {
+      //   this.showMenu = false;
+      // }
     },
     getEllipseHeight(count, maxHeight, minHeight) {
       var height = [];

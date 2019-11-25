@@ -1,6 +1,19 @@
 <template>
   <div>
     <div class="parent" ref="parent">
+      <div class="qita door">门</div>
+      <div class="qita door">门</div>
+      <div class="qita door">门</div>
+      <div class="qita column">柱子</div>
+      <div class="qita column">柱子</div>
+      <div class="qita column">柱子</div>
+      <div class="qita column">柱子</div>
+      <div class="qita column">柱子</div>
+      <div class="qita column">柱子</div>
+      <div class="qita column">柱子</div>
+      <div class="qita casement">窗户</div>
+      <div class="qita casement">窗户</div>
+      <div class="qita casement">窗户</div>
       <div
         class="box"
         v-for="(item, index) in foremostData"
@@ -149,6 +162,62 @@ export default {
   position: relative;
   width: 700px;
   height: 700px;
+  .qita {
+    color: #4760ba;
+    position: absolute;
+  }
+  .qita:nth-child(1) {
+    left: 30px;
+    top: 45%;
+  }
+  .qita:nth-child(2) {
+    left: 48px;
+    bottom: 30px;
+  }
+  .qita:nth-child(3) {
+    right: 30px;
+    top: 45%;
+  }
+  .qita:nth-child(4) {
+    top: 26px;
+    left: 105px;
+  }
+  .qita:nth-child(5) {
+    top: 352px;
+    left: 105px;
+  }
+  .qita:nth-child(6) {
+    bottom: 26px;
+    left: 105px;
+  }
+  .qita:nth-child(7) {
+    top: 26px;
+    left: 352px;
+  }
+  .qita:nth-child(8) {
+    top: 352px;
+    left: 355px;
+  }
+  .qita:nth-child(9) {
+    bottom: 26px;
+    left: 352px;
+  }
+  .qita:nth-child(10) {
+    top: 55%;
+    right: 35px;
+  }
+  .qita:nth-child(11) {
+    top: 70px;
+    left: 16px;
+  }
+  .qita:nth-child(12) {
+    left: 58%;
+    bottom: 16px;
+  }
+  .qita:nth-child(13) {
+    left: 74%;
+    bottom: 16px;
+  }
   .box {
     background-size: 100% !important;
     position: absolute;

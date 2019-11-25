@@ -111,35 +111,16 @@
         </div>
         <!-- 通用搜索框开始 -->
       </div>
-      <div class="show1" v-show="!moduleStatistics[4].select">
-        <h5 class="ui-city-title ui-height48 none-hover">
+      <div class="show1" v-show="!moduleStatistics[4]">
+        <!-- <h5 class="ui-city-title ui-height48 none-hover">
           <span class="ui-linebg"></span>{{ boxTitle }}
-        </h5>
+        </h5> -->
         <div id="powerCharts" class="powerCharts"></div>
       </div>
-      <div
-        style="margin-top: 20px;"
-        class="show2"
-        v-show="moduleStatistics[4].select"
-      >
+      <div style="margin-top: 20px;" class="show2" v-show="false">
         <h5 class="ui-city-title ui-height48" @click="showBuilding">
           <span class="ui-linebg"></span>{{ boxTitle }}
         </h5>
-        <!-- <div class="clearfix module-statis" style="padding-left: 0;">
-          <div class="lb-module-list ui-link-ul">
-            <ul>
-              <li
-                v-for="(item, index) in dataList"
-                :key="index"
-                @click="lookFloor(item, index)"
-                :class="{ 'select-li': item.select }"
-              >
-                <span>{{ index + 1 + ". " + item.name }}</span>
-                <span class="lb-icon"></span>
-              </li>
-            </ul>
-          </div>
-        </div> -->
         <el-tree
           :data="floorTreeData"
           :props="defaultProps"
@@ -184,7 +165,7 @@ import echarts from "echarts"; // 引入echarts
 // import { listSearchMixin } from "../../mixin"; //混淆请求
 import * as THREE from "three";
 // import "three-obj-mtl-loader";
-import { _debounce, _getTextCanvas } from "@/utils/public.js";
+import { _debounce, _getTextCanvas, _drawArrow } from "@/utils/public.js";
 import cabinetplaced from "@/json/dataList.js";
 import "@/utils/control/TrackballControls.js";
 import "@/utils/control/DragControls.js";
@@ -306,16 +287,15 @@ export default {
       myChart: null,
       activeIndex: 0,
       moduleStatistics: [
-        { name: "空间利用率", value: "30%", class: "right_planning" },
+        {
+          name: "空间利用率",
+          value: "30%",
+          class: "right_planning",
+          select: true
+        },
         { name: "功率利用率", value: "56%", class: "right_module" },
         { name: "非专业机柜总数", value: "7个", class: "right_planning" },
-        { name: "专业机柜总数", value: "8个", class: "right_cabinet" },
-        {
-          name: "机房总数",
-          value: "5个",
-          class: "right_building",
-          select: true
-        }
+        { name: "专业机柜总数", value: "8个", class: "right_cabinet" }
       ],
       selectValue: ["全部"],
       scene: null, // 场景
@@ -343,7 +323,7 @@ export default {
       loading: true,
       panelShow: true,
       lookAround: false,
-      floorIndex: -1,
+      floorIndex: 4,
       cameraX: 20000,
       cameraY: 40000,
       cameraZ: -20000,
@@ -425,6 +405,16 @@ export default {
           center: [-14000, 1000, -4000]
         }
       ],
+      floorData2: [
+        {
+          name: "机房门",
+          center: [14000, 1000, 12000]
+        },
+        {
+          name: "窗户",
+          center: [-7000, 1000, 5000]
+        }
+      ],
       analyser: null,
       superman: false
     };
@@ -436,7 +426,8 @@ export default {
   },
   created() {
     const self = this;
-
+    console.log("this.$route.params---", this.$route.params);
+    this.floorName = this.$route.params.name;
     self.cabinetplaced = cabinetplaced;
     self.cabinetType = self.cabinetType.map(item => {
       let items = item;
@@ -452,6 +443,10 @@ export default {
       items.position = [item.posX * 1000, item.posY * 1000];
       return items;
     });
+    this.buildId = this.$route.params.buildId;
+    if (sessionStorage.getItem("username") === "lubiao87") {
+      this.superman = true;
+    }
   },
   mounted() {
     const self = this;
@@ -462,17 +457,18 @@ export default {
     });
     //  this.$parent.restaurants = this.$parent.loadAll();
   },
-  activated() {
-    // console.log("$route.params", this.$route.params);
-    // console.log("this.$route.params", this.checkedKeys);
-    if (this.$route.params.buildId === 114101) {
-      this.scene.add(this.listGroup);
-      sessionStorage.setItem("buildId", 114101);
-    }
-    if (sessionStorage.getItem("username") === "lubiao87") {
-      this.superman = true;
-    }
-  },
+  // activated() {
+  //   // console.log("$route.params", this.$route.params);
+  //   // console.log("this.$route.params", this.checkedKeys);
+  //   // if (this.$route.params.buildId === 114101) {
+  //   //   this.scene.add(this.listGroup);
+  //   //   sessionStorage.setItem("buildId", 114101);
+  //   // }
+  //   this.buildId = this.$route.params.buildId;
+  //   if (sessionStorage.getItem("username") === "lubiao87") {
+  //     this.superman = true;
+  //   }
+  // },
   methods: {
     handleNodeClick(data) {
       console.log(data);
@@ -543,7 +539,7 @@ export default {
       // this.setOutlinePass();
 
       this.axisHelper = new THREE.AxisHelper(8000); // 辅助线
-      // this.scene.add(this.axisHelper);
+      this.scene.add(this.axisHelper);
 
       // this.pushLineBox()  // 虚线框
       window.onresize = this.onWindowResize;
@@ -749,8 +745,12 @@ export default {
       this.loading = false;
       obj.translateY(-17000);
       obj.name = "整栋楼房";
-      this.scene.add(obj);
-      this.modernBuilding = this.scene.getObjectByName("整栋楼房");
+      // this.scene.add(obj);
+      // this.scene.add(this.roomModel);
+      console.log(this.$route.params);
+      this.modernBuilding = obj;
+      obj.position.y = -4000;
+      obj.position.z = -10000;
       this.moderBuild = this.scene.getObjectByName("大楼");
       obj.traverse(function(child) {
         if (child.isMesh) {
@@ -758,6 +758,10 @@ export default {
           child.receiveShadow = true;
         }
       });
+      // if (this.$route.params.buildId === 114102) {
+
+      this.setCabinet();
+      // }
     },
     loaderFloor4(obj) {
       this.FloorOne = obj;
@@ -767,6 +771,8 @@ export default {
     },
     floorFourChilder(obj) {
       this.roomModel = obj;
+      this.roomModel.position.y = -4000;
+      this.roomModel.position.z = -10000;
     },
     // 4
     loaderDDF(obj) {
@@ -1063,15 +1069,40 @@ export default {
           self.addBox(item);
         }
       });
-      this.floorData.forEach((item, index) => {
+
+      this.floorData2.forEach((item, index) => {
+        let width = 4000,
+          height = 1200,
+          r = 200;
         var spriteMaterial = new THREE.SpriteMaterial({
-          map: new THREE.CanvasTexture(_getTextCanvas(item.name)) //设置精灵纹理贴图
+          map: new THREE.CanvasTexture(
+            _getTextCanvas(item.name, width, height, r)
+          ) //设置精灵纹理贴图
         });
         var sprite = new THREE.Sprite(spriteMaterial);
-        sprite.scale.set(4000, 1200, 1); // 只需要设置x、y两个分量就可以
+        sprite.scale.set(width, height, 1); // 只需要设置x、y两个分量就可以
         sprite.position.set(item.center[0], item.center[1], item.center[2]);
         self.spriteGroup.add(sprite);
+        let width2 = 400,
+          height2 = 3200;
+        // 线条
+        //注意注意矩形几何体宽高比例和canvas宽高比例一致，以免压缩或拉伸
+        var plane = new THREE.PlaneGeometry(width2, height2);
+        var planeMaterial = new THREE.MeshBasicMaterial({
+          map: new THREE.CanvasTexture(_drawArrow(width2, height2)), //设置精灵纹理贴图
+          side: THREE.DoubleSide, // 双面显示
+          transparent: true // 开启透明效果，否则颜色贴图map的透明不起作用
+        });
+        var planeMesh = new THREE.Mesh(plane, planeMaterial);
+        // planeMesh.scale.set(width2, height2, 1); // 只需要设置x、y两个分量就可以
+        planeMesh.position.set(
+          item.center[0],
+          item.center[1] - height2 / 2 - 400,
+          item.center[2]
+        );
+        self.spriteGroup.add(planeMesh);
       });
+
       this.listGroup.position.z = -10000;
       this.capacityGroup.position.z = -10000;
       this.spriteGroup.position.z = -10000;
@@ -1086,6 +1117,7 @@ export default {
       this.meshZL.translateX(5000);
       this.meshZL.translateZ(6000);
       this.meshZL.translateY(-2000);
+      this.scene.add(this.roomModel);
       if (self.buildId === 114102) {
         this.scene.add(this.listGroup);
         this.scene.add(this.meshZL);
@@ -1093,9 +1125,10 @@ export default {
         this.scene.add(this.listGroup);
         this.scene.add(this.meshZL);
       }
-      if (self.buildId <= 114) {
-        this.scene.add(this.spriteGroup);
-      }
+      // if (self.buildId <= 114) {
+      //   this.scene.add(this.spriteGroup);
+      // }
+      this.scene.add(this.spriteGroup);
       //创建一个屏幕和场景转换工具
       // self.projector = new THREE.Projector();
       self.mouse = new THREE.Vector2();
@@ -1662,68 +1695,64 @@ export default {
     }
   },
   watch: {
-    buildId(val) {
-      // console.log(val)
-      if (this.floorIndex < 0) return;
-      const self = this;
-      // this.removeMan();
-      this.removeObjAll();
-      // this.addBuilding();
-      this.animationTime = Date.now();
-      self.listGroup = {};
-      switch (this.floorIndex) {
-        case 1:
-          if (val > 114) {
-            self.scene.add(self.roomModel);
-            this.roomModel.position.y = -4000;
-            this.roomModel.position.z = -10000;
-          } else {
-            self.scene.add(self.FloorOne);
-            this.FloorOne.position.y = -16000;
-          }
-          break;
-        case 2:
-          if (val > 114) {
-            self.scene.add(self.roomModel);
-            this.roomModel.position.y = -4000;
-            this.roomModel.position.z = -10000;
-          } else {
-            self.scene.add(self.FloorTwo);
-            this.FloorOne.position.y = -12000;
-          }
-          break;
-        case 3:
-          if (val > 114) {
-            self.scene.add(self.roomModel);
-            this.roomModel.position.y = -4000;
-            this.roomModel.position.z = -10000;
-          } else {
-            self.scene.add(self.FloorThree);
-            this.FloorOne.position.y = -8000;
-          }
-          break;
-        case 4:
-          if (val > 114) {
-            self.scene.add(self.roomModel);
-            this.roomModel.position.y = -4000;
-            this.roomModel.position.z = -10000;
-          } else {
-            self.scene.add(self.FloorFour);
-            this.FloorOne.position.y = -4000;
-            this.FloorOne.position.z = -10000;
-          }
-          break;
+    // buildId(val) {
+    //   // console.log(val)
+    //   if (this.floorIndex < 0) return;
+    //   const self = this;
+    //   // this.removeMan();
+    //   this.removeObjAll();
+    //   // this.addBuilding();
+    //   this.animationTime = Date.now();
+    //   self.listGroup = {};
+    //   switch (this.floorIndex) {
+    //     case 1:
+    //       if (val > 114) {
+    //         self.scene.add(self.roomModel);
+    //         this.roomModel.position.y = -4000;
+    //         this.roomModel.position.z = -10000;
+    //       } else {
+    //         self.scene.add(self.FloorOne);
+    //         this.FloorOne.position.y = -16000;
+    //       }
+    //       break;
+    //     case 2:
+    //       if (val > 114) {
+    //         self.scene.add(self.roomModel);
+    //         this.roomModel.position.y = -4000;
+    //         this.roomModel.position.z = -10000;
+    //       } else {
+    //         self.scene.add(self.FloorTwo);
+    //         this.FloorOne.position.y = -12000;
+    //       }
+    //       break;
+    //     case 3:
+    //       if (val > 114) {
+    //         self.scene.add(self.roomModel);
+    //         this.roomModel.position.y = -4000;
+    //         this.roomModel.position.z = -10000;
+    //       } else {
+    //         self.scene.add(self.FloorThree);
+    //         this.FloorOne.position.y = -8000;
+    //       }
+    //       break;
+    //     case 4:
+    //       if (val > 114) {
+    //         self.scene.add(self.roomModel);
+    //         // this.roomModel.position.y = -4000;
+    //         // this.roomModel.position.z = -10000;
+    //       }
+    //       break;
 
-        default:
-          break;
-      }
-      // this.lookAround = true;
+    //     default:
+    //       break;
+    //   }
+    //   // this.lookAround = true;
 
-      // if (val === 114) {
-      self.getCabinetType(); // 对接口
-      // }
-      // console.log(this.scene)
-    },
+    //   // if (val === 114) {
+    //   self.getCabinetType(); // 对接口
+    //   // }
+    //   // console.log(this.scene)
+    // },
     selectValue(val) {
       console.log("selectValue", val);
       if (val.length >= 0 && this.floorIndex) {

@@ -193,6 +193,8 @@ export default {
   },
   data() {
     return {
+      animationMenTop: true, // 开门动画
+      animationZF: true, // 开门正负
       methName: "", // 鼠标悬停字段1
       location: "", // 鼠标悬停字段2
       occuRate: "", // 鼠标悬停字段2
@@ -408,11 +410,11 @@ export default {
       floorData2: [
         {
           name: "机房门",
-          center: [14000, 1000, 12000]
+          center: [15000, 1000, 9000]
         },
         {
-          name: "窗户",
-          center: [-7000, 1000, 5000]
+          name: "机房门",
+          center: [-2000, 1000, 10000]
         }
       ],
       analyser: null,
@@ -497,7 +499,7 @@ export default {
       // this.Objloader = new THREE.OBJLoader();
       // this.Objloader.load("./Assets/obj/dog.obj", self.loaderDog);
       this.FBXloader.load("./Assets/fbx/building.FBX", self.loaderObj);
-      this.FBXloader.load("./Assets/fbx/SambaDancing.FBX", self.loaderMan);
+      // this.FBXloader.load("./Assets/fbx/SambaDancing.FBX", self.loaderMan);
       this.FBXloader.load("./Assets/fbx/1.FBX", self.loaderCabinet1);
       this.FBXloader.load("./Assets/fbx/2.FBX", self.loaderCabinet2);
       this.FBXloader.load("./Assets/fbx/3.FBX", self.loaderCabinet3);
@@ -511,6 +513,10 @@ export default {
         "./Assets/fbx/floorFourChilder.FBX",
         self.floorFourChilder
       );
+      // this.FBXloader.load(
+      //   "./Assets/fbx/test001.FBX",
+      //   self.floorFourChilder
+      // );
       this.addMusic();
       this.ambient = new THREE.AmbientLight(0xffffff); // 环境光
       this.renderer = new THREE.WebGLRenderer(); // 渲染器
@@ -539,7 +545,7 @@ export default {
       // this.setOutlinePass();
 
       this.axisHelper = new THREE.AxisHelper(8000); // 辅助线
-      this.scene.add(this.axisHelper);
+      // this.scene.add(this.axisHelper);
 
       // this.pushLineBox()  // 虚线框
       window.onresize = this.onWindowResize;
@@ -686,6 +692,31 @@ export default {
           elem.material.color.r = arr[index] / 200;
         });
       }
+
+      if (
+        !this.animationZF &&
+        this.intersects2 &&
+        this.intersects2.rotation.y >= 1
+      ) {
+        this.animationMenTop = true;
+      }
+      if (
+        this.animationZF &&
+        this.intersects2 &&
+        this.intersects2.rotation.y <= 0
+      ) {
+        this.animationMenTop = true;
+      }
+      let pi = null;
+      if (this.animationZF) {
+        pi = Math.PI / 200;
+      } else {
+        pi = -Math.PI / 200;
+      }
+      if (!this.animationMenTop && this.intersects2) {
+        // console.log(this.intersects2.rotation.y);
+        this.intersects2.rotateY(pi);
+      }
       window.requestAnimationFrame(this.render);
     },
     addMusic() {
@@ -768,8 +799,11 @@ export default {
       this.FloorTwo = obj;
       this.FloorThree = obj;
       this.FloorFour = obj;
+      console.log(obj);
     },
     floorFourChilder(obj) {
+      console.log("floorFourChilder", obj);
+      // obj.scale.set(10, 10, 10)
       this.roomModel = obj;
       this.roomModel.position.y = -4000;
       this.roomModel.position.z = -10000;
@@ -1096,10 +1130,11 @@ export default {
         var planeMesh = new THREE.Mesh(plane, planeMaterial);
         // planeMesh.scale.set(width2, height2, 1); // 只需要设置x、y两个分量就可以
         planeMesh.position.set(
-          item.center[0],
+          item.center[0] - 500,
           item.center[1] - height2 / 2 - 400,
           item.center[2]
         );
+        planeMesh.rotateZ(-Math.PI / 6);
         self.spriteGroup.add(planeMesh);
       });
 
@@ -1314,6 +1349,9 @@ export default {
       const intersects = this.raycaster.intersectObjects(
         self.listGroup.children
       );
+      // const intersects2 = this.raycaster.intersectObjects(
+      //   self.roomModel.children
+      // );
       // console.log(intersects)
       if (intersects.length > 0) {
         if (this.border) {
@@ -1454,6 +1492,17 @@ export default {
       const intersects = this.raycaster.intersectObjects(
         self.listGroup.children
       );
+      const intersects2 = this.raycaster.intersectObjects(
+        self.roomModel.children
+      );
+      if (intersects2.length > 0) {
+        console.log(intersects2[0]);
+        if (intersects2[0].object.name.indexOf("右") > -1) {
+          this.intersects2 = intersects2[0].object;
+          this.animationMenTop = false;
+          this.animationZF = !this.animationZF;
+        }
+      }
       if (intersects.length && intersects[0].object.name === "列头机架") {
         this.freezeShowMenu2 = true;
         this.intersectsObj = intersects[0].object;

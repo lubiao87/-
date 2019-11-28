@@ -193,8 +193,10 @@ export default {
   },
   data() {
     return {
-      animationMenTop: true, // 开门动画
-      animationZF: true, // 开门正负
+      animationMenTop: true, // 开门右动画
+      animationMenTop2: true, // 开门左动画
+      animationZF: true, // 开门右正负
+      animationZF2: true, // 开门左正负
       methName: "", // 鼠标悬停字段1
       location: "", // 鼠标悬停字段2
       occuRate: "", // 鼠标悬停字段2
@@ -499,7 +501,7 @@ export default {
       // this.Objloader = new THREE.OBJLoader();
       // this.Objloader.load("./Assets/obj/dog.obj", self.loaderDog);
       this.FBXloader.load("./Assets/fbx/building.FBX", self.loaderObj);
-      // this.FBXloader.load("./Assets/fbx/SambaDancing.FBX", self.loaderMan);
+      this.FBXloader.load("./Assets/fbx/SambaDancing.FBX", self.loaderMan);
       this.FBXloader.load("./Assets/fbx/1.FBX", self.loaderCabinet1);
       this.FBXloader.load("./Assets/fbx/2.FBX", self.loaderCabinet2);
       this.FBXloader.load("./Assets/fbx/3.FBX", self.loaderCabinet3);
@@ -513,10 +515,6 @@ export default {
         "./Assets/fbx/floorFourChilder.FBX",
         self.floorFourChilder
       );
-      // this.FBXloader.load(
-      //   "./Assets/fbx/test001.FBX",
-      //   self.floorFourChilder
-      // );
       this.addMusic();
       this.ambient = new THREE.AmbientLight(0xffffff); // 环境光
       this.renderer = new THREE.WebGLRenderer(); // 渲染器
@@ -692,32 +690,96 @@ export default {
           elem.material.color.r = arr[index] / 200;
         });
       }
-
+      // 开门动画
+      this.openDoorAnimation();
+      window.requestAnimationFrame(this.render);
+    },
+    // 开门动画
+    openDoorAnimation() {
       if (
         !this.animationZF &&
         this.intersects2 &&
-        this.intersects2.rotation.y >= 1
+        this.intersects2.name.indexOf("右") > -1 &&
+        this.intersects2.rotation.y < -1.5
       ) {
+        this.intersects2.rotation.y = -1.5;
         this.animationMenTop = true;
+        // console.log("关右门");
       }
       if (
         this.animationZF &&
         this.intersects2 &&
-        this.intersects2.rotation.y <= 0
+        this.intersects2.name.indexOf("右") > -1 &&
+        this.intersects2.rotation.y > 0
       ) {
+        this.intersects2.rotation.y = 0;
         this.animationMenTop = true;
+        // console.log("开右门");
       }
-      let pi = null;
-      if (this.animationZF) {
-        pi = Math.PI / 200;
-      } else {
-        pi = -Math.PI / 200;
+
+      if (
+        !this.animationZF2 &&
+        this.intersects3 &&
+        this.intersects3.name.indexOf("左") > -1 &&
+        this.intersects3.rotation.y > 1.5
+      ) {
+        this.intersects3.rotation.y = 1.5;
+        this.animationMenTop2 = true;
+        // console.log("关左门");
       }
+      if (
+        this.animationZF2 &&
+        this.intersects3 &&
+        this.intersects3.name.indexOf("左") > -1 &&
+        this.intersects3.rotation.y < 0
+      ) {
+        this.intersects3.rotation.y = 0;
+        this.animationMenTop2 = true;
+        // console.log("开左门");
+      }
+      let pi1 = null;
+      let pi2 = null;
+      if (
+        this.animationZF &&
+        this.intersects2 &&
+        this.intersects2.name.indexOf("右") > -1
+      ) {
+        // console.log("开右门动画");
+        pi1 = -Math.PI / 200; // 右开
+      }
+      if (
+        !this.animationZF &&
+        this.intersects2 &&
+        this.intersects2.name.indexOf("右") > -1
+      ) {
+        // console.log("关右门动画");
+        pi1 = Math.PI / 200; // 左开
+      }
+      if (
+        !this.animationZF2 &&
+        this.intersects3 &&
+        this.intersects3.name.indexOf("左") > -1
+      ) {
+        // console.log("开左门动画");
+        pi2 = -Math.PI / 200; // 右关
+      }
+      if (
+        this.animationZF2 &&
+        this.intersects3 &&
+        this.intersects3.name.indexOf("左") > -1
+      ) {
+        // console.log("关左门动画");
+        pi2 = Math.PI / 200; // 右关
+      }
+
       if (!this.animationMenTop && this.intersects2) {
         // console.log(this.intersects2.rotation.y);
-        this.intersects2.rotateY(pi);
+        this.intersects2.rotateY(pi1);
       }
-      window.requestAnimationFrame(this.render);
+      if (!this.animationMenTop2 && this.intersects3) {
+        // console.log(this.intersects3.rotation.y);
+        this.intersects3.rotateY(pi2);
+      }
     },
     addMusic() {
       const self = this;
@@ -748,7 +810,7 @@ export default {
     },
     loaderMan(obj) {
       obj.name = "跳舞人";
-      obj.scale.set(150, 150, 150);
+      obj.scale.set(50, 50, 50);
       this.personPre = obj;
       this.referenceModel = obj.children[1];
       this.referenceModel2 = obj.children[2];
@@ -807,6 +869,8 @@ export default {
       this.roomModel = obj;
       this.roomModel.position.y = -4000;
       this.roomModel.position.z = -10000;
+      // this.roomModel.children[6].geometry.position(820, 0, 0);
+      // this.roomModel.children[6].position(-820, 0, 0);
     },
     // 4
     loaderDDF(obj) {
@@ -1349,9 +1413,6 @@ export default {
       const intersects = this.raycaster.intersectObjects(
         self.listGroup.children
       );
-      // const intersects2 = this.raycaster.intersectObjects(
-      //   self.roomModel.children
-      // );
       // console.log(intersects)
       if (intersects.length > 0) {
         if (this.border) {
@@ -1501,6 +1562,10 @@ export default {
           this.intersects2 = intersects2[0].object;
           this.animationMenTop = false;
           this.animationZF = !this.animationZF;
+        } else if (intersects2[0].object.name.indexOf("左") > -1) {
+          this.intersects3 = intersects2[0].object;
+          this.animationMenTop2 = false;
+          this.animationZF2 = !this.animationZF2;
         }
       }
       if (intersects.length && intersects[0].object.name === "列头机架") {

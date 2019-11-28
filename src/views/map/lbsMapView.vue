@@ -3,16 +3,17 @@
     <!-- <input type="flies" src="/assets/GKG.FBX" ref="mapID" alt="" /> -->
     <div
       id="cesiumContainer"
+      class="cesiumContainer"
       style="position:absolute; top: 0; width: 100%;height:100%;"
-      v-show="!panelFlag"
     ></div>
-    <div
+    <!-- v-show="!panelFlag" -->
+    <!-- <div
       id="cesiumContainer2"
       class="cesiumContainer2"
       ref="cesiumContainer2"
       style="position:absolute; top: 0; width: 100%;height:100%;"
       v-show="panelFlag"
-    ></div>
+    ></div> -->
     <el-select
       class="model-select"
       v-model="selectValue"
@@ -357,7 +358,7 @@ export default {
       viewer.camera.setView({
         destination: Cesium.Cartesian3.fromDegrees(-100.0, 5.0, height)
       });
-      that.mapInit();
+      // that.mapInit();
       setTimeout(function() {
         viewer.camera.flyTo({
           destination: Cesium.Cartesian3.fromDegrees(
@@ -370,7 +371,7 @@ export default {
           complete: function() {
             // console.log("完成飞行");
 
-            // that.mapInit();
+            that.mapInit();
             that.panelFlag = true;
             that.$emit("getNavShow", false);
           }
@@ -382,8 +383,9 @@ export default {
     },
     mapInit() {
       const that = this;
+      document.getElementById("cesiumContainer").innerHTML = "";
       // 创建地图实例
-      that.map = new AMap.Map("cesiumContainer2", {
+      that.map = new AMap.Map("cesiumContainer", {
         viewMode: "3D",
         pitch: 30,
         rotation: 25,
@@ -893,7 +895,7 @@ export default {
   /* height: 80px; */
 }
 
-.cesiumContainer2 .amap-marker-label {
+.cesiumContainer .amap-marker-label {
   border: 0px solid transparent;
   background-color: transparent;
   color: #4c66c7;
@@ -904,11 +906,11 @@ export default {
   font-size: 14px;
   /* text-shadow: 0 0 0.5em #359cdf, -0 -0 0.5em #359cdf; */
 }
-.cesiumContainer2 .amap-icon img {
+.cesiumContainer .amap-icon img {
   height: 2.6rem;
   width: 2.6rem;
 }
-.cesiumContainer2 .lb-label2 {
+.cesiumContainer .lb-label2 {
   /* width: 160px;
   text-align: center; */
   margin-left: -50%;

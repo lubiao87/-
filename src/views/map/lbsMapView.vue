@@ -417,7 +417,7 @@ export default {
         opacity: 0.8
       });
       that.map.add(that.object3Dlayer);
-      that.drawBounds();
+
       var parenTimg = "./Assets/img/parent-build.png";
       var zoomStyleMapping2 = {
         11: 1,
@@ -497,8 +497,9 @@ export default {
       // this.$refs.cesiumContainer2.addEventListener("click", this.hiddenMapImg);
       // 缩放事件
       // that.map.on('zoomstart', that.mapZoomstart);
-      that.map.on("zoomchange", that.mapZoom);
+      // that.map.on("zoomchange", that.mapZoom);
       that.mapMousemoveLi();
+      that.drawBounds();
       // that.map.on('zoomend', that.mapZoomend);
     },
     showMarker3Fn(event) {
@@ -823,6 +824,7 @@ export default {
         that.map.add(that.polygons);
 
         that.map.setFitView(that.polygons); //视口自适应
+        // that.map.setZoom(12.9);
       });
     }
   },

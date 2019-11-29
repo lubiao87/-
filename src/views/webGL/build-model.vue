@@ -100,11 +100,12 @@
             <div :class="item.class"></div>
           </div>
         </div>
-        <div class="ui-citytol" v-if="superman">
+        <!-- v-if="superman" -->
+        <div class="ui-citytol">
           <!-- ヽ(ー_ー)ノ 没用的东西  (^_−)☆   -->
-          <div class="scroll-wrap fn-mt10 regionName" @click="addMan">
+          <!-- <div class="scroll-wrap fn-mt10 regionName" @click="addMan">
             增加模型
-          </div>
+          </div> -->
           <div class="scroll-wrap fn-mt10 regionName" @click="removeMan">
             删除模型
           </div>
@@ -132,7 +133,12 @@
       </div>
     </div>
     <div class="yhui-real-timeimg"></div>
-    <el-button class="model-select1" type="primary" v-show="floorIndex > -1">
+    <el-button
+      @click="addMan"
+      class="model-select1"
+      type="primary"
+      v-show="floorIndex > -1"
+    >
       <i class="el-icon-folder-add"></i> 增加模型
     </el-button>
     <el-select
@@ -167,6 +173,8 @@ import * as THREE from "three";
 // import "three-obj-mtl-loader";
 import { _debounce, _getTextCanvas, _drawArrow } from "@/utils/public.js";
 import cabinetplaced from "@/json/dataList.js";
+import "@/utils/ColladaLoader.js";
+import "@/utils/BVHLoader.js";
 import "@/utils/control/TrackballControls.js";
 import "@/utils/control/DragControls.js";
 import "@/utils/control/TransformControls.js";
@@ -498,10 +506,14 @@ export default {
       this.scene = null;
       this.scene = new THREE.Scene(); // 场景
       this.FBXloader = new THREE.FBXLoader(); // fbx加载器
+      this.DAELoader = new THREE.ColladaLoader();
+      this.BVHLoader = new THREE.BVHLoader();
       // this.Objloader = new THREE.OBJLoader();
       // this.Objloader.load("./Assets/obj/dog.obj", self.loaderDog);
       this.FBXloader.load("./Assets/fbx/building.FBX", self.loaderObj);
       this.FBXloader.load("./Assets/fbx/SambaDancing.FBX", self.loaderMan);
+      this.DAELoader.load("./Assets/fbx/stormtrooper.dae", self.loaderMan2);
+      this.BVHLoader.load("./Assets/fbx/pirouette.bvh", self.loaderMan3);
       this.FBXloader.load("./Assets/fbx/1.FBX", self.loaderCabinet1);
       this.FBXloader.load("./Assets/fbx/2.FBX", self.loaderCabinet2);
       this.FBXloader.load("./Assets/fbx/3.FBX", self.loaderCabinet3);
@@ -673,6 +685,8 @@ export default {
         //clock.getDelta()方法获得两帧的时间间隔
         // 更新混合器相关的时间
         this.mixer.update(this.clock.getDelta());
+        this.mixer2.update(this.clock.getDelta());
+        this.mixer3.update(this.clock.getDelta());
       }
       // var delta = this.clock.getDelta();
       // this.lookAroundFn(); // 楼房渐变
@@ -786,13 +800,13 @@ export default {
       this.musicGroup = new THREE.Group();
       let N = 128; //控制音频分析器返回频率数据数量
       for (let i = 0; i < N / 2; i++) {
-        var box = new THREE.BoxGeometry(100, 1000, 100); //创建一个立方体几何对象
+        var box = new THREE.BoxGeometry(20, 200, 20); //创建一个立方体几何对象
         var material = new THREE.MeshPhongMaterial({
           color: 0x0000ff
         }); //材质对象
         var mesh = new THREE.Mesh(box, material); //网格模型对象
         // 长方体间隔20，整体居中
-        mesh.position.set(200 * i - (N / 2) * 100, 0, 0);
+        mesh.position.set(40 * i - (N / 2) * 20, 0, 0);
         this.musicGroup.add(mesh);
       }
       var listener = new THREE.AudioListener(); //监听者
@@ -810,7 +824,8 @@ export default {
     },
     loaderMan(obj) {
       obj.name = "跳舞人";
-      obj.scale.set(50, 50, 50);
+      obj.scale.set(10, 10, 10);
+      obj.position.set(0, -4000, 5000);
       this.personPre = obj;
       this.referenceModel = obj.children[1];
       this.referenceModel2 = obj.children[2];
@@ -832,6 +847,51 @@ export default {
       });
 
       // console.log(obj)
+    },
+    loaderMan2(collada) {
+      console.log("collada", collada);
+      var animations = collada.animations;
+      var avatar = collada.scene;
+      this.personPre2 = avatar;
+      avatar.scale.set(400, 400, 400);
+      avatar.position.set(3000, -4000, 5000);
+      this.mixer2 = new THREE.AnimationMixer(avatar);
+      // 查看动画数据
+      // console.log(obj.animations)
+      // obj.animations[0]：获得剪辑对象clip
+      this.AnimationAction2 = this.mixer2.clipAction(animations[0]);
+      this.AnimationAction2.timeScale = 50; //默认1，可以调节播放速度
+      this.AnimationAction2.play(); //播放动画
+      if (!collada.traverse) return;
+      collada.traverse(function(child) {
+        if (child.isMesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
+
+      // console.log(obj)
+    },
+    loaderMan3(result) {
+        var skeletonHelper = new THREE.SkeletonHelper( result.skeleton.bones[ 0 ] );
+				skeletonHelper.skeleton = result.skeleton; // allow animation mixer to bind to SkeletonHelper directly
+        console.log(result)
+				var boneContainer = new THREE.Group();
+				boneContainer.add( result.skeleton.bones[ 0 ] );
+				// boneContainer.add( result );
+
+        this.scene.add( skeletonHelper );
+        this.personPre3 = boneContainer;
+				// this.scene.add( boneContainer );
+
+				// play animation
+				this.mixer3 = new THREE.AnimationMixer( skeletonHelper );
+        // this.mixer3.clipAction( result.clip ).setEffectiveWeight( 1.0 ).play(); //播放动画
+        this.AnimationAction3 = this.mixer3.clipAction( result.clip );
+        this.AnimationAction3.setEffectiveWeight( 1.0 ).play(); //播放动画
+        this.AnimationAction3.timeScale = 50; //默认1，可以调节播放速度
+        boneContainer.scale.set(10, 10, 10);
+        boneContainer.position.set(6000, -4000, 5000);
     },
     loaderObj(obj) {
       // console.log(obj);
@@ -1043,15 +1103,19 @@ export default {
       // 显示人物
       if (!this.scene.getObjectByName("跳舞人")) {
         this.scene.add(this.personPre);
+        this.scene.add(this.personPre2);
+        this.scene.add(this.personPre3);
       }
       this.audio.play(); //播放
       // console.log(this.audio)
       this.scene.add(this.musicGroup);
-      this.musicGroup.position.set(4000, 10000, 10000);
+      this.musicGroup.position.set(1000, -800, 7000);
       // console.log(this.scene)
     },
     removeMan() {
       this.scene.remove(this.personPre);
+      this.scene.remove(this.personPre2);
+      this.scene.remove(this.personPre3);
       this.scene.remove(this.musicGroup);
       this.audio.stop();
     },

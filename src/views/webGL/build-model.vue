@@ -100,15 +100,6 @@
             <div :class="item.class"></div>
           </div>
         </div>
-        <div class="ui-citytol" v-if="superman">
-          <!-- ヽ(ー_ー)ノ 没用的东西  (^_−)☆   -->
-          <div class="scroll-wrap fn-mt10 regionName" @click="addMan">
-            增加模型
-          </div>
-          <div class="scroll-wrap fn-mt10 regionName" @click="removeMan">
-            删除模型
-          </div>
-        </div>
         <!-- 通用搜索框开始 -->
       </div>
       <div class="show1" v-show="!moduleStatistics[4]">
@@ -116,19 +107,6 @@
           <span class="ui-linebg"></span>{{ boxTitle }}
         </h5> -->
         <div id="powerCharts" class="powerCharts"></div>
-      </div>
-      <div style="margin-top: 20px;" class="show2" v-show="false">
-        <h5 class="ui-city-title ui-height48" @click="showBuilding">
-          <span class="ui-linebg"></span>{{ boxTitle }}
-        </h5>
-        <el-tree
-          :data="floorTreeData"
-          :props="defaultProps"
-          @node-click="handleNodeClick"
-          node-key="buildId"
-          :default-expanded-keys="expandedKeys"
-          :default-checked-keys="checkedKeys"
-        ></el-tree>
       </div>
     </div>
     <div class="yhui-real-timeimg"></div>
@@ -202,66 +180,6 @@ export default {
       occuRate: "", // 鼠标悬停字段2
       expandedKeys: [],
       checkedKeys: [],
-      floorTreeData: [
-        {
-          label: "一楼楼层",
-          buildId: 111,
-          floor: 1,
-          children: [
-            {
-              label: "1楼101机房",
-              buildId: 111101,
-              floor: 1
-            }
-          ]
-        },
-        {
-          label: "二楼楼层",
-          buildId: 112,
-          floor: 2,
-          children: [
-            {
-              label: "二楼201机房",
-              buildId: 112101,
-              floor: 2
-            },
-            {
-              label: "二楼202机房",
-              buildId: 112102,
-              floor: 2
-            }
-          ]
-        },
-        {
-          label: "三楼楼层",
-          buildId: 113,
-          floor: 3,
-          children: [
-            {
-              label: "三楼301机房",
-              buildId: 113101,
-              floor: 3
-            }
-          ]
-        },
-        {
-          label: "四楼楼层",
-          buildId: 114,
-          floor: 4,
-          children: [
-            {
-              label: "四楼401机房",
-              buildId: 114101,
-              floor: 4
-            },
-            {
-              label: "四楼402机房",
-              buildId: 114102,
-              floor: 4
-            }
-          ]
-        }
-      ],
       defaultProps: {
         children: "children",
         label: "label"
@@ -387,28 +305,6 @@ export default {
         z: 0
       },
       cabinetplaced: [],
-      floorData: [
-        {
-          name: "空调机房",
-          center: [14000, 1000, 12000]
-        },
-        {
-          name: "值班室",
-          center: [-7000, 1000, 5000]
-        },
-        {
-          name: "省公司机房102",
-          center: [-10000, 1000, -10000]
-        },
-        {
-          name: "男厕",
-          center: [-14000, 1000, -1000]
-        },
-        {
-          name: "女厕",
-          center: [-14000, 1000, -4000]
-        }
-      ],
       floorData2: [
         {
           name: "机房门",
@@ -498,10 +394,6 @@ export default {
       this.scene = null;
       this.scene = new THREE.Scene(); // 场景
       this.FBXloader = new THREE.FBXLoader(); // fbx加载器
-      // this.Objloader = new THREE.OBJLoader();
-      // this.Objloader.load("./Assets/obj/dog.obj", self.loaderDog);
-      this.FBXloader.load("./Assets/fbx/building.FBX", self.loaderObj);
-      this.FBXloader.load("./Assets/fbx/SambaDancing.FBX", self.loaderMan);
       this.FBXloader.load("./Assets/fbx/1.FBX", self.loaderCabinet1);
       this.FBXloader.load("./Assets/fbx/2.FBX", self.loaderCabinet2);
       this.FBXloader.load("./Assets/fbx/3.FBX", self.loaderCabinet3);
@@ -510,12 +402,10 @@ export default {
       this.FBXloader.load("./Assets/fbx/lietou.FBX", self.loaderLieTou);
       this.FBXloader.load("./Assets/fbx/ODF.FBX", self.loaderODF);
       this.FBXloader.load("./Assets/fbx/peixian.FBX", self.loaderPeixian);
-      this.FBXloader.load("./Assets/fbx/floorFour.FBX", self.loaderFloor4);
       this.FBXloader.load(
         "./Assets/fbx/floorFourChilder.FBX",
         self.floorFourChilder
       );
-      this.addMusic();
       this.ambient = new THREE.AmbientLight(0xffffff); // 环境光
       this.renderer = new THREE.WebGLRenderer(); // 渲染器
       this.scene.add(this.ambient);
@@ -540,7 +430,6 @@ export default {
       //设置阴影贴图精度
       // this.SpotLight.shadowMapWidth = this.SpotLight.shadowMapHeight = 1024;
       this.scene.add(this.SpotLight);
-      // this.setOutlinePass();
 
       this.axisHelper = new THREE.AxisHelper(8000); // 辅助线
       // this.scene.add(this.axisHelper);
@@ -675,10 +564,6 @@ export default {
         this.mixer.update(this.clock.getDelta());
       }
       // var delta = this.clock.getDelta();
-      // this.lookAroundFn(); // 楼房渐变
-      // if (typeof this.selectBorder !== "undefined") {
-      //   this.lookCabinetfn();
-      // }
       // this.composer.render(delta);
       if (this.analyser) {
         // console.log(analyser)
@@ -781,88 +666,6 @@ export default {
         this.intersects3.rotateY(pi2);
       }
     },
-    addMusic() {
-      const self = this;
-      this.musicGroup = new THREE.Group();
-      let N = 128; //控制音频分析器返回频率数据数量
-      for (let i = 0; i < N / 2; i++) {
-        var box = new THREE.BoxGeometry(100, 1000, 100); //创建一个立方体几何对象
-        var material = new THREE.MeshPhongMaterial({
-          color: 0x0000ff
-        }); //材质对象
-        var mesh = new THREE.Mesh(box, material); //网格模型对象
-        // 长方体间隔20，整体居中
-        mesh.position.set(200 * i - (N / 2) * 100, 0, 0);
-        this.musicGroup.add(mesh);
-      }
-      var listener = new THREE.AudioListener(); //监听者
-      this.audio = new THREE.Audio(listener); //非位置音频对象
-      var audioLoader = new THREE.AudioLoader(); //音频加载器
-      // 加载音频文件
-      audioLoader.load("./Assets/music/DanceMonkey.mp3", function(AudioBuffer) {
-        self.audio.setBuffer(AudioBuffer); // 音频缓冲区对象关联到音频对象audio
-        self.audio.setLoop(true); //是否循环
-        self.audio.setVolume(0.5); //音量
-        // self.audio.play(); //播放
-        // 音频分析器和音频绑定，可以实时采集音频时域数据进行快速傅里叶变换
-        self.analyser = new THREE.AudioAnalyser(self.audio, 2 * N);
-      });
-    },
-    loaderMan(obj) {
-      obj.name = "跳舞人";
-      obj.scale.set(50, 50, 50);
-      this.personPre = obj;
-      this.referenceModel = obj.children[1];
-      this.referenceModel2 = obj.children[2];
-      this.mixer = new THREE.AnimationMixer(obj);
-      // 查看动画数据
-      // console.log(obj.animations)
-      // obj.animations[0]：获得剪辑对象clip
-      this.AnimationAction = this.mixer.clipAction(obj.animations[0]);
-      // AnimationAction.timeScale = 1; //默认1，可以调节播放速度
-      // AnimationAction.loop = THREE.LoopOnce; //不循环播放
-      // AnimationAction.clampWhenFinished=true;//暂停在最后一帧播放的状态
-      this.AnimationAction.play(); //播放动画
-      if (!obj.traverse) return;
-      obj.traverse(function(child) {
-        if (child.isMesh) {
-          child.castShadow = true;
-          child.receiveShadow = true;
-        }
-      });
-
-      // console.log(obj)
-    },
-    loaderObj(obj) {
-      // console.log(obj);
-      this.loading = false;
-      obj.translateY(-17000);
-      obj.name = "整栋楼房";
-      // this.scene.add(obj);
-      // this.scene.add(this.roomModel);
-      console.log(this.$route.params);
-      this.modernBuilding = obj;
-      obj.position.y = -4000;
-      obj.position.z = -10000;
-      this.moderBuild = this.scene.getObjectByName("大楼");
-      obj.traverse(function(child) {
-        if (child.isMesh) {
-          child.castShadow = true;
-          child.receiveShadow = true;
-        }
-      });
-      // if (this.$route.params.buildId === 114102) {
-
-      this.setCabinet();
-      // }
-    },
-    loaderFloor4(obj) {
-      this.FloorOne = obj;
-      this.FloorTwo = obj;
-      this.FloorThree = obj;
-      this.FloorFour = obj;
-      console.log(obj);
-    },
     floorFourChilder(obj) {
       console.log("floorFourChilder", obj);
       // obj.scale.set(10, 10, 10)
@@ -874,7 +677,9 @@ export default {
     },
     // 4
     loaderDDF(obj) {
+      const that = this;
       this.DDF = obj;
+      that.setCabinet();
     },
     // 5
     loaderKongtiao(obj) {
@@ -931,129 +736,10 @@ export default {
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       // this.CSS3Renderer.setSize(window.innerWidth, window.innerHeight);
     },
-
-    lookAroundFn() {
-      // 楼房渐变
-      const self = this;
-      if (this.lookAround) {
-        if (this.animationFlag) {
-          // 进入查看楼层
-          if (this.cameraX > 0) {
-            this.cameraX -= 500;
-          }
-          if (this.cameraZ > -20000) {
-            this.cameraZ -= 500;
-          }
-          // if (this.cameraY < 20000) {
-          //   this.cameraY += 500;
-          // }
-          let number = 1 - (Date.now() - self.animationTime) / 2000;
-          this.moderBuild.material.forEach((item, index) => {
-            if (number < 0) {
-              self.lookAround = false;
-              self.scene.remove(this.modernBuilding);
-              self.moderBuild.material[index].opacity = 0;
-            } else {
-              self.moderBuild.material[index].transparent = true;
-              self.moderBuild.material[index].opacity = number;
-            }
-          });
-        } else {
-          // 返回查看房子
-          if (this.cameraX < 20000) {
-            this.cameraX += 500;
-          }
-          if (this.cameraZ < -10000) {
-            this.cameraZ += 500;
-          }
-          // if (this.cameraY > 10000) {
-          //   this.cameraY -= 500;
-          // }
-          let number = (Date.now() - self.animationTime) / 2000;
-          this.moderBuild.material.forEach((item, index) => {
-            if (number > 1) {
-              self.lookAround = false;
-              // self.scene.remove(this.modernBuilding)
-              self.moderBuild.material[index].opacity = 1;
-            } else {
-              self.moderBuild.material[index].transparent = true;
-              self.moderBuild.material[index].opacity = number;
-            }
-          });
-        }
-
-        this.camera.position.set(this.cameraX, this.cameraY, this.cameraZ);
-      }
-    },
-    removeObjAll() {
-      const self = this;
-      // this.removeMan();
-      const list = this.scene.getObjectByName("设备集合");
-      if (list) {
-        self.scene.remove(list);
-      }
-      // this.scene.traverse( function ( child ) {
-      //       if ( child.isGroup && child.name ) {
-      //         self.scene.remove(child)
-      //       }
-      //   });
-      self.scene.remove(this.modernBuilding);
-      self.scene.remove(this.FloorTwo);
-      self.scene.remove(this.FloorOne);
-      self.scene.remove(this.FloorThree);
-      self.scene.remove(this.FloorFour);
-      self.scene.remove(this.meshZL);
-      self.scene.remove(this.roomModel);
-      self.scene.remove(this.spriteGroup);
-      self.scene.remove(this.capacityGroup);
-    },
     // 右键查看机架详情
     showProps() {
       this.propsFlag = true;
       this.showMenu = false;
-    },
-    showBuilding() {
-      if (this.buildId === 100) {
-        return;
-      }
-      // if (!this.lookAround) {
-      this.removeObjAll();
-      this.removeEventListenerFn();
-      // 动画中禁止事件
-      this.addBuilding();
-      this.floorIndex = -1;
-      this.animationFlag = false;
-      this.animationTime = Date.now();
-      // this.lookAround = true; // 开启动画
-      // console.log(this.scene)
-      this.selectValue = ["全部"];
-      this.buildId = 100;
-      // }
-    },
-    addBuilding() {
-      // 显示房子
-      // if (!this.lookAround) {
-      // 动画中禁止增加
-      if (!this.scene.getObjectByName("整栋楼房")) {
-        this.scene.add(this.modernBuilding);
-      }
-      // }
-    },
-    addMan() {
-      // 显示人物
-      if (!this.scene.getObjectByName("跳舞人")) {
-        this.scene.add(this.personPre);
-      }
-      this.audio.play(); //播放
-      // console.log(this.audio)
-      this.scene.add(this.musicGroup);
-      this.musicGroup.position.set(4000, 10000, 10000);
-      // console.log(this.scene)
-    },
-    removeMan() {
-      this.scene.remove(this.personPre);
-      this.scene.remove(this.musicGroup);
-      this.audio.stop();
     },
     addMeth(item) {
       let geometry = new THREE.BoxGeometry(
@@ -1160,14 +846,7 @@ export default {
 
       this.spriteArr = new THREE.Group();
 
-      this.cabinetplaced.forEach((item, index) => {
-        let mesh = self.addMeth(item, index);
-        self.listGroup.add(mesh);
-        if (item.capacity) {
-          self.addBox(item);
-        }
-      });
-
+      console.log("this.scene ---------- ", this.scene);
       this.floorData2.forEach((item, index) => {
         let width = 4000,
           height = 1200,
@@ -1218,12 +897,28 @@ export default {
       this.meshZL.translateY(-2000);
       this.scene.add(this.roomModel);
       if (self.buildId === 114102) {
+        this.cabinetplaced.forEach((item, index) => {
+          let mesh = self.addMeth(item, index);
+          self.listGroup.add(mesh);
+          if (item.capacity) {
+            self.addBox(item);
+          }
+        });
         this.scene.add(this.listGroup);
         this.scene.add(this.meshZL);
       } else if (sessionStorage.getItem("buildId") && self.buildId === 114101) {
+        this.cabinetplaced.forEach((item, index) => {
+          let mesh = self.addMeth(item, index);
+          self.listGroup.add(mesh);
+          if (item.capacity) {
+            self.addBox(item);
+          }
+        });
+
         this.scene.add(this.listGroup);
         this.scene.add(this.meshZL);
       }
+      this.loading = false;
       // if (self.buildId <= 114) {
       //   this.scene.add(this.spriteGroup);
       // }
@@ -1238,6 +933,7 @@ export default {
       };
       this.removeEventListenerFn();
       this.addEventListenerFn();
+      this.setOutlinePass();
     },
     // 改变场数
     changefield: _debounce(function(e) {
@@ -1285,7 +981,6 @@ export default {
         self.onDocumentClick,
         false
       );
-      // self.renderer.domElement.addEventListener("click", self.choose, false);
       self.renderer.domElement.addEventListener(
         "mousedown",
         self.onDocumentMusedown,
@@ -1557,7 +1252,7 @@ export default {
         self.roomModel.children
       );
       if (intersects2.length > 0) {
-        console.log(intersects2[0]);
+        // console.log(intersects2[0]);
         if (intersects2[0].object.name.indexOf("右") > -1) {
           this.intersects2 = intersects2[0].object;
           this.animationMenTop = false;
@@ -1586,73 +1281,6 @@ export default {
       this.showMenu2 = false;
       this.freezeShowMenu2 = false;
     },
-    lookCabinetfn() {
-      let flagArr = [];
-      if (this.selectBorder) {
-        if (this.meshborder.position.x - 3000 - this.camera.position.x > 500) {
-          this.cameraPosition2.x += 500;
-        } else if (
-          this.camera.position.x - (this.meshborder.position.x - 3000) <
-          -500
-        ) {
-          this.cameraPosition2.x -= 500;
-        } else {
-          flagArr[0] = true;
-        }
-        if (this.camera.position.y - this.meshborder.position.y > 500) {
-          this.cameraPosition2.y -= 500;
-        } else if (this.camera.position.y - this.meshborder.position.y < -500) {
-          this.cameraPosition2.y += 500;
-        } else {
-          flagArr[0] = true;
-        }
-        if (this.camera.position.z - this.meshborder.position.z > 500) {
-          this.cameraPosition2.z -= 500;
-        } else if (this.camera.position.z - this.meshborder.position.z < -500) {
-          this.cameraPosition2.z += 500;
-        } else {
-          flagArr[0] = true;
-        }
-        this.camera.position.set(
-          this.cameraPosition2.x,
-          10000,
-          this.cameraPosition2.z
-        );
-      } else {
-        if (this.camera.position.x - this.cameraX > 500) {
-          this.cameraPosition2.x -= 500;
-        } else if (this.camera.position.x - this.cameraX < -500) {
-          this.cameraPosition2.x += 500;
-        } else {
-          flagArr[0] = true;
-        }
-        // if (this.camera.position.y - this.cameraY > 500) {
-        //   this.cameraPosition2.y -= 500;
-        // } else if (this.camera.position.y - this.cameraY < -500) {
-        //   this.cameraPosition2.y += 500;
-        // } else {
-        //   flagArr[1] = true;
-        // }
-        if (this.camera.position.z - this.cameraZ > 500) {
-          this.cameraPosition2.z -= 500;
-        } else if (this.camera.position.z - this.cameraZ < -500) {
-          this.cameraPosition2.z += 500;
-        } else {
-          flagArr[2] = true;
-        }
-
-        this.camera.position.set(
-          this.cameraPosition2.x,
-          this.cameraPosition2.y,
-          this.cameraPosition2.z
-        );
-      }
-      if (flagArr[0] && flagArr[1] && flagArr[2]) {
-        this.controls.target = new THREE.Vector3(0, 0, 0);
-        this.selectBorder = undefined;
-        // console.log("undefined");
-      }
-    },
     getCabinetType() {
       let self = this;
       // let params = {
@@ -1680,7 +1308,6 @@ export default {
       //     self.setCabinet();
       //   }
       // });
-      self.setCabinet();
     },
     newMap() {
       this.myChart.clear();
@@ -1720,7 +1347,7 @@ export default {
           },
           formatter: function(params) {
             let str = "kw";
-            console.log("$this.moduleStatistics", $this.moduleStatistics);
+            // console.log("$this.moduleStatistics", $this.moduleStatistics);
             if ($this.moduleStatistics[0].select) {
               str = " ㎡";
             } else if ($this.moduleStatistics[1].select) {
@@ -1773,100 +1400,9 @@ export default {
     },
     showChart() {
       this.showChartFlag = !this.showChartFlag;
-    },
-    choose(event) {
-      var Sx = event.clientX;
-      var Sy = event.clientY;
-      // vm.x = Sx + 20;
-      // vm.y = Sy + 20;
-      //屏幕坐标转标准设备坐标
-      var x = (Sx / window.innerWidth) * 2 - 1;
-      var y = -(Sy / window.innerHeight) * 2 + 1;
-      var raycaster = new THREE.Raycaster();
-      raycaster.setFromCamera(new THREE.Vector2(x, y), this.camera);
-      var intersects = raycaster.intersectObjects(
-        this.listGroup.children,
-        true
-      );
-      if (intersects.length > 0) {
-        // vm.message = intersects[0].object.message
-        console.log(intersects[0].object.name);
-        var mesh = intersects[0].object;
-
-        this.OutlinePass.selectedObjects = [mesh];
-        // text.textContent = intersects[0].object.name;
-        // 设置标签位置，用于坐标变换
-        // 插入的父对象很关键，层级模型问题
-        // label.position.copy(intersects[0].object.position);
-
-        this.scene.updateMatrixWorld(true);
-        var worldPosition = new THREE.Vector3();
-        mesh.getWorldPosition(worldPosition);
-        // label.position.copy(worldPosition);
-
-        this.lastMesh = mesh;
-      }
     }
   },
   watch: {
-    // buildId(val) {
-    //   // console.log(val)
-    //   if (this.floorIndex < 0) return;
-    //   const self = this;
-    //   // this.removeMan();
-    //   this.removeObjAll();
-    //   // this.addBuilding();
-    //   this.animationTime = Date.now();
-    //   self.listGroup = {};
-    //   switch (this.floorIndex) {
-    //     case 1:
-    //       if (val > 114) {
-    //         self.scene.add(self.roomModel);
-    //         this.roomModel.position.y = -4000;
-    //         this.roomModel.position.z = -10000;
-    //       } else {
-    //         self.scene.add(self.FloorOne);
-    //         this.FloorOne.position.y = -16000;
-    //       }
-    //       break;
-    //     case 2:
-    //       if (val > 114) {
-    //         self.scene.add(self.roomModel);
-    //         this.roomModel.position.y = -4000;
-    //         this.roomModel.position.z = -10000;
-    //       } else {
-    //         self.scene.add(self.FloorTwo);
-    //         this.FloorOne.position.y = -12000;
-    //       }
-    //       break;
-    //     case 3:
-    //       if (val > 114) {
-    //         self.scene.add(self.roomModel);
-    //         this.roomModel.position.y = -4000;
-    //         this.roomModel.position.z = -10000;
-    //       } else {
-    //         self.scene.add(self.FloorThree);
-    //         this.FloorOne.position.y = -8000;
-    //       }
-    //       break;
-    //     case 4:
-    //       if (val > 114) {
-    //         self.scene.add(self.roomModel);
-    //         // this.roomModel.position.y = -4000;
-    //         // this.roomModel.position.z = -10000;
-    //       }
-    //       break;
-
-    //     default:
-    //       break;
-    //   }
-    //   // this.lookAround = true;
-
-    //   // if (val === 114) {
-    //   self.getCabinetType(); // 对接口
-    //   // }
-    //   // console.log(this.scene)
-    // },
     selectValue(val) {
       console.log("selectValue", val);
       if (val.length >= 0 && this.floorIndex) {

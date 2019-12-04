@@ -329,33 +329,35 @@ export default {
       //   [20000, 18000],
       //   [20000, 0]
       // ],
-      // froomData: [ // 7 六边形
-      //   [0, 0],
-      //   [0, 18000],
-      //   [20000, 18000],
-      //   [20000, 24000],
-      //   [40000, 24000],
-      //   [40000, 0]
-      // ],
-      // froomData: [ // L 六边形
+      froomData: [
+        // 7 六边形
+        [0, 0],
+        [0, 18000],
+        [20000, 18000],
+        [20000, 24000],
+        [30000, 24000],
+        [30000, 0]
+      ]
+      // froomData: [
+      //   // L 六边形
       //   [0, 0],
       //   [0, 24000],
       //   [20000, 24000],
       //   [20000, 18000],
       //   [40000, 18000],
       //   [40000, 0]
-      // ],
-      froomData: [
-        // N 八边形 （单位：毫米）
-        [0, 0],
-        [0, 25000],
-        [18000, 25000],
-        [18000, 35000],
-        [25000, 35000],
-        [25000, 18000],
-        [18000, 18000],
-        [18000, 0]
-      ]
+      // ]
+      // froomData: [
+      //   // N 八边形 （单位：毫米）
+      //   [0, 0],
+      //   [0, 25000],
+      //   [18000, 25000],
+      //   [18000, 35000],
+      //   [25000, 35000],
+      //   [25000, 18000],
+      //   [18000, 18000],
+      //   [18000, 0]
+      // ]
     };
   },
   computed: {
@@ -429,6 +431,7 @@ export default {
       this.FBXloader.load("./Assets/fbx/lietou.FBX", self.loaderLieTou);
       this.FBXloader.load("./Assets/fbx/ODF.FBX", self.loaderODF);
       this.FBXloader.load("./Assets/fbx/peixian.FBX", self.loaderPeixian);
+      this.FBXloader.load("./Assets/fbx/men.FBX", self.loaderMen);
       this.FBXloader.load(
         "./Assets/fbx/floorFourChilder.FBX",
         self.floorFourChilder
@@ -635,6 +638,11 @@ export default {
     loaderPeixian(obj) {
       this.peixian = obj;
     },
+    loaderMen(obj) {
+      this.Men = obj;
+      this.Men.rotateX(Math.PI / 2);
+      // this.scene.add(obj);
+    },
     // 1
     loaderCabinet1(obj) {
       this.cabinet1 = obj;
@@ -833,7 +841,10 @@ export default {
         this.scene.add(this.listGroup);
         this.scene.add(this.meshZL);
       }
-      let methNow2 = _NowRoom(this.froomData, [100, 5000]);
+      let methNow2 = _NowRoom(this.froomData);
+      this.Men.position.set(5000, 100,1400)
+      this.Men.scale.set(1, 1, 1.1)
+      methNow2.add(this.Men);
       // methNow2.rotateX(Math.PI / 2);
       methNow2.position.x = -4000;
       methNow2.position.y = -1580;
@@ -907,7 +918,6 @@ export default {
       );
     },
     addBox(item) {
-      // console.log("addBox", item);
       let geometry = new THREE.BoxGeometry(
         this.cabinetType[item.index].size[1],
         this.cabinetType[item.index].size[0],

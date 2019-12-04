@@ -314,11 +314,11 @@ export default {
       floorData2: [
         {
           name: "机房门",
-          center: [15000, 1000, 9000]
+          center: [15000, 10000, 4000]
         },
         {
-          name: "机房门",
-          center: [-2000, 1000, 10000]
+          name: "机房门1",
+          center: [1000, -1000, 4000]
         }
       ],
       analyser: null,
@@ -805,10 +805,10 @@ export default {
         // planeMesh.scale.set(width2, height2, 1); // 只需要设置x、y两个分量就可以
         planeMesh.position.set(
           item.center[0] - 500,
-          item.center[1] - height2 / 2 - 400,
-          item.center[2]
+          item.center[1],
+          item.center[2] - height2 / 2 - 400
         );
-        planeMesh.rotateZ(-Math.PI / 6);
+        planeMesh.rotateX(Math.PI / 2);
         self.spriteGroup.add(planeMesh);
       });
 
@@ -842,8 +842,8 @@ export default {
         this.scene.add(this.meshZL);
       }
       let methNow2 = _NowRoom(this.froomData);
-      this.Men.position.set(5000, 100,1400)
-      this.Men.scale.set(1, 1, 1.1)
+      this.Men.position.set(5000, 100, 1400);
+      this.Men.scale.set(1, 1, 1.1);
       methNow2.add(this.Men);
       // methNow2.rotateX(Math.PI / 2);
       methNow2.position.x = -4000;

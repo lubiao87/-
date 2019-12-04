@@ -909,9 +909,9 @@ export default {
     addBox(item) {
       // console.log("addBox", item);
       let geometry = new THREE.BoxGeometry(
+        this.cabinetType[item.index].size[1],
         this.cabinetType[item.index].size[0],
-        this.cabinetType[item.index].size[2],
-        this.cabinetType[item.index].size[1]
+        this.cabinetType[item.index].size[2]
       ); //创建一个立方体几何对象Geometry
       let material = new THREE.MeshBasicMaterial({
         color: 0xffffff,
@@ -919,9 +919,9 @@ export default {
         opacity: 0.3
       }); //材质对象Material
       let geometry1 = new THREE.BoxGeometry(
+        this.cabinetType[item.index].size[1],
         this.cabinetType[item.index].size[0],
-        item.capacity * this.cabinetType[item.index].size[2],
-        this.cabinetType[item.index].size[1]
+        item.capacity * this.cabinetType[item.index].size[2]
       ); //创建一个立方体几何对象Geometry
       let material1 = new THREE.MeshBasicMaterial({
         color: 0x0000ff
@@ -934,20 +934,21 @@ export default {
 
       let mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
       let mesh1 = new THREE.Mesh(geometry1, material1); //网格模型对象Mesh
-
-      let positionY = -3600 + this.cabinetType[item.index].size[2] / 2;
       let positionY1 =
-        -3600 + (this.cabinetType[item.index].size[2] * item.capacity) / 2;
+        (this.cabinetType[item.index].size[2] * item.capacity) / 2;
+      let positionY = this.cabinetType[item.index].size[2] / 2;
 
       mesh.position.set(
-        -item.position[1] + 11200 - this.cabinetType[item.index].size[0] / 2,
-        positionY,
-        item.position[0] + 2000 + this.cabinetType[item.index].size[1] / 2
+        item.position[1] - this.cabinetType[item.index].size[0] / 2,
+
+        item.position[0] + this.cabinetType[item.index].size[1] / 2,
+        positionY
       );
       mesh1.position.set(
-        -item.position[1] + 11200 - this.cabinetType[item.index].size[0] / 2,
-        positionY1,
-        item.position[0] + 2000 + this.cabinetType[item.index].size[1] / 2
+        item.position[1] - this.cabinetType[item.index].size[0] / 2,
+
+        item.position[0] + this.cabinetType[item.index].size[1] / 2,
+        positionY1
       );
       this.capacityGroup.add(mesh); //网格模型添加到场景中
       this.capacityGroup.add(mesh1); //网格模型添加到场景中

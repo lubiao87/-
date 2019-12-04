@@ -253,10 +253,10 @@ export default {
       lookAround: false,
       floorIndex: 4,
       cameraX: 0,
-      cameraY: 40000,
-      cameraZ: 20000,
+      cameraY: -14000,
+      cameraZ: 6000,
       floorName: "工业园机楼",
-      animationTime: 0,
+      animationTime: 4,
       animationFlag: true,
       cabinetType: [
         {
@@ -348,13 +348,13 @@ export default {
       froomData: [
         // N 八边形 （单位：毫米）
         [0, 0],
-        [0, 30000],
-        [20000, 30000],
-        [20000, 45000],
-        [30000, 45000],
-        [30000, 20000],
-        [20000, 20000],
-        [20000, 0]
+        [0, 25000],
+        [18000, 25000],
+        [18000, 35000],
+        [25000, 35000],
+        [25000, 18000],
+        [18000, 18000],
+        [18000, 0]
       ]
     };
   },
@@ -724,13 +724,13 @@ export default {
         material = this.peixian.children[0].material;
         mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
       }
-      mesh.rotateX(-Math.PI / 2);
-      let positionY = -3600 + this.cabinetType[item.index].size[2] / 2;
+      // mesh.rotateX(-Math.PI / 2);
+      let positionY = this.cabinetType[item.index].size[1] / 2;
       // }
       mesh.position.set(
         item.position[1] - this.cabinetType[item.index].size[0] / 2,
-        positionY,
-        item.position[0] + this.cabinetType[item.index].size[1] / 2
+        item.position[0] + this.cabinetType[item.index].size[1] / 2,
+        positionY
       );
       mesh.TYPE = this.cabinetType[item.index].name;
       mesh.name = item.name;
@@ -741,8 +741,8 @@ export default {
         this.newCSS3DSprite3(
           "子",
           item.position[1] - this.cabinetType[item.index].size[0] / 2,
-          positionY,
-          item.position[0] + 2000 + this.cabinetType[item.index].size[1] / 2
+          item.position[0] + 2000 + this.cabinetType[item.index].size[1] / 2,
+          positionY
         );
       }
       if (item.setId) {
@@ -834,10 +834,10 @@ export default {
         this.scene.add(this.meshZL);
       }
       let methNow2 = _NowRoom(this.froomData, [100, 5000]);
-      methNow2.rotateX(Math.PI / 2);
+      // methNow2.rotateX(Math.PI / 2);
       methNow2.position.x = -4000;
-      methNow2.position.y = -580;
-      methNow2.position.z = -3000;
+      methNow2.position.y = -1580;
+      methNow2.position.z = -1400;
       this.loading = false;
 
       this.scene.add(this.spriteGroup);
@@ -1042,17 +1042,11 @@ export default {
           this.scene.updateMatrixWorld(true);
           const worldPosition = new THREE.Vector3();
           intersects[0].object.getWorldPosition(worldPosition);
-          // this.selectedObject = intersects[0].object;
-          // console.log("世界坐标", worldPosition);
-          // console.log("intersects[0].object", intersects[0].object);
+
           this.methName = intersects[0].object.name;
           this.location = intersects[0].object.dataInfo.location;
           this.occuRate = intersects[0].object.dataInfo.occuRate;
           mesh.position.set(worldPosition.x, worldPosition.y, worldPosition.z); //点光源位置
-          // if (intersects[0].object.rotateY90) {
-          //   mesh.rotateY(-Math.PI / 2);
-          // }
-          mesh.rotateX(-Math.PI / 2);
           this.border = new THREE.BoxHelper(mesh, "#5b78e7"); //设置边框，这个边框不会旋转
           this.border.name = "高亮显示柜";
           this.scene.add(this.border); //网格模型添加到场景中

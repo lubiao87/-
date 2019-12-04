@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import "./threebsp";
+
 // 防抖
 export function _debounce(fn, delay) {
   var delay = delay || 200;
@@ -100,8 +100,7 @@ export function _drawArrow(w, h) {
   ctx[type]();
   return canvas;
 }
-export function _NowRoom(arr, data) {
-  // const rh = 3000;
+export function _NowRoom(arr) {
   let listGroup = new THREE.Group();
   if (Array.isArray(arr)) {
     if (arr.length < 2) {
@@ -116,15 +115,6 @@ export function _NowRoom(arr, data) {
       shape.moveTo(arr[0][0], arr[0][1]); //起点
       shape2.moveTo(arr[0][0], arr[0][1]); //起点
 
-      // var maxX = arr[0][0];
-      // var maxY = arr[0][1];
-      // arr.forEach((item, i) => {
-      //   var curX = item[0];
-      //   var curY = item[1];
-      //   curX > maxX ? (maxX = curX) : null;
-      //   curY > maxY ? (maxY = curY) : null;
-      // });
-      // console.log("最大最小值： " + maxX, maxY);
       arr.forEach((item, index) => {
         let xn = 0;
         let yn = 0;
@@ -168,16 +158,7 @@ export function _NowRoom(arr, data) {
       shape2.lineTo(arr[0][0], arr[0][1]);
 
       path.lineTo(arr[0][0] + 200, arr[0][1] + 200);
-      // var shapeMen = new THREE.Path();
-      // if (data) {
-      //   shapeMen.moveTo(data[0] - 200, data[1] + 1000); //起点
-      //   shapeMen.lineTo(data[0] + 200, data[1] + 1000);
-      //   shapeMen.lineTo(data[0] + 200, data[1] - 1000);
-      //   shapeMen.lineTo(data[0] - 200, data[1] - 1000);
-      //   shapeMen.lineTo(data[0] - 200, data[1] + 1000);
-      //   shape.holes.push(shapeMen); //设置内轮廓
-      //   console.log(shape.holes);
-      // }
+
       shape.holes.push(path); //设置内轮廓
       var geometry = new THREE.ExtrudeGeometry( //拉伸造型
         shape, //二维轮廓
@@ -203,35 +184,6 @@ export function _NowRoom(arr, data) {
       }); //材质对象
       var mesh = new THREE.Mesh(geometry, material2); //网格模型对象
       var mesh2 = new THREE.Mesh(geometry2, material2); //网格模型对象
-      mesh2.position.z = 3000;
-      // var newClone = mesh.clone(); // 克隆组group1
-      var geometrySmall = new THREE.BoxGeometry(600, 2000, 2400); //创建一个立方体几何对象Geometry
-      //  创建一个线框纹理
-
-      // var materialSmall = new THREE.MeshLambertMaterial({
-      //   color: 0x0000ff
-      // }); //材质对象Material
-      // var meshSmall = new THREE.Mesh(geometrySmall, materialSmall); //网格模型对象Mesh
-      // meshSmall.position.z = 1600;
-      // meshSmall.position.y = 12000;
-      // meshSmall.position.x = 100;
-
-      // //生成ThreeBSP对象
-      // var sphereBSP = new ThreeBSP(mesh);
-      // var cubeBSP = new ThreeBSP(meshSmall);
-      // //进行并集计算
-      // var resultBSP = sphereBSP.subtract(cubeBSP);
-      // //从BSP对象内获取到处理完后的mesh模型数据
-      // var result = resultBSP.toMesh();
-      // //更新模型的面和顶点的数据
-      // result.geometry.computeFaceNormals();
-      // result.geometry.computeVertexNormals();
-      // //重新赋值一个纹理
-      // var material = new THREE.MeshPhongMaterial({
-      //   color: "#ccc",
-      //   side: THREE.DoubleSide
-      // });
-      // result.material = material;
 
       listGroup.add(mesh).add(mesh2);
       // listGroup.add(result).add(mesh2);

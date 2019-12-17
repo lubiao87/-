@@ -321,7 +321,6 @@ export default {
           center: [1000, -1000, 4000]
         }
       ],
-      analyser: null,
       superman: false,
       // froomData: [ // 四边形
       //   [0, 0],
@@ -367,7 +366,7 @@ export default {
   },
   created() {
     const self = this;
-    console.log("this.$route.params---", this.$route.params);
+    // console.log("this.$route.params---", this.$route.params);
     this.floorName = this.$route.params.name;
     self.cabinetplaced = cabinetplaced;
     self.cabinetType = self.cabinetType.map(item => {
@@ -462,7 +461,7 @@ export default {
       this.scene.add(this.SpotLight);
 
       this.axisHelper = new THREE.AxisHelper(8000); // 辅助线
-      this.scene.add(this.axisHelper);
+      // this.scene.add(this.axisHelper);
 
       // this.pushLineBox()  // 虚线框
       window.onresize = this.onWindowResize;
@@ -595,16 +594,16 @@ export default {
       }
       // var delta = this.clock.getDelta();
       // this.composer.render(delta);
-      if (this.analyser) {
-        // console.log(analyser)
-        // 获得频率数据N个
-        var arr = this.analyser.getFrequencyData();
-        // 遍历组对象，每个网格子对象设置一个对应的频率数据
-        this.musicGroup.children.forEach((elem, index) => {
-          elem.scale.y = arr[index] / 80;
-          elem.material.color.r = arr[index] / 200;
-        });
-      }
+      // if (this.analyser) {
+      //   // console.log(analyser)
+      //   // 获得频率数据N个
+      //   var arr = this.analyser.getFrequencyData();
+      //   // 遍历组对象，每个网格子对象设置一个对应的频率数据
+      //   this.musicGroup.children.forEach((elem, index) => {
+      //     elem.scale.y = arr[index] / 80;
+      //     elem.material.color.r = arr[index] / 200;
+      //   });
+      // }
       window.requestAnimationFrame(this.render);
     },
     floorFourChilder(obj) {
@@ -735,11 +734,7 @@ export default {
       // mesh.rotateX(-Math.PI / 2);
       let positionY = this.cabinetType[item.index].size[1] / 2;
       // }
-      mesh.position.set(
-        item.position[1] - this.cabinetType[item.index].size[0] / 2,
-        item.position[0] + this.cabinetType[item.index].size[1] / 2,
-        positionY
-      );
+      mesh.position.set(item.position[1], item.position[0], positionY);
       mesh.TYPE = this.cabinetType[item.index].name;
       mesh.name = item.name;
       mesh.dataInfo = item;
@@ -749,8 +744,8 @@ export default {
         this.newCSS3DSprite3(
           "子",
           item.position[1] - this.cabinetType[item.index].size[0] / 2,
-          item.position[0] + 2000 + this.cabinetType[item.index].size[1] / 2,
-          positionY
+          item.position[0] + this.cabinetType[item.index].size[1] / 2,
+          positionY + 1600
         );
       }
       if (item.setId) {
@@ -819,6 +814,7 @@ export default {
         color: "#666"
       }); //材质对象Material
       this.meshZL = new THREE.Mesh(geometryZL, materialZL); //网格模型对象Mesh
+      this.meshZL.position.y = 14000;
       if (self.buildId === 114102) {
         this.cabinetplaced.forEach((item, index) => {
           let mesh = self.addMeth(item, index);
@@ -863,7 +859,7 @@ export default {
       };
       this.removeEventListenerFn();
       this.addEventListenerFn();
-      this.setOutlinePass();
+      // this.setOutlinePass();
     },
     // 改变场数
     changefield: _debounce(function(e) {
@@ -949,15 +945,15 @@ export default {
       let positionY = this.cabinetType[item.index].size[2] / 2;
 
       mesh.position.set(
-        item.position[1] - this.cabinetType[item.index].size[0] / 2,
+        item.position[1],
 
-        item.position[0] + this.cabinetType[item.index].size[1] / 2,
+        item.position[0],
         positionY
       );
       mesh1.position.set(
-        item.position[1] - this.cabinetType[item.index].size[0] / 2,
+        item.position[1],
 
-        item.position[0] + this.cabinetType[item.index].size[1] / 2,
+        item.position[0],
         positionY1
       );
       this.capacityGroup.add(mesh); //网格模型添加到场景中
@@ -1016,7 +1012,8 @@ export default {
           if (!this.transformControls) {
             this.transformControls = new THREE.TransformControls(
               this.camera,
-              this.renderer.domElement
+              this.renderer.domElement,
+              this.fn
             );
             this.transformControls.attach(intersects[0].object);
             this.transformControls.setSpace("local");
@@ -1026,6 +1023,9 @@ export default {
           this.showMenu = false;
         }
       }
+    },
+    fn(e) {
+      console.log(e);
     },
     onDocumentMouseMove(event) {
       //阻止本来的默认事件，比如浏览器的默认右键事件是弹出浏览器的选项

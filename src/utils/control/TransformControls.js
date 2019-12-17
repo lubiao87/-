@@ -769,7 +769,7 @@ import * as THREE from "three";
   );
   THREE.TransformGizmoScale.prototype.constructor = THREE.TransformGizmoScale;
 
-  THREE.TransformControls = function(camera, domElement) {
+  THREE.TransformControls = function(camera, domElement, fn) {
     // TODO: Make non-uniform scale and rotate play nice in hierarchies
     // TODO: ADD RXYZ contol
 
@@ -1008,7 +1008,7 @@ import * as THREE from "three";
         if (intersect) {
           event.preventDefault();
           event.stopPropagation();
-          console.log(intersect.object.name); // -----------------------------------------------------------------
+          // console.log(intersect.object.name); // -----------------------------------------------------------------
           if (intersect.object.name.search("Z") > -1) {
             return;
           }
@@ -1059,7 +1059,7 @@ import * as THREE from "three";
         (event.button !== undefined && event.button !== 0)
       )
         return;
-
+      fn(scope.object.position);
       var pointer = event.changedTouches ? event.changedTouches[0] : event;
 
       var planeIntersect = intersectObjects(pointer, [
@@ -1312,6 +1312,7 @@ import * as THREE from "three";
       if (event.button !== undefined && event.button !== 0) return;
 
       if (_dragging && scope.axis !== null) {
+        console.log("onPointerUp", scope.object.position);
         mouseUpEvent.mode = _mode;
         scope.dispatchEvent(mouseUpEvent);
       }

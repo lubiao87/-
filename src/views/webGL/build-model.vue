@@ -140,7 +140,7 @@
 
 <script>
 import echarts from "echarts"; // 引入echarts
-// import { listSearchMixin } from "../../mixin"; //混淆请求
+import { listSearchMixin } from "../../mixin"; //混淆请求
 import * as THREE from "three";
 // import "three-obj-mtl-loader";
 import {
@@ -166,11 +166,11 @@ require("three-fbxloader-offical");
 import { OrbitControls } from "../../utils/OrbitControls";
 import popup from "../../components/popup/popup";
 import buildModel2d from "./build-model-2d";
-// import { api2 } from "../../api/api"; //api配置请求的路径
+import { api2 } from "../../api/api"; //api配置请求的路径
 export default {
   name: "olmap",
   props: ["coordinate"],
-  // mixins: [listSearchMixin],
+  mixins: [listSearchMixin],
   components: {
     popup,
     buildModel2d
@@ -321,22 +321,22 @@ export default {
           center: [1000, -1000, 4000]
         }
       ],
-      superman: false,
-      // froomData: [ // 四边形
-      //   [0, 0],
-      //   [0, 18000],
-      //   [20000, 18000],
-      //   [20000, 0]
-      // ],
-      froomData: [
-        // 7 六边形
+      // superman: false,
+      froomData: [ // 四边形
         [0, 0],
         [0, 18000],
         [20000, 18000],
-        [20000, 24000],
-        [30000, 24000],
-        [30000, 0]
+        [20000, 0]
       ]
+      // froomData: [
+      //   // 7 六边形
+      //   [0, 0],
+      //   [0, 18000],
+      //   [20000, 18000],
+      //   [20000, 24000],
+      //   [30000, 24000],
+      //   [30000, 0]
+      // ]
       // froomData: [
       //   // L 六边形
       //   [0, 0],
@@ -368,25 +368,9 @@ export default {
     const self = this;
     // console.log("this.$route.params---", this.$route.params);
     this.floorName = this.$route.params.name;
-    self.cabinetplaced = cabinetplaced;
-    self.cabinetType = self.cabinetType.map(item => {
-      let items = item;
-      items.size = [
-        item.size[0] * 1000,
-        item.size[1] * 1000,
-        item.size[2] * 1000
-      ];
-      return items;
-    });
-    self.cabinetplaced = self.cabinetplaced.map(item => {
-      let items = item;
-      items.position = [item.posX * 1000, item.posY * 1000];
-      return items;
-    });
+
     this.buildId = this.$route.params.buildId;
-    if (sessionStorage.getItem("username") === "lubiao87") {
-      this.superman = true;
-    }
+    this.getRoomByIdData();
   },
   mounted() {
     const self = this;
@@ -398,6 +382,52 @@ export default {
     //  this.$parent.restaurants = this.$parent.loadAll();
   },
   methods: {
+    getRoomByIdData() {
+      const self = this;
+      let formData = new FormData();
+      formData.append("roomId", 123);
+      let param = {
+        url: api2.getRoomByIdData, //获取request_url.js文件的请求路径
+        data: formData
+      };
+      self.sendReq(param, res => {
+        console.log("--------",res);
+        // self.cabinetplaced = cabinetplaced;
+        self.cabinetType = [];
+        self.cabinetplaced = [];
+        if (res.respHeader.resultCode === 0) {
+          self.cabinetType.push(...[
+            {
+              name: "全部",
+              size: [0, 0, 0],
+              index: 0
+            }
+          ]);
+          let arr1 = res.respBody.cabinetType.map(item => {
+            let items = item;
+            items.size = [
+              item.size[0] * 10,
+              item.size[1] * 10,
+              item.size[2] * 10
+            ];
+            return items;
+          });
+          self.cabinetType.push(...arr1);
+          let arr2 = res.respBody.cabinetplaced.map(item => {
+            let items = item;
+            items.position = [item.posX * 10, item.posY * 10];
+            return items;
+          });
+          self.cabinetplaced.push(...arr2);
+          self.froomData = [];
+          let arr3 = res.respBody.froomData.split(",");
+          arr3.forEach((item) => {
+            let arr = [JSON.parse(item.split(" ")[0]) * 10, JSON.parse(item.split(" ")[1]) * 10];
+            self.froomData.push(arr);
+          })
+        }
+      });
+    },
     handleNodeClick(data) {
       console.log(data);
       // 查看楼层
@@ -703,12 +733,12 @@ export default {
         material = this.cabinet1.children[0].material;
         mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
       } else if (item.index === 2) {
-        geometry = this.cabinet2.children[0].geometry;
-        material = this.cabinet2.children[0].material;
+        geometry = this.lietou.children[0].geometry;
+        material = this.lietou.children[0].material;
         mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
       } else if (item.index === 3) {
-        geometry = this.cabinet3.children[0].geometry;
-        material = this.cabinet3.children[0].material;
+        geometry = this.peixian.children[0].geometry;
+        material = this.peixian.children[0].material;
         mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
       } else if (item.index === 4) {
         geometry = this.DDF.children[0].geometry;

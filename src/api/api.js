@@ -4,9 +4,7 @@ import reqUrl2 from "./api-p/module_url";
 
 // 获取当前环境变量 true => 生产环境 false => 开发环境
 const BASEURL =
-  process.env.NODE_ENV === "production"
-    ? "/infoCollectTool"
-    : "/infoCollectTool";
+  process.env.NODE_ENV === "production" ? "/AccessRoom" : "/AccessRoom";
 
 export const api = {
   ...reqUrl(BASEURL)

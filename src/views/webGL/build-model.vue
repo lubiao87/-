@@ -424,7 +424,8 @@ export default {
           arr3.forEach((item) => {
             let arr = [JSON.parse(item.split(" ")[0]) * 10, JSON.parse(item.split(" ")[1]) * 10];
             self.froomData.push(arr);
-          })
+          });
+          // self.floorData2 = res.respBody.floorData2;
         }
       });
     },
@@ -491,7 +492,7 @@ export default {
       this.scene.add(this.SpotLight);
 
       this.axisHelper = new THREE.AxisHelper(8000); // 辅助线
-      // this.scene.add(this.axisHelper);
+      this.scene.add(this.axisHelper);
 
       // this.pushLineBox()  // 虚线框
       window.onresize = this.onWindowResize;
@@ -869,11 +870,11 @@ export default {
       }
       let methNow2 = _NowRoom(this.froomData);
       this.Men.position.set(5000, 100, 1400);
-      this.Men.scale.set(1, 1, 1.1);
+      this.Men.scale.set(1, 1, 1.2);
       methNow2.add(this.Men);
       // methNow2.rotateX(Math.PI / 2);
-      methNow2.position.x = -4000;
-      methNow2.position.y = -1580;
+      // methNow2.position.x = -4000;
+      // methNow2.position.y = -1580;
       methNow2.position.z = -1400;
       this.loading = false;
 

@@ -129,7 +129,7 @@
         :key="item.type"
         :label="item.name"
         :value="item.name"
-        :class="{ hide: item.index === 1 || item.index === 2 }"
+        :class="{ hide: item.type_index === 1 || item.type_index === 2 }"
       >
       </el-option>
     </el-select>
@@ -262,47 +262,47 @@ export default {
         {
           name: "全部",
           size: [0, 0, 0],
-          index: 0
+          type_index: 0
         },
         {
           name: "标准机架 - 56个", // 机柜类型
           size: [0.6, 0.6, 2.6], // 长宽高
-          index: 1 // 类型1对应的索引，目的为了减少遍历
+          type_index: 1 // 类型1对应的索引，目的为了减少遍历
         },
         {
           name: "标准机架 - 56个", // 机柜类型
           size: [0.6, 0.6, 2.2], // 长宽高
-          index: 2
+          type_index: 2
         },
         {
           name: "标准机架 - 56个", // 机柜类型
           size: [0.6, 0.6, 2.0], // 长宽高
-          index: 3
+          type_index: 3
         },
         {
           name: "DDF机架 - 12个", // 机柜类型
           size: [0.3, 0.24, 2.6], // 长宽高
-          index: 4
+          type_index: 4
         },
         {
           name: "空调 - 12个", // 机柜类型
           size: [0.5, 0.5, 2.6], // 长宽高
-          index: 5
+          type_index: 5
         },
         {
           name: "列头机架 - 14个", // 机柜类型
           size: [0.6, 0.6, 2.6], // 长宽高
-          index: 6
+          type_index: 6
         },
         {
           name: "ODF机架 - 32个", // 机柜类型
           size: [0.3, 0.84, 2.6], // 长宽高
-          index: 7
+          type_index: 7
         },
         {
           name: "配线机架 - 12个", // 机柜类型
           size: [0.6, 0.6, 2.6], // 长宽高
-          index: 8
+          type_index: 8
         }
       ],
       cabinetPosition: {
@@ -385,7 +385,7 @@ export default {
     getRoomByIdData() {
       const self = this;
       let formData = new FormData();
-      formData.append("roomId", 123);
+      formData.append("roomId", 404);
       let param = {
         url: api2.getRoomByIdData, //获取request_url.js文件的请求路径
         data: formData
@@ -400,7 +400,7 @@ export default {
             {
               name: "全部",
               size: [0, 0, 0],
-              index: 0
+              type_index: 0
             }
           ]);
           let arr1 = res.respBody.cabinetType.map(item => {
@@ -719,9 +719,9 @@ export default {
     },
     addMeth(item) {
       let geometry = new THREE.BoxGeometry(
-        this.cabinetType[item.index].size[0],
-        this.cabinetType[item.index].size[2],
-        this.cabinetType[item.index].size[1]
+        this.cabinetType[item.type_index].size[0],
+        this.cabinetType[item.type_index].size[1],
+        this.cabinetType[item.type_index].size[2]
       ); //创建一个立方体几何对象Geometry
       let material = new THREE.MeshLambertMaterial({
         color: "#9fc1dd",
@@ -729,44 +729,44 @@ export default {
         opacity: 0.8 //设置透明度具体值
       }); //材质对象Material
       let mesh = null;
-      if (item.index === 1) {
+      if (item.type_index === 1) {
         geometry = this.cabinet1.children[0].geometry;
         material = this.cabinet1.children[0].material;
         mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
-      } else if (item.index === 2) {
+      } else if (item.type_index === 2) {
         geometry = this.lietou.children[0].geometry;
         material = this.lietou.children[0].material;
         mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
-      } else if (item.index === 3) {
+      } else if (item.type_index === 3) {
         geometry = this.peixian.children[0].geometry;
         material = this.peixian.children[0].material;
         mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
-      } else if (item.index === 4) {
+      } else if (item.type_index === 4) {
         geometry = this.DDF.children[0].geometry;
         material = this.DDF.children[0].material;
         mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
-      } else if (item.index === 5) {
+      } else if (item.type_index === 5) {
         geometry = this.kongtiao.children[0].geometry;
         material = this.kongtiao.children[0].material;
         mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
-      } else if (item.index === 6) {
+      } else if (item.type_index === 6) {
         geometry = this.lietou.children[0].geometry;
         material = this.lietou.children[0].material;
         mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
-      } else if (item.index === 7) {
+      } else if (item.type_index === 7) {
         geometry = this.ODF.children[0].geometry;
         material = this.ODF.children[0].material;
         mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
-      } else if (item.index === 8) {
+      } else if (item.type_index === 8) {
         geometry = this.peixian.children[0].geometry;
         material = this.peixian.children[0].material;
         mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
       }
       // mesh.rotateX(-Math.PI / 2);
-      let positionY = this.cabinetType[item.index].size[1] / 2;
+      let positionY = this.cabinetType[item.type_index].size[1] / 2;
       // }
-      mesh.position.set(item.position[1], item.position[0], positionY);
-      mesh.TYPE = this.cabinetType[item.index].name;
+      mesh.position.set(item.position[0] + this.cabinetType[item.type_index].size[0] / 2, item.position[1] + this.cabinetType[item.type_index].size[1] / 2, positionY);
+      mesh.TYPE = this.cabinetType[item.type_index].name;
       mesh.name = item.name;
       mesh.dataInfo = item;
       if (item.parentId) {
@@ -774,8 +774,8 @@ export default {
         // 创建精灵图标
         this.newCSS3DSprite3(
           "子",
-          item.position[1] - this.cabinetType[item.index].size[0] / 2,
-          item.position[0] + this.cabinetType[item.index].size[1] / 2,
+          item.position[1] - this.cabinetType[item.type_index].size[0] / 2,
+          item.position[0] + this.cabinetType[item.type_index].size[1] / 2,
           positionY + 1600
         );
       }
@@ -946,9 +946,9 @@ export default {
     },
     addBox(item) {
       let geometry = new THREE.BoxGeometry(
-        this.cabinetType[item.index].size[1],
-        this.cabinetType[item.index].size[0],
-        this.cabinetType[item.index].size[2]
+        this.cabinetType[item.type_index].size[1],
+        this.cabinetType[item.type_index].size[0],
+        this.cabinetType[item.type_index].size[2]
       ); //创建一个立方体几何对象Geometry
       let material = new THREE.MeshBasicMaterial({
         color: 0xffffff,
@@ -956,9 +956,9 @@ export default {
         opacity: 0.3
       }); //材质对象Material
       let geometry1 = new THREE.BoxGeometry(
-        this.cabinetType[item.index].size[1],
-        this.cabinetType[item.index].size[0],
-        item.capacity * this.cabinetType[item.index].size[2]
+        this.cabinetType[item.type_index].size[1],
+        this.cabinetType[item.type_index].size[0],
+        item.capacity * this.cabinetType[item.type_index].size[2]
       ); //创建一个立方体几何对象Geometry
       let material1 = new THREE.MeshBasicMaterial({
         color: 0x0000ff
@@ -972,8 +972,8 @@ export default {
       let mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
       let mesh1 = new THREE.Mesh(geometry1, material1); //网格模型对象Mesh
       let positionY1 =
-        (this.cabinetType[item.index].size[2] * item.capacity) / 2;
-      let positionY = this.cabinetType[item.index].size[2] / 2;
+        (this.cabinetType[item.type_index].size[2] * item.capacity) / 2;
+      let positionY = this.cabinetType[item.type_index].size[2] / 2;
 
       mesh.position.set(
         item.position[1],

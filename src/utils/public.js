@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import "./threebsp";
 
 // 防抖
 export function _debounce(fn, delay) {
@@ -100,6 +101,23 @@ export function _drawArrow(w, h) {
   ctx[type]();
   return canvas;
 }
+//生成模型
+function createMesh(geom) {
+  //设置当前的模型矩阵沿xy轴偏移，让图片处于显示中心
+  //geom.applyMatrix(new THREE.Matrix4().makeTranslation(-250, -100, 0));
+
+  //  创建一个线框纹理
+  var wireFrameMat = new THREE.MeshBasicMaterial({
+    opacity: 0.5,
+    wireframeLinewidth: 0.5
+  });
+  wireFrameMat.wireframe = true;
+
+  // 创建模型
+  var mesh = new THREE.Mesh(geom, wireFrameMat);
+
+  return mesh;
+}
 export function _NowRoom(arr) {
   let listGroup = new THREE.Group();
   if (Array.isArray(arr)) {
@@ -109,57 +127,19 @@ export function _NowRoom(arr) {
       var shape = new THREE.Shape();
       var shape2 = new THREE.Shape();
 
-      var path = new THREE.Path(); //path对象
-      path.moveTo(arr[0][0] + 200, arr[0][1] + 200); //起点
       // shape.absarc(50,50,40,0,2*Math.PI);//圆弧
       shape.moveTo(arr[0][0], arr[0][1]); //起点
       shape2.moveTo(arr[0][0], arr[0][1]); //起点
-
+      let arrX = [],
+        arrY = [];
       arr.forEach((item, index) => {
-        let xn = 0;
-        let yn = 0;
-        if (index !== 0 && index !== arr.length - 1) {
-          if (item[0] - arr[index - 1][0] === 0) {
-            if (arr[index + 1][0] - item[0] > 0) {
-              yn = item[1] - 200;
-            } else {
-              yn = item[1] + 200;
-            }
-          } else if (item[0] - arr[index - 1][0] > 0) {
-            yn = item[1] - 200;
-          } else {
-            yn = item[1] + 200;
-          }
-          if (item[1] - arr[index - 1][1] === 0) {
-            if (arr[index + 1][1] - item[1] > 0) {
-              xn = item[0] + 200;
-            } else {
-              xn = item[0] - 200;
-            }
-          } else if (item[1] - arr[index - 1][1] > 0) {
-            xn = item[0] + 200;
-          } else {
-            xn = item[0] - 200;
-          }
-        } else if (index === arr.length - 1) {
-          xn = item[0] - 200;
-          yn = item[1] + 200;
-        } else {
-          xn = item[0] + 200;
-          yn = item[1] + 200;
-        }
+        arrX.push(item[0]);
+        arrY.push(item[1]);
         shape.lineTo(item[0], item[1]);
         shape2.lineTo(item[0], item[1]);
-        path.lineTo(xn, yn);
-        // console.log("外定点： ", item);
-        // console.log("内定点： " + xn + " - " + yn);
       });
       shape.lineTo(arr[0][0], arr[0][1]);
       shape2.lineTo(arr[0][0], arr[0][1]);
-
-      path.lineTo(arr[0][0] + 200, arr[0][1] + 200);
-
-      shape.holes.push(path); //设置内轮廓
       var geometry = new THREE.ExtrudeGeometry( //拉伸造型
         shape, //二维轮廓
         //拉伸参数
@@ -182,12 +162,33 @@ export function _NowRoom(arr) {
         color: "#ccc",
         side: THREE.DoubleSide //两面可见
       }); //材质对象
-      var mesh = new THREE.Mesh(geometry, material2); //网格模型对象
-      var mesh2 = new THREE.Mesh(geometry2, material2); //网格模型对象
 
-      listGroup.add(mesh).add(mesh2);
-      // listGroup.add(result).add(mesh2);
-      // });
+      var objectClone = geometry.clone();
+      var getMaxX = Math.max.apply(null, arrX);
+      var getMaxY = Math.max.apply(null, arrY);
+      objectClone.scale(1 + 400 / getMaxX, 1 + 400 / getMaxY, 1);
+      var cubeBig = createMesh(objectClone);
+      cubeBig.position.x = -200;
+      cubeBig.position.y = -200;
+      var sphereSmoll = createMesh(geometry);
+      //生成ThreeBSP对象
+      var sphereBSP = new ThreeBSP(cubeBig);
+      var cubeBSP = new ThreeBSP(sphereSmoll);
+      //进行并集计算
+      var resultBSP = sphereBSP.subtract(cubeBSP);
+
+      //从BSP对象内获取到处理完后的mesh模型数据
+      var result = resultBSP.toMesh();
+      //更新模型的面和顶点的数据
+      result.geometry.computeFaceNormals();
+      result.geometry.computeVertexNormals();
+      //重新赋值一个纹理
+      var material = new THREE.MeshPhongMaterial({ color: "#ccc" });
+      result.material = material;
+      // var mesh = new THREE.Mesh(geometry, material2); //网格模型对象
+      var mesh2 = new THREE.Mesh(geometry2, material2); //网格模型对象
+      // listGroup.add(mesh).add(mesh2);
+      listGroup.add(result).add(mesh2);
     }
   } else {
     console.error("未传入数组");

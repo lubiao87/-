@@ -116,14 +116,32 @@
     <!-- 鼠标悬停提示窗 -->
     <div class="menu" ref="menu">
       <ul>
-        <li @mouseover="mapMousemoveLi" @mouseleave="mapMοuseοutLi()" :data="3">
-          5G BBU <span>3</span>
+        <li
+          @mouseover="mapMousemoveLi"
+          @mouseleave="mapMοuseοutLi()"
+          :liName="'BBU'"
+        >
+          5G BBU <span :liName="'BBU'">3</span>
         </li>
 
-        <li @mouseover="mapMousemoveLi" @mouseleave="mapMοuseοutLi()" :data="1">
-          综合接入间 <span>1</span>
+        <li
+          @mouseover="mapMousemoveLi"
+          @mouseleave="mapMοuseοutLi()"
+          :liName="'综合接入间'"
+        >
+          综合接入间
+          <span :liName="'综合接入间'">
+            {{ modelData[objIndex].iconLocation.length }}
+          </span>
         </li>
-        <li>其它 <span>0</span></li>
+        <li
+          @mouseover="mapMousemoveLi"
+          @mouseleave="mapMοuseοutLi()"
+          :liName="'其它'"
+        >
+          其它
+          <span :liName="'其它'">0</span>
+        </li>
       </ul>
       <div class="jianTou"></div>
     </div>
@@ -146,7 +164,14 @@ export default {
     return {
       restaurants: [],
       state: "",
-      modelData: [],
+      modelData: [
+        {
+          iconLocation: [],
+          modelName: "工业园机楼",
+          modeLocation: ["113.366016977858", "23.1274220838625"],
+          modelType: 1
+        }
+      ],
       moduleStatistics: [
         { name: "机楼数", value: 132, class: "right_building" },
         { name: "接入间数", value: 2837, class: "right_module" },
@@ -247,7 +272,8 @@ export default {
         }
       ],
       clickFlag: null,
-      tabPosition: "接入间"
+      tabPosition: "接入间",
+      objIndex: 0
     };
   },
   computed: {
@@ -261,7 +287,6 @@ export default {
   created() {
     this.$emit("getNavShow", true);
     console.log(JieRuJian);
-
   },
   mounted() {
     this.modelData = this.tabPosition === "接入间" ? JieRuJian : JiLou;
@@ -485,7 +510,6 @@ export default {
       // 缩放事件
       // that.map.on('zoomstart', that.mapZoomstart);
       that.map.on("zoomchange", that.mapZoom);
-      // that.mapMousemoveLi();
       // that.map.on('zoomend', that.mapZoomend);
     },
     setInfoWindow() {
@@ -524,12 +548,6 @@ export default {
     },
     mouseleveInfoWindow(e) {
       e.target.setzIndex(3);
-    },
-    showMarker3Fn(event) {
-      //阻止本来的默认事件，比如浏览器的默认右键事件是弹出浏览器的选项
-      event.preventDefault();
-      this.showMarker3 = true;
-      return false;
     },
     lnglatToG20(lnglat) {
       var lnglat = this.map.lngLatToGeodeticCoord(lnglat);
@@ -631,12 +649,13 @@ export default {
       return false;
     },
     mapDbllickMarker(e) {
-
       if (this.clickFlag) {
         //取消上次延时未执行的方法
         this.clickFlag = clearTimeout(this.clickFlag);
       }
-      let params = e.target.getExtData ? e.target.getExtData() : this.item.query;
+      let params = e.target.getExtData
+        ? e.target.getExtData()
+        : this.item.query;
       console.log("双击", params);
       this.$router.push({ name: "buildModel", params: params });
     },
@@ -648,123 +667,108 @@ export default {
       }
       this.$router.push({ name: "buildModel", params: e });
     },
-    mapMousemoveLi() {
-      // console.log(e);
+    iconLocationCode(item, index, img) {
       const that = this;
-      // if (that.objIndex === null) {
-      //   return;
-      // }
-      // let numberIndex = [];
-      // const textLi = e.target.innerText;
-      // if (textLi.indexOf("综合接入间") > -1) {
-      //   numberIndex = [0, 5, 5, 5];
-      // } else {
-      //   numberIndex = [5, 1, 2, 3];
-      // }
+      var deepX =
+        (item.location[0] - that.modelData[that.objIndex].modeLocation[0]) / 4;
+      var deepY =
+        (item.location[1] - that.modelData[that.objIndex].modeLocation[1]) / 4;
+      var points = [
+        new AMap.LngLat(
+          JSON.parse(that.modelData[that.objIndex].modeLocation[0]),
+          JSON.parse(that.modelData[that.objIndex].modeLocation[1])
+        ),
+        new AMap.LngLat(
+          JSON.parse(that.modelData[that.objIndex].modeLocation[0]) + deepX,
+          JSON.parse(that.modelData[that.objIndex].modeLocation[1]) + deepY
+        ),
+        new AMap.LngLat(
+          JSON.parse(that.modelData[that.objIndex].modeLocation[0]) + deepX * 2,
+          JSON.parse(that.modelData[that.objIndex].modeLocation[1]) + deepY * 2
+        ),
+        new AMap.LngLat(
+          JSON.parse(item.location[0]),
+          JSON.parse(item.location[1])
+        )
+      ];
+      var numberOfPoints = 180;
+      var minHeight = 5;
+      if (item.meshLine) {
+        that.object3Dlayer.remove(item.meshLine);
+      }
+      that.modelData[that.objIndex].iconLocation[
+        index
+      ].meshLine = new AMap.Object3D.MeshLine({
+        path: that.computeBezier(points, numberOfPoints, minHeight),
+        height: that.getEllipseHeight(numberOfPoints, 2000, minHeight),
+        color: "rgba(55,129,240, 0.9)",
+        width: 2
+      });
+      that.modelData[that.objIndex].iconLocation[
+        index
+      ].meshLine.transparent = true;
+      that.modelData[that.objIndex].iconLocation[index].meshLine[
+        "backOrFront"
+      ] = "both";
+      that.object3Dlayer.add(
+        that.modelData[that.objIndex].iconLocation[index].meshLine
+      );
+
+      // 图标
+      var marker2 = new AMap.Marker({
+        position: new AMap.LngLat(
+          JSON.parse(item.location[0]),
+          JSON.parse(item.location[1])
+        ),
+        icon: img,
+        //  animation: "AMAP_ANIMATION_BOUNCE",
+        extData: {
+          buildId: item.buildId,
+          name: item.name
+        },
+        offset: new AMap.Pixel(-20, -30)
+      });
+      // marker2.setTitle(item.name);
+      marker2.setLabel({
+        offset: new AMap.Pixel(0, 40), //设置文本标注偏移量
+        content: `<div class="lb-label2" style="width:${
+          item.name.length
+        }em; margin-left: -${(item.name.length - 4) / 2}em;">${item.name}</div>` //设置文本标注内容
+        // direction: 'right' //设置文本标注方位
+      });
+      that.markers.push(marker2);
+    },
+    mapMousemoveLi(e) {
+      let target = e.target || e.srcElement,
+        liName = target.getAttribute("liName");
+      console.log("li标签名称", liName);
+      const that = this;
       that.markers = [];
       var img = "./Assets/img/search-map-icon.png";
-      that.modelData[0].iconLocation.forEach((item, index) => {
-        // if (index === numberIndex[index]) {
-        var deepX = (item.location[0] - that.modelData[0].modeLocation[0]) / 4;
-        var deepY = (item.location[1] - that.modelData[0].modeLocation[1]) / 4;
-        var points = [
-          new AMap.LngLat(
-            JSON.parse(that.modelData[0].modeLocation[0]),
-            JSON.parse(that.modelData[0].modeLocation[1])
-          ),
-          new AMap.LngLat(
-            JSON.parse(that.modelData[0].modeLocation[0]) + deepX,
-            JSON.parse(that.modelData[0].modeLocation[1]) + deepY
-          ),
-          new AMap.LngLat(
-            JSON.parse(that.modelData[0].modeLocation[0]) + deepX * 2,
-            JSON.parse(that.modelData[0].modeLocation[1]) + deepY * 2
-          ),
-          new AMap.LngLat(
-            JSON.parse(item.location[0]),
-            JSON.parse(item.location[1])
-          )
-        ];
-        var numberOfPoints = 180;
-        var minHeight = 5;
-        if (item.meshLine) {
-          that.object3Dlayer.remove(item.meshLine);
-        }
-        that.modelData[0].iconLocation[
-          index
-        ].meshLine = new AMap.Object3D.MeshLine({
-          path: that.computeBezier(points, numberOfPoints, minHeight),
-          height: that.getEllipseHeight(numberOfPoints, 2000, minHeight),
-          color: "rgba(55,129,240, 0.9)",
-          width: 2
+      if (liName === "综合接入间") {
+        that.modelData[that.objIndex].iconLocation.forEach((item, index) => {
+          that.iconLocationCode(item, index, img);
         });
-        that.modelData[0].iconLocation[index].meshLine.transparent = true;
-        that.modelData[0].iconLocation[index].meshLine["backOrFront"] = "both";
-        that.object3Dlayer.add(that.modelData[0].iconLocation[index].meshLine);
-
-        // 图标
-        var marker2 = new AMap.Marker({
-          position: new AMap.LngLat(
-            JSON.parse(item.location[0]),
-            JSON.parse(item.location[1])
-          ),
-          icon: img,
-          //  animation: "AMAP_ANIMATION_BOUNCE",
-          extData: {
-            buildId: item.buildId,
-            name: item.name
-          },
-          offset: new AMap.Pixel(-20, -30)
-        });
-        // marker2.setTitle(item.name);
-        marker2.setLabel({
-          offset: new AMap.Pixel(0, 40), //设置文本标注偏移量
-          content: `<div class="lb-label2" style="width:${
-            item.name.length
-          }em; margin-left: -${(item.name.length - 4) / 2}em;">${
-            item.name
-          }</div>` //设置文本标注内容
-          // direction: 'right' //设置文本标注方位
-        });
-        that.markers.push(marker2);
-        // marker2.on("dblclick", that.mapDbllickMarker);
-
-        // }
-      });
+      }
       if (!that.overlayGroups) {
         that.overlayGroups = new AMap.OverlayGroup(that.markers);
         that.map.add(that.overlayGroups);
       }
-      // console.log("that.overlayGroups", that.overlayGroups);
-      // that.overlayGroups.hide();
-      // that.object3Dlayer.hide();
-      //自适应中心点、展示所有标记点--核心代码
-      // var newCenter = that.map.setFitView();
-      // newCenter.getCenter();
     },
     mapMοuseοutLi() {
       const that = this;
-      // var pixel = ev.pixel;
       console.log("鼠标离开li");
-      // ev.target.setAnimation("AMAP_ANIMATION_NONE");
-      // console.log("getMapScreenMarkers", that.markers.getMap());
-      // ev.target.show();
-      if (this.showMarker3) {
-        return false;
-      }
       if (that.objIndex != null) {
         that.modelData[that.objIndex].iconLocation.forEach((item, index) => {
           if (item.meshLine) {
             that.object3Dlayer.remove(item.meshLine);
             that.modelData[that.objIndex].iconLocation[index].meshLine = null;
           }
-          // that.map.remove(that.markers[index]);
         });
         if (that.overlayGroups) {
           that.map.remove(that.overlayGroups);
           that.overlayGroups = null;
         }
-        // that.objIndex = null;
       }
       if (that.marker3) {
         that.map.remove(that.marker3);

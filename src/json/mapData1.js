@@ -1,7 +1,8 @@
 const JiLou = [
   {
-    modelName: "工业园机楼",
+    modelName: "工业园机楼", // 机楼名称
     iconLocation: [
+      // 综合接入间
       {
         location: ["113.377468854055", "23.114265554063"],
         name: "美林花园远端机房"
@@ -19,8 +20,10 @@ const JiLou = [
         name: "职业技术师范接入网机房"
       }
     ],
-    modeLocation: ["113.366016977858", "23.1274220838625"],
-    modelType: 2
+    model5GBBU: [], // 5GBBU
+    modelOther: [], // 其它机楼
+    modeLocation: ["113.366016977858", "23.1274220838625"], // 机楼经纬度
+    modelType: 2 // 类型： 1为接入间 2为机楼
   },
   {
     modelName: "青云机楼",

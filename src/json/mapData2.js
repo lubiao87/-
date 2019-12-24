@@ -1,9 +1,9 @@
 const JieRuJian = [
   {
-    modelName: "荔城1接入间",
-    iconLocation: [],
-    modeLocation: ["113.830949516789", "23.2906952874569"],
-    modelType: 1
+    modelName: "荔城1接入间", // 接入间名称
+    iconLocation: [], // 不要的字段
+    modeLocation: ["113.830949516789", "23.2906952874569"], // 接入间高德经纬度
+    modelType: 1 // 类型： 1为接入间 2为机楼
   },
   {
     modelName: "新街接入间",

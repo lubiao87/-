@@ -64,13 +64,17 @@
       <div style="margin-top: 20px; ">
         <h5 class="ui-city-title ui-height48">
           <span class="ui-linebg"></span>接入间列表
+          <el-radio-group v-model="tabPosition" style="margin-left: 10px;">
+            <el-radio-button label="机楼">机楼</el-radio-button>
+            <el-radio-button label="接入间">接入间</el-radio-button>
+          </el-radio-group>
         </h5>
         <div class="clearfix module-statis" style="padding-left: 0;">
-          <!-- <el-autocomplete
+          <el-autocomplete
             popper-class="my-autocomplete"
             v-model="state"
             :fetch-suggestions="querySearch"
-            placeholder="请输入机楼"
+            :placeholder="placeholderInput"
             @select="handleSelect"
           >
             <i
@@ -82,20 +86,18 @@
             <template slot-scope="{ item }">
               <div class="name">{{ item.modelName }}</div>
             </template>
-          </el-autocomplete> -->
+          </el-autocomplete>
           <div class="lb-module-list page-index" style="margin-top: 12px;">
             <ul>
               <li
-                @click="rountGo(modelData[0])"
-                @dblclick="liClick(modelData[0].iconLocation[0])"
+                v-for="(items, index) in modelData"
+                :key="index"
+                @click="rountGo(items)"
+                @dblclick="mapDbllickMarker"
               >
-                美林花园接入间
-              </li>
-              <li
-                @click="rountGo(modelData[0])"
-                @dblclick="liClick(modelData[0].iconLocation[1])"
-              >
-                棠下荷光路接入间
+                <span>{{ index + 1 }}. </span>
+                <span>{{ items.modelName }}</span>
+                <span class="lb-icon"></span>
               </li>
             </ul>
           </div>
@@ -132,6 +134,8 @@
 // import { listSearchMixin } from "../../mixin"; //混淆请求
 // 局部组件引用
 import Cesium from "cesium/Cesium";
+import JiLou from "@/json/mapData1.js"; //api配置请求的路径
+import JieRuJian from "@/json/mapData2.js"; //api配置请求的路径
 // noinspection ES6UnusedImports
 import widget from "cesium/Widgets/widgets.css";
 export default {
@@ -142,24 +146,7 @@ export default {
     return {
       restaurants: [],
       state: "",
-      modelData: [
-        {
-          modelName: "工业园机楼",
-          iconLocation: [
-            {
-              location: ["113.377468854055", "23.114265554063"],
-              name: "美林花园接入间",
-              buildId: 114102
-            },
-            {
-              location: ["113.386872581306", "23.1477018208333"],
-              name: "棠下荷光路接入间",
-              buildId: 114101
-            }
-          ],
-          modeLocation: ["113.366016977858", "23.1274220838625"]
-        }
-      ],
+      modelData: [],
       moduleStatistics: [
         { name: "机楼数", value: 132, class: "right_building" },
         { name: "接入间数", value: 2837, class: "right_module" },
@@ -189,89 +176,95 @@ export default {
         {
           value: "440100",
           label: "广州市",
-          // name: 'jiangmen'
+          buidingNumber: 4,
           coordinate: [113.280637, 23.125178]
         },
         {
           value: "440117",
           label: "从化区",
-          coordinate: [113.587386, 23.545283]
-          // name: 'pengjiang'
+          coordinate: [113.587386, 23.545283],
+          buidingNumber: 12
         },
         {
           value: "440115",
           label: "南沙区",
-          coordinate: [113.53738, 22.794531]
-          // name: 'jianghai'
+          coordinate: [113.53738, 22.794531],
+          buidingNumber: 6
         },
         {
           value: "440114",
           label: "花都区",
-          coordinate: [113.211184, 23.39205]
-          // name: 'xinhui'
+          coordinate: [113.211184, 23.39205],
+          buidingNumber: 22
         },
         {
           value: "440113",
           label: "番禺区",
-          coordinate: [113.364619, 22.938582]
-          // name: 'taishan'
+          coordinate: [113.364619, 22.938582],
+          buidingNumber: 11
         },
         {
           value: "440103",
           label: "荔湾区",
-          coordinate: [113.243038, 23.124943]
-          // name: 'heshan'
+          coordinate: [113.243038, 23.124943],
+          buidingNumber: 8
         },
         {
           value: "440111",
           label: "白云区",
-          coordinate: [113.262831, 23.162281]
-          // name: 'enping'
+          coordinate: [113.262831, 23.162281],
+          buidingNumber: 4
         },
         {
           value: "440105",
           label: "海珠区",
-          coordinate: [113.262008, 23.103131]
-          // name: 'enping'
+          coordinate: [113.262008, 23.103131],
+          buidingNumber: 22
         },
         {
           value: "440112",
           label: "黄埔区",
-          coordinate: [113.450761, 23.103239]
-          // name: 'enping'
+          coordinate: [113.450761, 23.103239],
+          buidingNumber: 12
         },
         {
           value: "440118",
           label: "增城区",
-          coordinate: [113.829579, 23.290497]
-          // name: 'enping'
+          coordinate: [113.829579, 23.290497],
+          buidingNumber: 32
         },
         {
           value: "440106",
           label: "天河区",
-          coordinate: [113.335367, 23.13559]
-          // name: 'enping'
+          coordinate: [113.335367, 23.13559],
+          buidingNumber: 5
         },
         {
           value: "440104",
           label: "越秀区",
-          coordinate: [113.280714, 23.125624]
-          // name: 'enping'
+          coordinate: [113.280714, 23.125624],
+          buidingNumber: 20
         }
       ],
-      clickFlag: null
-      // stops: false
+      clickFlag: null,
+      tabPosition: "接入间"
     };
   },
   computed: {
     overInfoId() {
       return "-over-info-";
+    },
+    placeholderInput() {
+      return this.tabPosition === "接入间" ? "请输入接入间" : "请输入机楼";
     }
   },
   created() {
     this.$emit("getNavShow", true);
+    console.log(JieRuJian);
+
   },
   mounted() {
+    this.modelData = this.tabPosition === "接入间" ? JieRuJian : JiLou;
     this.restaurants = this.loadAll();
     this.$nextTick(() => {
       this.cesiumInit();
@@ -403,8 +396,14 @@ export default {
         zIndex: 110,
         opacity: 0.8
       });
+      that.map.clearMap();
       that.map.add(that.object3Dlayer);
-
+      that.setMapView();
+      that.setInfoWindow();
+      that.drawBounds();
+    },
+    setMapView() {
+      const that = this;
       var parenTimg = "./Assets/img/parent-build.png";
       var zoomStyleMapping2 = {
         11: 1,
@@ -472,7 +471,7 @@ export default {
           //   name: parent.modelName
           // }
         });
-        marker.setExtData(parent.modelName);
+        marker.setExtData(parent);
         spots.push(marker);
         // 绑定事件
         // marker.on("mouseover", that.mapMοuseοutMarker);
@@ -488,22 +487,20 @@ export default {
       that.map.on("zoomchange", that.mapZoom);
       // that.mapMousemoveLi();
       // that.map.on('zoomend', that.mapZoomend);
-      that.setInfoWindow();
-      that.drawBounds();
     },
     setInfoWindow() {
       const that = this;
       that.object3Dlayer2 = new AMap.Object3DLayer({ zIndex: 2, opacity: 1 });
       that.map.add(that.object3Dlayer2);
       this.areas.forEach((item, i, arr) => {
-         var text = new AMap.Text({
+        var text = new AMap.Text({
           text: `<div class="infoWindowBox" ref="infoWindowBox">
                   <div class="info-lable">${item.label}</div>
-                  <div class="btn">机楼 12</div>
+                  <div class="btn">机楼 ${item.buidingNumber}</div>
                 </div>`,
-          anchor: 'center', // 设置文本标记锚点
+          anchor: "center", // 设置文本标记锚点
           draggable: false,
-          cursor: 'pointer',
+          cursor: "pointer",
           angle: 10,
           position: item.coordinate,
           zooms: [10.5, 12],
@@ -511,8 +508,8 @@ export default {
         });
         text.setMap(that.map);
         text.setExtData(item);
-        text.on('click', that.clickInfoWindow);
-        text.on('mousemove', that.mousemoveInfoWindow);
+        text.on("click", that.clickInfoWindow);
+        text.on("mousemove", that.mousemoveInfoWindow);
       });
     },
     clickInfoWindow(e) {
@@ -593,7 +590,7 @@ export default {
       const that = this;
       this.getExtData = ev.target.getExtData();
       that.modelData.forEach((item, i) => {
-        if (item.modelName === this.getExtData) {
+        if (item.modelName === this.getExtData.modelName) {
           that.objIndex = i;
         }
       });
@@ -625,7 +622,7 @@ export default {
         that.MarkerClick = !that.MarkerClick;
         that.getExtData = ev.target.getExtData();
         that.modelData.forEach((item, i) => {
-          if (item.modelName === that.getExtData) {
+          if (item.modelName === that.getExtData.modelName) {
             that.objIndex = i;
           }
         });
@@ -634,12 +631,14 @@ export default {
       return false;
     },
     mapDbllickMarker(e) {
-      console.log("双击", e.target.getExtData());
+
       if (this.clickFlag) {
         //取消上次延时未执行的方法
         this.clickFlag = clearTimeout(this.clickFlag);
       }
-      this.$router.push({ name: "buildModel", params: e.target.getExtData() });
+      let params = e.target.getExtData ? e.target.getExtData() : this.item.query;
+      console.log("双击", params);
+      this.$router.push({ name: "buildModel", params: params });
     },
     liClick(e) {
       console.log(e);
@@ -869,40 +868,59 @@ export default {
 
       // console.log("data ",data);
       this.selectValueName = data[0].label;
-      // switch (this.selectValueName) {
-      //   case "番禺区":
-      //     setTimeout(() => {
-      //       that.map.setZoom(13);
-      //     }, 400);
-      //     break;
-      //   case "荔湾区":
-      //     setTimeout(() => {
-      //       that.map.setZoom(13);
-      //     }, 400);
-      //     break;
-      //   case "海珠区":
-      //     setTimeout(() => {
-      //       that.map.setZoom(13);
-      //     }, 400);
-      //     break;
-      //   case "天河区":
-      //     setTimeout(() => {
-      //       that.map.setZoom(13);
-      //     }, 400);
-      //     break;
-      //   case "越秀区":
-      //     setTimeout(() => {
-      //       that.map.setZoom(14);
-      //     }, 400);
-      //     break;
+      switch (this.selectValueName) {
+        case "番禺区":
+          setTimeout(() => {
+            that.map.setZoom(13);
+          }, 400);
+          break;
+        case "荔湾区":
+          setTimeout(() => {
+            that.map.setZoom(13);
+          }, 400);
+          break;
+        case "海珠区":
+          setTimeout(() => {
+            that.map.setZoom(13);
+          }, 400);
+          break;
+        case "天河区":
+          setTimeout(() => {
+            that.map.setZoom(13);
+          }, 400);
+          break;
+        case "越秀区":
+          setTimeout(() => {
+            that.map.setZoom(14);
+          }, 400);
+          break;
+        case "广州市":
+          setTimeout(() => {
+            that.map.setZoom(11);
+          }, 400);
+          break;
 
-      //   default:
-      //     setTimeout(() => {
-      //       that.map.setZoom(13);
-      //     }, 400);
-      //     break;
-      // }
+        default:
+          setTimeout(() => {
+            that.map.setZoom(13);
+          }, 400);
+          break;
+      }
       // console.log(this.selectValueName);
+    },
+    tabPosition(val) {
+      const that = this;
+      if (val === "接入间") {
+        this.modelData = JieRuJian;
+      } else {
+        this.modelData = JiLou;
+      }
+      this.restaurants = this.loadAll();
+      that.map.clearMap();
+      that.map.add(that.object3Dlayer);
+      that.setMapView();
+      that.setInfoWindow();
+      that.drawBounds();
     }
   }
 };

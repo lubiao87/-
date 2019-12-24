@@ -305,7 +305,7 @@ export default {
   },
   created() {
     const self = this;
-    // console.log("this.$route.params---", this.$route.params);
+    console.log("this.$route.params---", this.$route.params);
     this.floorName = this.$route.params.name;
 
     this.buildId = this.$route.params.buildId;

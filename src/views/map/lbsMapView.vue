@@ -1,19 +1,10 @@
 <template>
   <div style="width: 100%;height:100%;">
-    <!-- <input type="flies" src="/assets/GKG.FBX" ref="mapID" alt="" /> -->
     <div
       id="cesiumContainer"
       class="cesiumContainer"
       style="position:absolute; top: 0; width: 100%;height:100%;"
     ></div>
-    <!-- v-show="!panelFlag" -->
-    <!-- <div
-      id="cesiumContainer2"
-      class="cesiumContainer2"
-      ref="cesiumContainer2"
-      style="position:absolute; top: 0; width: 100%;height:100%;"
-      v-show="panelFlag"
-    ></div> -->
     <el-select
       class="model-select"
       v-model="selectValue"
@@ -94,15 +85,6 @@
           </el-autocomplete> -->
           <div class="lb-module-list page-index" style="margin-top: 12px;">
             <ul>
-              <!-- <li
-                v-for="(items, index) in modelData"
-                :key="index"
-                @click="rountGo(items)"
-              >
-                <span>{{ index + 1 }}. </span>
-                <span>{{ items.modelName }}</span>
-                <span class="lb-icon"></span>
-              </li> -->
               <li
                 @click="rountGo(modelData[0])"
                 @dblclick="liClick(modelData[0].iconLocation[0])"
@@ -122,7 +104,15 @@
       <div class="yhui-real-timeimg"></div>
     </div>
     <!-- 右边收缩栏结束 -->
-    <!-- <div class="menu" v-show="showMenu" ref="menu">
+
+    <!-- 初始化区域框 -->
+    <!-- <div class="infoWindowBox" ref="infoWindowBox">
+      <div class="info-lable">花都区</div>
+      <div class="btn">机楼 12</div>
+    </div> -->
+
+    <!-- 鼠标悬停提示窗 -->
+    <div class="menu" ref="menu">
       <ul>
         <li @mouseover="mapMousemoveLi" @mouseleave="mapMοuseοutLi()" :data="3">
           5G BBU <span>3</span>
@@ -133,9 +123,8 @@
         </li>
         <li>其它 <span>0</span></li>
       </ul>
-      <div class="close-btn" @click="hineMenuFn" v-show="MarkerClick">X</div>
       <div class="jianTou"></div>
-    </div> -->
+    </div>
   </div>
 </template>
 
@@ -153,8 +142,6 @@ export default {
     return {
       restaurants: [],
       state: "",
-      // showMenu: false,
-      MarkerClick: false,
       modelData: [
         {
           modelName: "工业园机楼",
@@ -192,7 +179,7 @@ export default {
           id: 123
         }
       },
-
+      MarkerClick: false,
       panelFlag: false,
       district: null,
       polygons: [],
@@ -389,8 +376,8 @@ export default {
         viewMode: "3D",
         pitch: 30,
         rotation: 25,
-        zoom: 12.9,
-        zooms: [11, 20],
+        zoom: 11,
+        zooms: [10.5, 20],
         center: [113.370565, 23.122751],
         // mapStyle: "amap://styles/macaron",
         showIndoorMap: true,
@@ -417,7 +404,7 @@ export default {
         opacity: 0.8
       });
       that.map.add(that.object3Dlayer);
-      that.drawBounds();
+
       var parenTimg = "./Assets/img/parent-build.png";
       var zoomStyleMapping2 = {
         11: 1,
@@ -431,9 +418,10 @@ export default {
       };
       var spots = [];
       that.modelData.forEach((parent, index) => {
+        // 机楼marker
         var marker = new AMap.ElasticMarker({
           position: [parent.modeLocation[0], parent.modeLocation[1]],
-          zooms: [11, 20],
+          zooms: [12, 20],
           styles: [
             {
               icon: {
@@ -441,7 +429,7 @@ export default {
                 size: [32, 32], //可见区域的大小
                 ancher: [16, 16], //锚点
                 // imageSize:[24,24],
-                fitZoom: 12, //最合适的级别
+                fitZoom: 12.5, //最合适的级别
                 scaleFactor: 2, //地图放大一级的缩放比例系数
                 maxScale: 1.5, //最大放大比例
                 minScale: 1 //最小放大比例
@@ -465,7 +453,7 @@ export default {
                 fitZoom: 13,
                 scaleFactor: 2,
                 maxScale: 1.5,
-                minScale: 0.5
+                minScale: 0.8
               },
               label: {
                 content: `<div class="lb-label2" style="width:${
@@ -488,18 +476,57 @@ export default {
         spots.push(marker);
         // 绑定事件
         // marker.on("mouseover", that.mapMοuseοutMarker);
-        // marker.on("mousemove", that.mapMοuseοutMarker);
+        marker.on("mousemove", that.mapMοuseοutMarker);
 
         marker.on("click", that.mapClickMarker);
-        // marker.on("dblclick", that.mapDbllickMarker);
+        marker.on("dblclick", that.mapDbllickMarker);
       });
       that.map.add(spots);
       // this.$refs.cesiumContainer2.addEventListener("click", this.hiddenMapImg);
       // 缩放事件
       // that.map.on('zoomstart', that.mapZoomstart);
       that.map.on("zoomchange", that.mapZoom);
-      that.mapMousemoveLi();
+      // that.mapMousemoveLi();
       // that.map.on('zoomend', that.mapZoomend);
+      that.setInfoWindow();
+      that.drawBounds();
+    },
+    setInfoWindow() {
+      const that = this;
+      that.object3Dlayer2 = new AMap.Object3DLayer({ zIndex: 2, opacity: 1 });
+      that.map.add(that.object3Dlayer2);
+      this.areas.forEach((item, i, arr) => {
+         var text = new AMap.Text({
+          text: `<div class="infoWindowBox" ref="infoWindowBox">
+                  <div class="info-lable">${item.label}</div>
+                  <div class="btn">机楼 12</div>
+                </div>`,
+          anchor: 'center', // 设置文本标记锚点
+          draggable: false,
+          cursor: 'pointer',
+          angle: 10,
+          position: item.coordinate,
+          zooms: [10.5, 12],
+          zIndex: 3
+        });
+        text.setMap(that.map);
+        text.setExtData(item);
+        text.on('click', that.clickInfoWindow);
+        text.on('mousemove', that.mousemoveInfoWindow);
+      });
+    },
+    clickInfoWindow(e) {
+      console.log("item", e.target.getExtData());
+      const data = e.target.getExtData();
+      this.selectValue = data.value;
+    },
+    mousemoveInfoWindow(e) {
+      const that = this;
+      e.target.setzIndex(666);
+      e.target.on("mouseout", that.mouseleveInfoWindow);
+    },
+    mouseleveInfoWindow(e) {
+      e.target.setzIndex(3);
     },
     showMarker3Fn(event) {
       //阻止本来的默认事件，比如浏览器的默认右键事件是弹出浏览器的选项
@@ -562,29 +589,29 @@ export default {
       //   that.rountGo(that.item);
       // }
     },
-    hineMenuFn() {
-      // this.showMenu = false;
-      this.MarkerClick = false;
-      this.showMarker3 = false;
-      this.mapMοuseοutLi();
-    },
     mapMοuseοutMarker(ev) {
       const that = this;
-      if (this.MarkerClick) {
-        return;
-      }
-      var scrollTop =
-        document.documentElement.scrollTop || document.body.scrollTop;
-      this.$refs.menu.style.left = ev.pixel.x - 80 + "px";
-      this.$refs.menu.style.top = ev.pixel.y - 180 + scrollTop + "px";
       this.getExtData = ev.target.getExtData();
       that.modelData.forEach((item, i) => {
         if (item.modelName === this.getExtData) {
           that.objIndex = i;
         }
       });
+
+      that.infoWindow = new AMap.InfoWindow({
+        content: that.$refs.menu //使用默认信息窗体框样式，显示信息内容
+      });
+      // console.log(that.map.getCenter());
+      that.infoWindow.open(
+        this.map,
+        new AMap.LngLat(
+          that.modelData[that.objIndex].modeLocation[0],
+          that.modelData[that.objIndex].modeLocation[1]
+        )
+      );
       ev.target.on("mouseout", that.mouseleveMarker);
     },
+    // 点击Marker
     mapClickMarker(ev) {
       //阻止本来的默认事件，比如浏览器的默认右键事件是弹出浏览器的选项
       const that = this;
@@ -595,18 +622,13 @@ export default {
       }
       this.clickFlag = setTimeout(function() {
         // click 事件的处理
-        that.MarkerClick = true;
-        var scrollTop =
-          document.documentElement.scrollTop || document.body.scrollTop;
-        that.$refs.menu.style.left = ev.pixel.x - 80 + "px";
-        that.$refs.menu.style.top = ev.pixel.y - 180 + scrollTop + "px";
+        that.MarkerClick = !that.MarkerClick;
         that.getExtData = ev.target.getExtData();
         that.modelData.forEach((item, i) => {
           if (item.modelName === that.getExtData) {
             that.objIndex = i;
           }
         });
-        // that.showMenu = true;
       }, 300); //延时300毫秒执行
 
       return false;
@@ -706,13 +728,20 @@ export default {
           // direction: 'right' //设置文本标注方位
         });
         that.markers.push(marker2);
-        marker2.on("dblclick", that.mapDbllickMarker);
+        // marker2.on("dblclick", that.mapDbllickMarker);
+
         // }
       });
       if (!that.overlayGroups) {
         that.overlayGroups = new AMap.OverlayGroup(that.markers);
         that.map.add(that.overlayGroups);
       }
+      // console.log("that.overlayGroups", that.overlayGroups);
+      // that.overlayGroups.hide();
+      // that.object3Dlayer.hide();
+      //自适应中心点、展示所有标记点--核心代码
+      // var newCenter = that.map.setFitView();
+      // newCenter.getCenter();
     },
     mapMοuseοutLi() {
       const that = this;
@@ -747,9 +776,11 @@ export default {
       const that = this;
       // var pixel = ev.pixel;
       console.log("鼠标离开Marker");
-      // if (!this.MarkerClick) {
-      //   this.showMenu = false;
-      // }
+      if (!this.MarkerClick) {
+        that.infoWindow.close();
+      } else {
+        this.MarkerClick = false;
+      }
     },
     getEllipseHeight(count, maxHeight, minHeight) {
       var height = [];
@@ -822,7 +853,8 @@ export default {
         }
         that.map.add(that.polygons);
 
-        that.map.setFitView(that.polygons); //视口自适应
+        var newCenter = that.map.setFitView(that.polygons); //视口自适应
+        newCenter.getCenter();
       });
     }
   },
@@ -837,45 +869,70 @@ export default {
 
       // console.log("data ",data);
       this.selectValueName = data[0].label;
-      switch (this.selectValueName) {
-        case "番禺区":
-          setTimeout(() => {
-            that.map.setZoom(12.9);
-          }, 400);
-          break;
-        case "荔湾区":
-          setTimeout(() => {
-            that.map.setZoom(12.9);
-          }, 400);
-          break;
-        case "海珠区":
-          setTimeout(() => {
-            that.map.setZoom(12.9);
-          }, 400);
-          break;
-        case "天河区":
-          setTimeout(() => {
-            that.map.setZoom(12.9);
-          }, 400);
-          break;
-        case "越秀区":
-          setTimeout(() => {
-            that.map.setZoom(14);
-          }, 400);
-          break;
+      // switch (this.selectValueName) {
+      //   case "番禺区":
+      //     setTimeout(() => {
+      //       that.map.setZoom(13);
+      //     }, 400);
+      //     break;
+      //   case "荔湾区":
+      //     setTimeout(() => {
+      //       that.map.setZoom(13);
+      //     }, 400);
+      //     break;
+      //   case "海珠区":
+      //     setTimeout(() => {
+      //       that.map.setZoom(13);
+      //     }, 400);
+      //     break;
+      //   case "天河区":
+      //     setTimeout(() => {
+      //       that.map.setZoom(13);
+      //     }, 400);
+      //     break;
+      //   case "越秀区":
+      //     setTimeout(() => {
+      //       that.map.setZoom(14);
+      //     }, 400);
+      //     break;
 
-        default:
-          setTimeout(() => {
-            that.map.setZoom(12);
-          }, 400);
-          break;
-      }
+      //   default:
+      //     setTimeout(() => {
+      //       that.map.setZoom(13);
+      //     }, 400);
+      //     break;
+      // }
       // console.log(this.selectValueName);
     }
   }
 };
 </script>
-<style>
+<style lang="scss">
+.infoWindowBox {
+  width: 110px;
+  background-color: #fff;
+  padding: 10px;
+  background: rgba(255, 255, 255, 1);
+  border: 1px solid rgba(229, 229, 229, 1);
+  box-shadow: 0px 0px 7px 3px rgba(204, 204, 204, 1);
+  border-radius: 4px;
+  position: relative;
+  .info-lable {
+    width: 100%;
+    height: 30px;
+    font-size: 14px;
+    text-align: center;
+    color: #333;
+    font-weight: 600;
+  }
+  .btn {
+    width: 100%;
+    text-align: center;
+    color: #fff;
+    background-color: #637fe7;
+    padding: 4px 0;
+  }
+}
 .stip-formatter * {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -986,7 +1043,7 @@ export default {
   width: 180px;
   height: 138px;
   background: rgba(75, 91, 171, 0.7);
-  position: absolute;
+  // position: absolute;
   color: #fff;
   padding: 10px;
   border-radius: 5px;

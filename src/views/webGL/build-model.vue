@@ -8,7 +8,7 @@
   >
     <div style="width: 100%;height:100%;" id="buildModel"></div>
     <!-- 机房 2d页面 -->
-    <div
+    <!-- <div
       class="cad-img ui-busin-ul"
       v-show="isCollapse === '2D平面图'"
       ref="isCollapse2d"
@@ -19,15 +19,7 @@
         @propsFlag="propsFlagFn"
         :foremostData="cabinetplaced"
       ></build-model2d>
-    </div>
-    <!-- 右键html -->
-    <div class="menu" v-show="showMenu" ref="menu">
-      <ul>
-        <li @click="deleteMeth">删除机架</li>
-        <li @click="setMethPositon">修改位置</li>
-        <li @click="showProps">查看详情</li>
-      </ul>
-    </div>
+    </div> -->
     <!-- 列头柜鼠标悬停html  -->
     <div class="menu menu2" v-show="showMenu2" ref="menu2">
       <ul>
@@ -65,7 +57,7 @@
       <el-radio-button size="small" label="机柜容量图"
         >机柜容量图</el-radio-button
       >
-      <el-radio-button size="small" label="2D平面图">2D平面图</el-radio-button>
+      <!-- <el-radio-button size="small" label="2D平面图">2D平面图</el-radio-button> -->
     </el-radio-group>
     <!-- 右边收缩栏开始 -->
     <div
@@ -148,38 +140,23 @@ import {
   _drawArrow,
   _NowRoom
 } from "@/utils/public.js";
-// import cabinetplaced from "@/json/dataList.js";
-import "@/utils/control/TrackballControls.js";
-import "@/utils/control/DragControls.js";
-import "@/utils/control/TransformControls.js";
-import "@/utils/renderers/CSS3DRenderer.js";
 import "@/utils/threebsp.js";
-// import "@/utils/renderers/CSS2DRenderer.js";
-
-// import "@/utils/postprocessing/EffectComposer.js";
-// import "@/utils/postprocessing/RenderPass.js";
-// import "@/utils/postprocessing/ShaderPass.js";
-// import "@/utils/shaders/CopyShader.js";
-// import "@/utils/postprocessing/OutlinePass.js";
-require("three-fbxloader-offical");
+import "three-fbxloader-offical";
+// require("three-fbxloader-offical");
 import { OrbitControls } from "../../utils/OrbitControls";
 import popup from "../../components/popup/popup";
-import buildModel2d from "./build-model-2d";
+// import buildModel2d from "./build-model-2d";
 import { api2 } from "../../api/api"; //api配置请求的路径
 export default {
   name: "olmap",
-  props: ["coordinate"],
+  // props: ["coordinate"],
   mixins: [listSearchMixin],
   components: {
-    popup,
-    buildModel2d
+    popup
+    // buildModel2d
   },
   data() {
     return {
-      animationMenTop: true, // 开门右动画
-      animationMenTop2: true, // 开门左动画
-      animationZF: true, // 开门右正负
-      animationZF2: true, // 开门左正负
       methName: "", // 鼠标悬停字段1
       location: "", // 鼠标悬停字段2
       occuRate: "", // 鼠标悬停字段2
@@ -203,7 +180,7 @@ export default {
         "变电站-天河F4"
       ],
       showMenu2: false,
-      showMenu: false,
+      // showMenu: false,
       buildId: null,
       propsFlag: false,
       barData: [
@@ -212,7 +189,6 @@ export default {
         { value: 280, name: "预占" }
       ],
       myChart: null,
-      activeIndex: 0,
       moduleStatistics: [
         {
           name: "空间利用率",
@@ -243,10 +219,6 @@ export default {
       modernBuilding: null, // 楼层obj
       moderBuild: null, // 大楼obj
       personPre: null, // 人obj
-      referenceModel: null, // 人网格模型
-      AnimationAction: null, // 动画
-      // intersects: null, // -----
-      timer: 20000,
       loading: true,
       panelShow: true,
       lookAround: false,
@@ -255,8 +227,6 @@ export default {
       cameraY: -14000,
       cameraZ: 6000,
       floorName: "工业园机楼",
-      animationTime: 4,
-      animationFlag: true,
       cabinetType: [
         {
           name: "全部",
@@ -320,42 +290,12 @@ export default {
           center: [1000, -1000, 4000]
         }
       ],
-      // superman: false,
       froomData: [ // 四边形
         [0, 0],
         [0, 18000],
         [20000, 18000],
         [20000, 0]
       ]
-      // froomData: [
-      //   // 7 六边形
-      //   [0, 0],
-      //   [0, 18000],
-      //   [20000, 18000],
-      //   [20000, 24000],
-      //   [30000, 24000],
-      //   [30000, 0]
-      // ]
-      // froomData: [
-      //   // L 六边形
-      //   [0, 0],
-      //   [0, 24000],
-      //   [20000, 24000],
-      //   [20000, 18000],
-      //   [40000, 18000],
-      //   [40000, 0]
-      // ]
-      // froomData: [
-      //   // N 八边形 （单位：毫米）
-      //   [0, 0],
-      //   [0, 25000],
-      //   [18000, 25000],
-      //   [18000, 35000],
-      //   [25000, 35000],
-      //   [25000, 18000],
-      //   [18000, 18000],
-      //   [18000, 0]
-      // ]
     };
   },
   computed: {
@@ -439,7 +379,7 @@ export default {
         this.scene.remove(this.FloorFour);
         this.scene.add(this.roomModel);
       } else {
-        this.animationFlag = true;
+        // this.animationFlag = true;
         this.buildId = data.buildId;
         this.floorName = "工业园机楼 - " + data.label;
       }
@@ -710,10 +650,10 @@ export default {
       // this.CSS3Renderer.setSize(window.innerWidth, window.innerHeight);
     },
     // 右键查看机架详情
-    showProps() {
-      this.propsFlag = true;
-      this.showMenu = false;
-    },
+    // showProps() {
+    //   this.propsFlag = true;
+    //   this.showMenu = false;
+    // },
     addMeth(item) {
       let geometry = new THREE.BoxGeometry(
         this.cabinetType[item.type_index].size[0],
@@ -785,14 +725,14 @@ export default {
       }
       return mesh;
     },
-    deleteMeth(event) {
-      //阻止本来的默认事件，比如浏览器的默认右键事件是弹出浏览器的选项
-      event.preventDefault();
-      // console.log(this.selectedObject);
-      this.listGroup.remove(this.selectedObject);
-      this.showMenu = false;
-      return false;
-    },
+    // deleteMeth(event) {
+    //   //阻止本来的默认事件，比如浏览器的默认右键事件是弹出浏览器的选项
+    //   event.preventDefault();
+    //   // console.log(this.selectedObject);
+    //   this.listGroup.remove(this.selectedObject);
+    //   this.showMenu = false;
+    //   return false;
+    // },
     setCabinet() {
       const self = this;
       this.listGroup = new THREE.Group();
@@ -909,11 +849,11 @@ export default {
         self.onDocumentClick,
         false
       );
-      self.renderer.domElement.removeEventListener(
-        "mousedown",
-        self.onDocumentMusedown,
-        false
-      );
+      // self.renderer.domElement.removeEventListener(
+      //   "mousedown",
+      //   self.onDocumentMusedown,
+      //   false
+      // );
     },
     addEventListenerFn() {
       const self = this;
@@ -933,11 +873,11 @@ export default {
         self.onDocumentClick,
         false
       );
-      self.renderer.domElement.addEventListener(
-        "mousedown",
-        self.onDocumentMusedown,
-        false
-      );
+      // self.renderer.domElement.addEventListener(
+      //   "mousedown",
+      //   self.onDocumentMusedown,
+      //   false
+      // );
     },
     addBox(item) {
       let geometry = new THREE.BoxGeometry(
@@ -1016,43 +956,40 @@ export default {
         //这里的130px主要是为了标签和模型有一定偏移，当然也可以不设置，两者叠加在一起
       }
     },
-    onDocumentMusedown(ev) {
-      if (ev.button === 2) {
-        console.log("你点了右键");
-        var ev = ev || event;
-        ev.preventDefault();
-        const self = this;
-        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-        this.raycaster.setFromCamera(this.mouse, this.camera);
-        const intersects = this.raycaster.intersectObjects(
-          self.listGroup.children
-        );
-        if (intersects.length > 0) {
-          this.selectedObject = intersects[0].object;
-          var scrollTop =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          this.$refs.menu.style.left = ev.clientX + "px";
-          this.$refs.menu.style.top = ev.clientY + scrollTop + "px";
-          this.showMenu = true;
-          if (!this.transformControls) {
-            this.transformControls = new THREE.TransformControls(
-              this.camera,
-              this.renderer.domElement,
-              this.fn
-            );
-            this.transformControls.attach(intersects[0].object);
-            this.transformControls.setSpace("local");
-            console.log("getMode", this.transformControls);
-          }
-        } else {
-          this.showMenu = false;
-        }
-      }
-    },
-    fn(e) {
-      console.log(e);
-    },
+    // onDocumentMusedown(ev) {
+    //   if (ev.button === 2) {
+    //     console.log("你点了右键");
+    //     var ev = ev || event;
+    //     ev.preventDefault();
+    //     const self = this;
+    //     this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    //     this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    //     this.raycaster.setFromCamera(this.mouse, this.camera);
+    //     const intersects = this.raycaster.intersectObjects(
+    //       self.listGroup.children
+    //     );
+    //     if (intersects.length > 0) {
+    //       this.selectedObject = intersects[0].object;
+    //       var scrollTop =
+    //         document.documentElement.scrollTop || document.body.scrollTop;
+    //       this.$refs.menu.style.left = ev.clientX + "px";
+    //       this.$refs.menu.style.top = ev.clientY + scrollTop + "px";
+    //       if (!this.transformControls) {
+    //         this.transformControls = new THREE.TransformControls(
+    //           this.camera,
+    //           this.renderer.domElement,
+    //           this.fn
+    //         );
+    //         this.transformControls.attach(intersects[0].object);
+    //         this.transformControls.setSpace("local");
+    //         console.log("getMode", this.transformControls);
+    //       }
+    //     }
+    //   }
+    // },
+    // fn(e) {
+    //   console.log(e);
+    // },
     onDocumentMouseMove(event) {
       //阻止本来的默认事件，比如浏览器的默认右键事件是弹出浏览器的选项
       event.preventDefault();
@@ -1133,10 +1070,10 @@ export default {
         this.showMenu = false;
       }
     },
-    setMethPositon() {
-      this.scene.add(this.transformControls);
-      this.showMenu = false;
-    },
+    // setMethPositon() {
+    //   this.scene.add(this.transformControls);
+    //   this.showMenu = false;
+    // },
     // 创建朔源精灵图标3
     newCSS3DSprite3(name, x, y, z) {
       let canvas = document.createElement("canvas");
@@ -1232,44 +1169,16 @@ export default {
       this.showMenu2 = false;
       this.freezeShowMenu2 = false;
     },
-    getCabinetType() {
-      let self = this;
-      // let params = {
-      //   url: api2.getFrameList, //获取request_url.js文件的请求路径
-      //   method: "GET"
-      // };
-      // this.sendReq(params, res => {
-      //   console.log("获取机柜类型", res);
-      //   if (res.respHeader.resultCode === 0) {
-      //     self.cabinetType = res.respBody.cabinetType.map(item => {
-      //       let items = item;
-      //       items.size = [
-      //         item.size[0] * 1000,
-      //         item.size[1] * 1000,
-      //         item.size[2] * 1000
-      //       ];
-      //       return items;
-      //     });
-      //     self.cabinetplaced = res.respBody.cabinetList.map(item => {
-      //       let items = item;
-      //       items.position = [item.posX * 1000, item.posY * 1000];
-      //       return items;
-      //     });
-      //     self.scene.add(obj);
-      //     self.setCabinet();
-      //   }
-      // });
-    },
     newMap() {
       this.myChart.clear();
       let option = this.setOption();
       this.myChart.setOption(option);
     },
-    // tabbar切换数据
-    tabbarActive(index) {
-      this.activeIndex = index;
-      this.newMap();
-    },
+    // // tabbar切换数据
+    // tabbarActive(index) {
+    //   this.activeIndex = index;
+    //   this.newMap();
+    // },
     setOption() {
       let data = [];
       this.barData.forEach(item => {

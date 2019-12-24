@@ -1861,3 +1861,13 @@ body {
     color: #2196F3;
     margin-top: -20px;
 }
+
+body .amap-info-content {
+  background: transparent;
+  overflow: hidden;
+}
+body .amap-info-close {
+  right: 0px !important;
+  background-color: #808ac0;
+  top: 10px;
+}

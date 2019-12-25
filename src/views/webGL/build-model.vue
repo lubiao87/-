@@ -725,14 +725,6 @@ export default {
       }
       return mesh;
     },
-    // deleteMeth(event) {
-    //   //阻止本来的默认事件，比如浏览器的默认右键事件是弹出浏览器的选项
-    //   event.preventDefault();
-    //   // console.log(this.selectedObject);
-    //   this.listGroup.remove(this.selectedObject);
-    //   this.showMenu = false;
-    //   return false;
-    // },
     setCabinet() {
       const self = this;
       this.listGroup = new THREE.Group();
@@ -787,28 +779,38 @@ export default {
       }); //材质对象Material
       this.meshZL = new THREE.Mesh(geometryZL, materialZL); //网格模型对象Mesh
       this.meshZL.position.y = 14000;
-      if (self.buildId === 114102) {
-        this.cabinetplaced.forEach((item, index) => {
-          let mesh = self.addMeth(item, index);
-          self.listGroup.add(mesh);
-          if (item.capacity) {
-            self.addBox(item);
-          }
-        });
-        this.scene.add(this.listGroup);
-        this.scene.add(this.meshZL);
-      } else if (sessionStorage.getItem("buildId") && self.buildId === 114101) {
-        this.cabinetplaced.forEach((item, index) => {
-          let mesh = self.addMeth(item, index);
-          self.listGroup.add(mesh);
-          if (item.capacity) {
-            self.addBox(item);
-          }
-        });
+      // if (self.buildId === 114102) {
+      //   this.cabinetplaced.forEach((item, index) => {
+      //     let mesh = self.addMeth(item, index);
+      //     self.listGroup.add(mesh);
+      //     if (item.capacity) {
+      //       self.addBox(item);
+      //     }
+      //   });
+      //   this.scene.add(this.listGroup);
+      //   this.scene.add(this.meshZL);
+      // } else if (sessionStorage.getItem("buildId") && self.buildId === 114101) {
+      //   this.cabinetplaced.forEach((item, index) => {
+      //     let mesh = self.addMeth(item, index);
+      //     self.listGroup.add(mesh);
+      //     if (item.capacity) {
+      //       self.addBox(item);
+      //     }
+      //   });
 
+      //   this.scene.add(this.listGroup);
+      //   this.scene.add(this.meshZL);
+      // }
+      this.cabinetplaced.forEach((item, index) => {
+          let mesh = self.addMeth(item, index);
+          self.listGroup.add(mesh);
+          if (item.capacity) {
+            self.addBox(item);
+          }
+        });
         this.scene.add(this.listGroup);
         this.scene.add(this.meshZL);
-      }
+
       let methNow2 = _NowRoom(this.froomData);
       methNow2.position.z = -1400;
       this.loading = false;
@@ -956,40 +958,6 @@ export default {
         //这里的130px主要是为了标签和模型有一定偏移，当然也可以不设置，两者叠加在一起
       }
     },
-    // onDocumentMusedown(ev) {
-    //   if (ev.button === 2) {
-    //     console.log("你点了右键");
-    //     var ev = ev || event;
-    //     ev.preventDefault();
-    //     const self = this;
-    //     this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    //     this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-    //     this.raycaster.setFromCamera(this.mouse, this.camera);
-    //     const intersects = this.raycaster.intersectObjects(
-    //       self.listGroup.children
-    //     );
-    //     if (intersects.length > 0) {
-    //       this.selectedObject = intersects[0].object;
-    //       var scrollTop =
-    //         document.documentElement.scrollTop || document.body.scrollTop;
-    //       this.$refs.menu.style.left = ev.clientX + "px";
-    //       this.$refs.menu.style.top = ev.clientY + scrollTop + "px";
-    //       if (!this.transformControls) {
-    //         this.transformControls = new THREE.TransformControls(
-    //           this.camera,
-    //           this.renderer.domElement,
-    //           this.fn
-    //         );
-    //         this.transformControls.attach(intersects[0].object);
-    //         this.transformControls.setSpace("local");
-    //         console.log("getMode", this.transformControls);
-    //       }
-    //     }
-    //   }
-    // },
-    // fn(e) {
-    //   console.log(e);
-    // },
     onDocumentMouseMove(event) {
       //阻止本来的默认事件，比如浏览器的默认右键事件是弹出浏览器的选项
       event.preventDefault();
@@ -1070,10 +1038,6 @@ export default {
         this.showMenu = false;
       }
     },
-    // setMethPositon() {
-    //   this.scene.add(this.transformControls);
-    //   this.showMenu = false;
-    // },
     // 创建朔源精灵图标3
     newCSS3DSprite3(name, x, y, z) {
       let canvas = document.createElement("canvas");
@@ -1174,11 +1138,6 @@ export default {
       let option = this.setOption();
       this.myChart.setOption(option);
     },
-    // // tabbar切换数据
-    // tabbarActive(index) {
-    //   this.activeIndex = index;
-    //   this.newMap();
-    // },
     setOption() {
       let data = [];
       this.barData.forEach(item => {

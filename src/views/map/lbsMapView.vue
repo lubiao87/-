@@ -114,7 +114,7 @@
     </div> -->
 
     <!-- 鼠标悬停提示窗 -->
-    <div class="menu" ref="menu">
+    <div class="menu" ref="menu" v-if="modelData[objIndex].modelType === 2">
       <ul>
         <li
           @mouseover="mapMousemoveLi"
@@ -199,10 +199,10 @@ export default {
       selectValueName: "广州市",
       areas: [
         {
-          value: "440100",
+          value: "440100", // 高德地图ID，必须对应写死的
           label: "广州市",
-          buidingNumber: 4,
-          coordinate: [113.280637, 23.125178]
+          buidingNumber: 4, // 机楼数或接入间数
+          coordinate: [113.280637, 23.125178] // 区域中心点，一般不会变
         },
         {
           value: "440117",
@@ -612,7 +612,9 @@ export default {
           that.objIndex = i;
         }
       });
-
+      if (that.modelData[0].modelType === 1) {
+        return false;
+      }
       that.infoWindow = new AMap.InfoWindow({
         content: that.$refs.menu //使用默认信息窗体框样式，显示信息内容
       });

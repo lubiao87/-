@@ -24,7 +24,7 @@ const JiLou = [
     model5GBBU: [], // 5GBBU
     modelOther: [], // 其它机楼
     modeLocation: ["113.366016977858", "23.1274220838625"], // 机楼经纬度
-    modelType: 2 // 类型： 1为接入间 2为机楼
+    modelType: 2 // 类型： 1为接入间 2为机楼 3 楼层
   },
   {
     modelName: "青云机楼",

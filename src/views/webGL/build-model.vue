@@ -7,19 +7,6 @@
     element-loading-background="rgba(0, 0, 0, 0.8)"
   >
     <div style="width: 100%;height:100%;" id="buildModel"></div>
-    <!-- 机房 2d页面 -->
-    <!-- <div
-      class="cad-img ui-busin-ul"
-      v-show="isCollapse === '2D平面图'"
-      ref="isCollapse2d"
-    >
-      <build-model2d
-        ref="buildModel2d"
-        class="img-box2  ui-busin-ul"
-        @propsFlag="propsFlagFn"
-        :foremostData="cabinetplaced"
-      ></build-model2d>
-    </div> -->
     <!-- 列头柜鼠标悬停html  -->
     <div class="menu menu2" v-show="showMenu2" ref="menu2">
       <ul>
@@ -49,7 +36,6 @@
       class="capacity-btn2"
       v-model="isCollapse"
       style="margin-bottom: 20px;"
-      v-show="floorIndex > -1"
     >
       <el-radio-button size="small" label="模块间视图"
         >模块间视图</el-radio-button
@@ -92,17 +78,26 @@
             <div :class="item.class"></div>
           </div>
         </div>
+
         <!-- 通用搜索框开始 -->
       </div>
       <div class="show1" v-show="!moduleStatistics[4]">
-        <!-- <h5 class="ui-city-title ui-height48 none-hover">
-          <span class="ui-linebg"></span>{{ boxTitle }}
-        </h5> -->
         <div id="powerCharts" class="powerCharts"></div>
       </div>
+      <h5 class="ui-city-title ui-height48 none-hover">
+        <span class="ui-linebg"></span>{{ boxTitle }}
+      </h5>
+      <el-tree
+        :data="floorTreeData"
+        :props="defaultProps"
+        @node-click="handleNodeClick"
+        node-key="buildId"
+        :default-expanded-keys="expandedKeys"
+        :default-checked-keys="checkedKeys"
+      ></el-tree>
     </div>
     <div class="yhui-real-timeimg"></div>
-    <el-button class="model-select1" type="primary" v-show="floorIndex > -1">
+    <el-button class="model-select1" type="primary">
       <i class="el-icon-folder-add"></i> 增加模型
     </el-button>
     <el-select
@@ -114,7 +109,6 @@
       placeholder="请选择机柜类型"
       class="model-select"
       size="large"
-      v-show="floorIndex > -1"
     >
       <el-option
         v-for="item in cabinetType"
@@ -222,10 +216,9 @@ export default {
       loading: true,
       panelShow: true,
       lookAround: false,
-      floorIndex: 4,
       cameraX: 0,
-      cameraY: -14000,
-      cameraZ: 6000,
+      cameraY: -30000,
+      cameraZ: 20000,
       floorName: "工业园机楼",
       cabinetType: [
         {
@@ -295,7 +288,71 @@ export default {
         [0, 18000],
         [20000, 18000],
         [20000, 0]
-      ]
+      ],
+      floorTreeData: [
+        {
+          label: "一楼楼层", // 名称
+          buildId: 111, // id
+          floor: 1, // 楼层
+          modelType: 3, // 类型： 1为接入间 2为机楼 3 楼层
+          children: [
+            {
+              label: "1楼101机房",
+              modelType: 1,
+              buildId: 111101
+            }
+          ]
+        },
+        {
+          label: "二楼楼层",
+          buildId: 112,
+          floor: 2,
+          modelType: 3,
+          children: [
+            {
+              label: "二楼201机房",
+              modelType: 1,
+              buildId: 112101
+            },
+            {
+              label: "二楼202机房",
+              buildId: 112102
+            }
+          ]
+        },
+        {
+          label: "三楼楼层",
+          buildId: 113,
+          floor: 3,
+          modelType: 3,
+          children: [
+            {
+              label: "三楼301机房",
+              modelType: 1,
+              buildId: 113101
+            }
+          ]
+        },
+        {
+          label: "四楼楼层",
+          buildId: 114,
+          floor: 4,
+          modelType: 3,
+          children: [
+            {
+              label: "四楼401机房",
+              modelType: 1,
+              buildId: 114101
+            },
+            {
+              label: "四楼402机房",
+              modelType: 1,
+              buildId: 114102
+            }
+          ]
+        }
+      ],
+      modelType: 1
     };
   },
   computed: {
@@ -307,7 +364,7 @@ export default {
     const self = this;
     console.log("this.$route.params---", this.$route.params);
     this.floorName = this.$route.params.name;
-
+    this.modelType = this.$route.params.modelType;
     this.buildId = this.$route.params.buildId;
     this.getRoomByIdData();
   },
@@ -324,7 +381,7 @@ export default {
     getRoomByIdData() {
       const self = this;
       let formData = new FormData();
-      formData.append("roomId", 404);
+      formData.append("roomId", "ADSMLHYUR01");
       let param = {
         url: api2.getRoomByIdData, //获取request_url.js文件的请求路径
         data: formData
@@ -342,19 +399,16 @@ export default {
               type_index: 0
             }
           ]);
-          let arr1 = res.respBody.cabinetType.map(item => {
+          let arr1 = res.respBody.cabinetType;
+          self.cabinetType.push(...arr1);
+          let arr2 = res.respBody.cabinetplaced.map(item => {
             let items = item;
+            items.position = [item.posX * 10, item.posY * 10];
             items.size = [
               item.size[0] * 10,
               item.size[1] * 10,
               item.size[2] * 10
             ];
-            return items;
-          });
-          self.cabinetType.push(...arr1);
-          let arr2 = res.respBody.cabinetplaced.map(item => {
-            let items = item;
-            items.position = [item.posX * 10, item.posY * 10];
             return items;
           });
           self.cabinetplaced.push(...arr2);
@@ -364,26 +418,17 @@ export default {
             let arr = [JSON.parse(item.split(" ")[0]) * 10, JSON.parse(item.split(" ")[1]) * 10];
             self.froomData.push(arr);
           });
-          // self.floorData2 = res.respBody.floorData2;
         }
       });
     },
     handleNodeClick(data) {
       console.log(data);
       // 查看楼层
-      // if (!this.lookAround) {
-      this.floorIndex = data.floor;
-      if (data.buildId > 114) {
-        this.buildId = data.buildId;
-        this.floorName = "工业园机楼 - " + data.label;
-        this.scene.remove(this.FloorFour);
-        this.scene.add(this.roomModel);
-      } else {
-        // this.animationFlag = true;
-        this.buildId = data.buildId;
-        this.floorName = "工业园机楼 - " + data.label;
-      }
+      this.buildId = data.buildId;
+      this.floorName = "工业园机楼 - " + data.label;
       this.isCollapse = "模块间视图";
+      this.removeObjAll();
+      this.setCabinet();
       // }
     },
     createHtml() {
@@ -392,19 +437,7 @@ export default {
       this.scene = null;
       this.scene = new THREE.Scene(); // 场景
       this.FBXloader = new THREE.FBXLoader(); // fbx加载器
-      this.FBXloader.load("./Assets/fbx/1.FBX", self.loaderCabinet1);
-      this.FBXloader.load("./Assets/fbx/2.FBX", self.loaderCabinet2);
-      this.FBXloader.load("./Assets/fbx/3.FBX", self.loaderCabinet3);
-      this.FBXloader.load("./Assets/fbx/DDF.FBX", self.loaderDDF);
-      this.FBXloader.load("./Assets/fbx/kongtiao.FBX", self.loaderKongtiao);
-      this.FBXloader.load("./Assets/fbx/lietou.FBX", self.loaderLieTou);
-      this.FBXloader.load("./Assets/fbx/ODF.FBX", self.loaderODF);
-      this.FBXloader.load("./Assets/fbx/peixian.FBX", self.loaderPeixian);
-      this.FBXloader.load("./Assets/fbx/men.FBX", self.loaderMen);
-      this.FBXloader.load(
-        "./Assets/fbx/floorFourChilder.FBX",
-        self.floorFourChilder
-      );
+
       this.ambient = new THREE.AmbientLight(0xffffff); // 环境光
       this.renderer = new THREE.WebGLRenderer(); // 渲染器
       this.scene.add(this.ambient);
@@ -438,6 +471,48 @@ export default {
       // window.requestAnimationFrame(this.render);
       this.render();
       this.raycaster = new THREE.Raycaster();
+      if (this.modelType === 1) {
+        this.loaderAur();
+      } else {
+        this.getBuildData();
+      }
+    },
+    getBuildData() {
+      this.FBXloader.load("./Assets/fbx/building.FBX", this.loaderObj);
+      this.FBXloader.load("./Assets/fbx/floorFour.FBX", self.loaderFloor4);
+    },
+    removeObjAll() {
+      const self = this;
+      // this.removeMan();
+      const list = this.scene.getObjectByName("设备集合");
+      if (list) {
+        self.scene.remove(list);
+      }
+      self.scene.remove(this.modernBuilding);
+      self.scene.remove(this.FloorTwo);
+      self.scene.remove(this.FloorOne);
+      self.scene.remove(this.FloorThree);
+      self.scene.remove(this.FloorFour);
+      self.scene.remove(this.meshZL);
+      self.scene.remove(this.roomModel);
+      self.scene.remove(this.spriteGroup);
+      self.scene.remove(this.capacityGroup);
+    },
+    loaderAur() {
+      const self = this;
+      this.FBXloader.load("./Assets/fbx/1.FBX", self.loaderCabinet1);
+      this.FBXloader.load("./Assets/fbx/2.FBX", self.loaderCabinet2);
+      this.FBXloader.load("./Assets/fbx/3.FBX", self.loaderCabinet3);
+      this.FBXloader.load("./Assets/fbx/DDF.FBX", self.loaderDDF);
+      this.FBXloader.load("./Assets/fbx/kongtiao.FBX", self.loaderKongtiao);
+      this.FBXloader.load("./Assets/fbx/lietou.FBX", self.loaderLieTou);
+      this.FBXloader.load("./Assets/fbx/ODF.FBX", self.loaderODF);
+      this.FBXloader.load("./Assets/fbx/peixian.FBX", self.loaderPeixian);
+      this.FBXloader.load("./Assets/fbx/men.FBX", self.loaderMen);
+      this.FBXloader.load(
+        "./Assets/fbx/floorFourChilder.FBX",
+        self.floorFourChilder
+      );
     },
     propsFlagFn(e) {
       console.log("propsFlag-------", e);
@@ -522,32 +597,6 @@ export default {
           break;
       }
     },
-    // OutlinePass通道
-    setOutlinePass() {
-      // 创建一个渲染器通道，场景和相机作为参数
-      this.renderPass = new THREE.RenderPass(this.scene, this.camera);
-      // 创建OutlinePass通道,显示外轮廓边框
-      this.OutlinePass = new THREE.OutlinePass(
-        new THREE.Vector2(window.innerWidth, window.innerHeight),
-        this.scene,
-        this.camera
-      );
-      var effectCopy = new THREE.ShaderPass(THREE.CopyShader); //CopyShader是为了能将结果输出，普通的通道一般都是不能输出的，要靠CopyShader进行输出
-      effectCopy.renderToScreen = true; //设置这个参数的目的是马上将当前的内容输出
-
-      // 后处理完成，设置renderToScreen为true，后处理结果在Canvas画布上显示
-      this.OutlinePass.renderToScreen = true;
-      //OutlinePass相关属性设置
-      this.OutlinePass.visibleEdgeColor = new THREE.Color(0, 1, 0);
-      this.OutlinePass.hiddenEdgeColor = new THREE.Color(0, 1, 0);
-      this.OutlinePass.edgeThickness = 3.0;
-      // 创建后处理对象EffectComposer，WebGL渲染器作为参数
-      this.composer = new THREE.EffectComposer(this.renderer);
-      // 设置renderPass通道
-      this.composer.addPass(this.renderPass);
-      // 设置OutlinePass通道
-      this.composer.addPass(this.OutlinePass);
-    },
     render() {
       // if (this.scene) {
 
@@ -585,11 +634,29 @@ export default {
       // this.roomModel.children[6].geometry.position(820, 0, 0);
       // this.roomModel.children[6].position(-820, 0, 0);
     },
+    loaderObj(obj) {
+      // console.log(obj);
+      this.loading = false;
+      // obj.translateY(-17000);
+      obj.name = "整栋楼房";
+      this.scene.add(obj);
+      this.modernBuilding = obj;
+      obj.rotateX(Math.PI / 2);
+      obj.traverse(function(child) {
+        if (child.isMesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
+      this.loaderAur();
+    },
     // 4
     loaderDDF(obj) {
       const that = this;
       this.DDF = obj;
-      that.setCabinet();
+      if (this.modelType === 1) {
+        that.setCabinet();
+      }
     },
     // 5
     loaderKongtiao(obj) {
@@ -655,29 +722,59 @@ export default {
     //   this.showMenu = false;
     // },
     addMeth(item) {
-      let geometry = new THREE.BoxGeometry(
-        this.cabinetType[item.type_index].size[0],
-        this.cabinetType[item.type_index].size[1],
-        this.cabinetType[item.type_index].size[2]
-      ); //创建一个立方体几何对象Geometry
+
+      let geometry = null;
       let material = new THREE.MeshLambertMaterial({
         color: "#9fc1dd",
         transparent: true, //开启透明度
         opacity: 0.8 //设置透明度具体值
       }); //材质对象Material
+      if (item.IsParallelX === "N") {
+        geometry = new THREE.BoxGeometry(
+          item.size[1],
+          item.size[0],
+          item.size[2]
+        ); //创建一个立方体几何对象Geometry
+      } else {
+        geometry = new THREE.BoxGeometry(
+          item.size[0],
+          item.size[1],
+          item.size[2]
+        ); //创建一个立方体几何对象Geometry
+      }
       let mesh = null;
       if (item.type_index === 1) {
         geometry = this.cabinet1.children[0].geometry;
         material = this.cabinet1.children[0].material;
+        if (item.IsParallelX === "N") {
+          geometry.scale(1 * item.size[1] / 600, 1 * item.size[0] / 600, 1)
+        } else {
+          geometry.scale(1 * item.size[0] / 600, 1 * item.size[1] / 600, 1)
+        }
       } else if (item.type_index === 2) {
         geometry = this.lietou.children[0].geometry;
         material = this.lietou.children[0].material;
-      } else if (item.type_index === 3) {
+        if (item.IsParallelX === "N") {
+          geometry.scale(1 * item.size[1] / 600, 1 * item.size[0] / 600, 1)
+        } else {
+          geometry.scale(1 * item.size[0] / 600, 1 * item.size[1] / 600, 1)
+        }
+      } else if (item.type_index === 5) {
         geometry = this.peixian.children[0].geometry;
         material = this.peixian.children[0].material;
+        if (item.IsParallelX === "N") {
+          geometry.scale(1 * item.size[1] / 600, 1 * item.size[0] / 600, 1)
+        } else {
+          geometry.scale(1 * item.size[0] / 600, 1 * item.size[1] / 600, 1)
+        }
       } else if (item.type_index === 4) {
         geometry = this.ODF.children[0].geometry;
         material = this.ODF.children[0].material;
+        if (item.IsParallelX === "N") {
+          geometry.scale(1 * item.size[1] / 300, 1 * item.size[0] / 840, 1)
+        } else {
+          geometry.scale(1 * item.size[0] / 300, 1 * item.size[1] / 840, 1)
+        }
       } else if (item.type_index === 7) {
         geometry = this.Men.children[0].geometry;
         material = this.Men.children[0].material;
@@ -685,29 +782,33 @@ export default {
       } else if (item.type_index === 8) {
         geometry = this.kongtiao.children[0].geometry;
         material = this.kongtiao.children[0].material;
+        // if (item.IsParallelX === "N") {
+        //   geometry.scale(1 * item.size[1] / 500, 1 * item.size[0] / 300, 1)
+        // } else {
+        //   geometry.scale(1 * item.size[0] / 500, 1 * item.size[1] / 300, 1)
+        // }
       }
-
       mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
+
       // mesh.rotateX(-Math.PI / 2);
-      let positionY = this.cabinetType[item.type_index].size[1] / 2;
+      let positionY = item.size[1] / 2;
       // }
       if (item.IsParallelX === "N") {
         if (item.type_index === 7) {
           mesh.rotateX(Math.PI / 2);
           mesh.rotateY(Math.PI / 2);
         // mesh.translate(-600, 0, 0);
-          mesh.position.set(item.position[0] - this.cabinetType[item.type_index].size[1] / 2, item.position[1] + 200, positionY);
+          mesh.position.set(item.position[0] - item.size[1] / 2, item.position[1] + 200, positionY);
         } else {
-          mesh.position.set(item.position[0] + this.cabinetType[item.type_index].size[0] / 2, item.position[1] + this.cabinetType[item.type_index].size[1] / 2, positionY);
+          mesh.position.set(item.position[0] + item.size[1] / 2, item.position[1] + item.size[0] / 2, positionY);
         }
       } else {
-        if (item.type_index === 8) {
-          mesh.rotateZ(Math.PI / 2);
-        }
-        mesh.position.set(item.position[0] + this.cabinetType[item.type_index].size[0] / 2, item.position[1] + this.cabinetType[item.type_index].size[1] / 2, positionY);
+        mesh.position.set(item.position[0] + item.size[0] / 2, item.position[1] + item.size[1] / 2, positionY);
       }
-
-      mesh.TYPE = this.cabinetType[item.type_index].name;
+      if (item.type_index === 8) {
+        mesh.rotateZ(Math.PI / 2);
+      }
+      mesh.TYPE = item.name;
       mesh.name = item.name;
       mesh.dataInfo = item;
       if (item.parentId) {
@@ -715,8 +816,8 @@ export default {
         // 创建精灵图标
         this.newCSS3DSprite3(
           "子",
-          item.position[1] - this.cabinetType[item.type_index].size[0] / 2,
-          item.position[0] + this.cabinetType[item.type_index].size[1] / 2,
+          item.position[1] - item.size[0] / 2,
+          item.position[0] + item.size[1] / 2,
           positionY + 1600
         );
       }
@@ -779,44 +880,21 @@ export default {
       }); //材质对象Material
       this.meshZL = new THREE.Mesh(geometryZL, materialZL); //网格模型对象Mesh
       this.meshZL.position.y = 14000;
-      // if (self.buildId === 114102) {
-      //   this.cabinetplaced.forEach((item, index) => {
-      //     let mesh = self.addMeth(item, index);
-      //     self.listGroup.add(mesh);
-      //     if (item.capacity) {
-      //       self.addBox(item);
-      //     }
-      //   });
-      //   this.scene.add(this.listGroup);
-      //   this.scene.add(this.meshZL);
-      // } else if (sessionStorage.getItem("buildId") && self.buildId === 114101) {
-      //   this.cabinetplaced.forEach((item, index) => {
-      //     let mesh = self.addMeth(item, index);
-      //     self.listGroup.add(mesh);
-      //     if (item.capacity) {
-      //       self.addBox(item);
-      //     }
-      //   });
-
-      //   this.scene.add(this.listGroup);
-      //   this.scene.add(this.meshZL);
-      // }
       this.cabinetplaced.forEach((item, index) => {
-          let mesh = self.addMeth(item, index);
-          self.listGroup.add(mesh);
-          if (item.capacity) {
-            self.addBox(item);
-          }
-        });
-        this.scene.add(this.listGroup);
-        this.scene.add(this.meshZL);
-
+        let mesh = self.addMeth(item, index);
+        self.listGroup.add(mesh);
+        if (item.capacity) {
+          self.addBox(item);
+        }
+      });
       let methNow2 = _NowRoom(this.froomData);
       methNow2.position.z = -1400;
       this.loading = false;
 
-      this.scene.add(this.spriteGroup);
-      this.scene.add(methNow2);
+      this.scene.add(this.listGroup); // 设备列表
+      this.scene.add(this.meshZL); // 整流器
+      this.scene.add(this.spriteGroup); // 标签
+      this.scene.add(methNow2); // 机房
       //创建一个屏幕和场景转换工具
       // self.projector = new THREE.Projector();
       self.mouse = new THREE.Vector2();
@@ -827,7 +905,6 @@ export default {
       };
       this.removeEventListenerFn();
       this.addEventListenerFn();
-      // this.setOutlinePass();
     },
     // 改变场数
     changefield: _debounce(function(e) {
@@ -882,24 +959,39 @@ export default {
       // );
     },
     addBox(item) {
-      let geometry = new THREE.BoxGeometry(
-        this.cabinetType[item.type_index].size[1],
-        this.cabinetType[item.type_index].size[0],
-        this.cabinetType[item.type_index].size[2]
-      ); //创建一个立方体几何对象Geometry
+      let geometry = null;
       let material = new THREE.MeshBasicMaterial({
         color: 0xffffff,
         transparent: true,
         opacity: 0.3
       }); //材质对象Material
-      let geometry1 = new THREE.BoxGeometry(
-        this.cabinetType[item.type_index].size[1],
-        this.cabinetType[item.type_index].size[0],
-        item.capacity * this.cabinetType[item.type_index].size[2]
-      ); //创建一个立方体几何对象Geometry
+      let geometry1 = null;
       let material1 = new THREE.MeshBasicMaterial({
         color: 0x0000ff
       }); //材质对象Material
+      if (item.IsParallelX === "N") {
+        geometry = new THREE.BoxGeometry(
+          item.size[1],
+          item.size[0],
+          item.size[2]
+        ); //创建一个立方体几何对象Geometry
+        geometry1 = new THREE.BoxGeometry(
+          item.size[1],
+          item.size[0],
+          item.capacity * item.size[2]
+        ); //创建一个立方体几何对象Geometry
+      } else {
+        geometry = new THREE.BoxGeometry(
+          item.size[0],
+          item.size[1],
+          item.size[2]
+        ); //创建一个立方体几何对象Geometry
+        geometry1 = new THREE.BoxGeometry(
+          item.size[0],
+          item.size[1],
+          item.capacity * item.size[2]
+        ); //创建一个立方体几何对象Geometry
+      }
       if (item.capacity > 0.7) {
         material1 = new THREE.MeshBasicMaterial({
           color: 0xff3030
@@ -909,19 +1001,19 @@ export default {
       let mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
       let mesh1 = new THREE.Mesh(geometry1, material1); //网格模型对象Mesh
       let positionY1 =
-        (this.cabinetType[item.type_index].size[2] * item.capacity) / 2;
-      let positionY = this.cabinetType[item.type_index].size[2] / 2;
+        (item.size[2] * item.capacity) / 2;
+      let positionY = item.size[2] / 2;
 
       mesh.position.set(
-        item.position[1],
-
         item.position[0],
+
+        item.position[1],
         positionY
       );
       mesh1.position.set(
-        item.position[1],
-
         item.position[0],
+
+        item.position[1],
         positionY1
       );
       this.capacityGroup.add(mesh); //网格模型添加到场景中
@@ -989,6 +1081,9 @@ export default {
           this.location = intersects[0].object.dataInfo.location;
           this.occuRate = intersects[0].object.dataInfo.occuRate;
           mesh.position.set(worldPosition.x, worldPosition.y, worldPosition.z); //点光源位置
+          if (intersects[0].object.dataInfo.type === "空调") {
+            mesh.rotateZ(Math.PI / 2);
+          }
           this.border = new THREE.BoxHelper(mesh, "#5b78e7"); //设置边框，这个边框不会旋转
           this.border.name = "高亮显示柜";
           this.scene.add(this.border); //网格模型添加到场景中
@@ -1224,7 +1319,7 @@ export default {
   watch: {
     selectValue(val) {
       console.log("selectValue", val);
-      if (val.length >= 0 && this.floorIndex) {
+      if (val.length >= 0) {
         if (!this.listGroup.traverse) {
           return;
         }

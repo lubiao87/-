@@ -149,17 +149,18 @@
 </template>
 
 <script>
-// import { listSearchMixin } from "../../mixin"; //混淆请求
+import { listSearchMixin } from "../../mixin"; //混淆请求
 // 局部组件引用
 import Cesium from "cesium/Cesium";
-import JiLou from "@/json/mapData1.js"; //api配置请求的路径
-import JieRuJian from "@/json/mapData2.js"; //api配置请求的路径
+// import JiLou from "@/json/mapData1.js"; //api配置请求的路径
+// import JieRuJian from "@/json/mapData2.js"; //api配置请求的路径
+import { api2 } from "../../api/api"; //api配置请求的路径
 // noinspection ES6UnusedImports
 import widget from "cesium/Widgets/widgets.css";
 export default {
   name: "olmap2",
   props: ["coordinate"],
-  // mixins: [listSearchMixin],
+  mixins: [listSearchMixin],
   data() {
     return {
       restaurants: [],
@@ -231,19 +232,19 @@ export default {
         {
           value: "440103",
           label: "荔湾区",
-          coordinate: [113.243038, 23.124943],
+          coordinate: [113.218911, 23.110264],
           buidingNumber: 8
         },
         {
           value: "440111",
           label: "白云区",
-          coordinate: [113.262831, 23.162281],
+          coordinate: [113.271097, 23.254926],
           buidingNumber: 4
         },
         {
           value: "440105",
           label: "海珠区",
-          coordinate: [113.262008, 23.103131],
+          coordinate: [113.336476, 23.076481],
           buidingNumber: 22
         },
         {
@@ -261,7 +262,7 @@ export default {
         {
           value: "440106",
           label: "天河区",
-          coordinate: [113.335367, 23.13559],
+          coordinate: [113.399119, 23.1588],
           buidingNumber: 5
         },
         {
@@ -282,20 +283,80 @@ export default {
     },
     placeholderInput() {
       return this.tabPosition === "接入间" ? "请输入接入间" : "请输入机楼";
+    },
+    queryType() {
+      return this.tabPosition === "接入间" ? 1 : 0;
     }
   },
   created() {
     this.$emit("getNavShow", true);
-    console.log(JieRuJian);
   },
   mounted() {
-    this.modelData = this.tabPosition === "接入间" ? JieRuJian : JiLou;
-    this.restaurants = this.loadAll();
     this.$nextTick(() => {
       this.cesiumInit();
     });
   },
   methods: {
+    // 获取区域数据
+    getAreasData() {
+      const self = this;
+      let param = {
+        url: api2.getAreaNumberData + `?queryType=${this.queryType}&area=广州` //获取request_url.js文件的请求路径
+      };
+      self.sendReq(param, res => {
+        // console.log("--------", res);
+        if (res.respHeader.resultCode === 0) {
+          self.areas = res.respBody.areas;
+        }
+        if (self.tabPosition === "接入间") {
+          self.getJieRuJianDataMap();
+        } else {
+          self.getJiLouDataMap();
+        }
+      });
+    },
+    // 获取机楼分布
+    getJiLouDataMap() {
+      const self = this;
+      let param = null;
+      param = {
+        url: api2.getJiLouData //获取request_url.js文件的请求路径
+      };
+      self.sendReq(param, res => {
+        console.log("机楼分布--------", res);
+        if (res.respHeader.resultCode === 0) {
+          self.modelData = res.respBody.JiLou;
+          self.restaurants = self.modelData;
+        }
+        self.setClearMap();
+      });
+    },
+    // 获取接入间分布
+    getJieRuJianDataMap() {
+      const self = this;
+      let param = null;
+      param = {
+        url: api2.getJieRuJianData //获取request_url.js文件的请求路径
+      };
+      self.sendReq(param, res => {
+        console.log("接入间分布--------", res);
+        if (res.respHeader.resultCode === 0) {
+          self.modelData = res.respBody.JieRuJian;
+          self.restaurants = self.modelData;
+        }
+        // fn(res);
+        self.setClearMap();
+      });
+    },
+    setClearMap() {
+      const that = this;
+      that.map.clearMap();
+      that.map.remove(that.object3Dlayer);
+      that.map.add(that.object3Dlayer);
+      that.setMapView();
+      that.setInfoWindow();
+      that.drawBounds();
+    },
     querySearch(queryString, cb) {
       var restaurants = this.restaurants;
       var results = queryString
@@ -312,9 +373,6 @@ export default {
             .indexOf(queryString.toLowerCase()) > -1
         );
       };
-    },
-    loadAll() {
-      return this.modelData;
     },
     handleSelect(item) {
       console.log(item);
@@ -334,6 +392,7 @@ export default {
         parseFloat(item.modeLocation[0]),
         parseFloat(item.modeLocation[1])
       ]); //同时设置地图层级与中心点
+      this.item = item;
       // this.$router.push({ path: item.path, query: item.query });
     },
     cesiumInit() {
@@ -363,7 +422,6 @@ export default {
       viewer.camera.setView({
         destination: Cesium.Cartesian3.fromDegrees(-100.0, 5.0, height)
       });
-      // that.mapInit();
       setTimeout(function() {
         viewer.camera.flyTo({
           destination: Cesium.Cartesian3.fromDegrees(
@@ -375,16 +433,12 @@ export default {
           pitchAdjustHeight: 2000000,
           complete: function() {
             // console.log("完成飞行");
-
             that.mapInit();
             that.panelFlag = true;
             that.$emit("getNavShow", false);
           }
         });
       }, 3000);
-      // that.mapInit();
-      //   that.panelFlag = true;
-      //   that.$emit('getNavShow', false);
     },
     mapInit() {
       const that = this;
@@ -421,15 +475,16 @@ export default {
         zIndex: 110,
         opacity: 0.8
       });
-      that.map.clearMap();
-      that.map.add(that.object3Dlayer);
-      that.setMapView();
-      that.setInfoWindow();
-      that.drawBounds();
+      that.getAreasData();
     },
     setMapView() {
       const that = this;
-      var parenTimg = "./Assets/img/parent-build.png";
+      var parenTimg = "";
+      if (this.tabPosition === "接入间") {
+        parenTimg = "./Assets/img/search-map-icon.png";
+      } else {
+        parenTimg = "./Assets/img/parent-build.png";
+      }
       var zoomStyleMapping2 = {
         11: 1,
         12: 1,
@@ -526,7 +581,10 @@ export default {
           draggable: false,
           cursor: "pointer",
           angle: 10,
-          position: item.coordinate,
+          position: [
+            JSON.parse(item.coordinate[0]),
+            JSON.parse(item.coordinate[1])
+          ],
           zooms: [10.5, 12],
           zIndex: 3
         });
@@ -655,9 +713,7 @@ export default {
         //取消上次延时未执行的方法
         this.clickFlag = clearTimeout(this.clickFlag);
       }
-      let params = e.target.getExtData
-        ? e.target.getExtData()
-        : this.item.query;
+      let params = e.target.getExtData ? e.target.getExtData() : this.item;
       console.log("双击", params);
       this.$router.push({ name: "buildModel", params: params });
     },
@@ -917,16 +973,10 @@ export default {
     tabPosition(val) {
       const that = this;
       if (val === "接入间") {
-        this.modelData = JieRuJian;
+        that.getJieRuJianDataMap();
       } else {
-        this.modelData = JiLou;
+        that.getJiLouDataMap();
       }
-      this.restaurants = this.loadAll();
-      that.map.clearMap();
-      that.map.add(that.object3Dlayer);
-      that.setMapView();
-      that.setInfoWindow();
-      that.drawBounds();
     }
   }
 };

@@ -367,6 +367,7 @@ export default {
     this.modelType = this.$route.params.modelType;
     this.buildId = this.$route.params.buildId;
     this.getRoomByIdData();
+    this.getJieRuJianStatistics();
   },
   mounted() {
     const self = this;
@@ -378,11 +379,24 @@ export default {
     //  this.$parent.restaurants = this.$parent.loadAll();
   },
   methods: {
+    // 获取区域其它数据
+    getJieRuJianStatistics() {
+      const self = this;
+      let param = {
+        url: api2.getJieRuJianStatistics + `?id=123&queryType=${this.modelType}` //获取request_url.js文件的请求路径
+      };
+      self.sendReq(param, res => {
+        // console.log("--------", res);
+        if (res.respHeader.resultCode === 0) {
+          self.moduleStatistics = res.respBody.moduleStatistics;
+        }
+      });
+    },
     getRoomByIdData() {
       const self = this;
       let formData = new FormData();
-      // formData.append("roomId", "ADSMLHYUR01");
       formData.append("roomId", "123");
+      // formData.append("roomId", "123");
       let param = {
         url: api2.getRoomByIdData, //获取request_url.js文件的请求路径
         data: formData
@@ -440,7 +454,11 @@ export default {
       this.FBXloader = new THREE.FBXLoader(); // fbx加载器
 
       this.ambient = new THREE.AmbientLight(0xffffff); // 环境光
-      this.renderer = new THREE.WebGLRenderer(); // 渲染器
+      this.renderer = new THREE.WebGLRenderer({
+        //增加下面两个属性，可以抗锯齿
+        antialias:true,
+        alpha:true
+      }); // 渲染器
       this.scene.add(this.ambient);
       this.clock = new THREE.Clock();
       this.setCamera();
@@ -501,19 +519,19 @@ export default {
     },
     loaderAur() {
       const self = this;
-      this.FBXloader.load("./Assets/fbx/1.FBX", self.loaderCabinet1);
-      this.FBXloader.load("./Assets/fbx/2.FBX", self.loaderCabinet2);
-      this.FBXloader.load("./Assets/fbx/3.FBX", self.loaderCabinet3);
+      this.FBXloader.load("./Assets/fbx/biaozhun.FBX", self.loaderCabinet1);
+      // this.FBXloader.load("./Assets/fbx/2.FBX", self.loaderCabinet2);
+      // this.FBXloader.load("./Assets/fbx/3.FBX", self.loaderCabinet3);
       this.FBXloader.load("./Assets/fbx/DDF.FBX", self.loaderDDF);
       this.FBXloader.load("./Assets/fbx/kongtiao.FBX", self.loaderKongtiao);
       this.FBXloader.load("./Assets/fbx/lietou.FBX", self.loaderLieTou);
       this.FBXloader.load("./Assets/fbx/ODF.FBX", self.loaderODF);
       this.FBXloader.load("./Assets/fbx/peixian.FBX", self.loaderPeixian);
       this.FBXloader.load("./Assets/fbx/men.FBX", self.loaderMen);
-      this.FBXloader.load(
-        "./Assets/fbx/floorFourChilder.FBX",
-        self.floorFourChilder
-      );
+      // this.FBXloader.load(
+      //   "./Assets/fbx/floorFourChilder.FBX",
+      //   self.floorFourChilder
+      // );
     },
     propsFlagFn(e) {
       console.log("propsFlag-------", e);
@@ -626,15 +644,15 @@ export default {
       // }
       window.requestAnimationFrame(this.render);
     },
-    floorFourChilder(obj) {
-      console.log("floorFourChilder", obj);
-      // obj.scale.set(10, 10, 10)
-      this.roomModel = obj;
-      this.roomModel.position.y = -4000;
-      this.roomModel.position.z = -10000;
-      // this.roomModel.children[6].geometry.position(820, 0, 0);
-      // this.roomModel.children[6].position(-820, 0, 0);
-    },
+    // floorFourChilder(obj) {
+    //   console.log("floorFourChilder", obj);
+    //   // obj.scale.set(10, 10, 10)
+    //   this.roomModel = obj;
+    //   this.roomModel.position.y = -4000;
+    //   this.roomModel.position.z = -10000;
+    //   // this.roomModel.children[6].geometry.position(820, 0, 0);
+    //   // this.roomModel.children[6].position(-820, 0, 0);
+    // },
     loaderObj(obj) {
       // console.log(obj);
       this.loading = false;
@@ -683,13 +701,13 @@ export default {
       this.cabinet1 = obj;
     },
     // 2
-    loaderCabinet2(obj) {
-      this.cabinet2 = obj;
-    },
+    // loaderCabinet2(obj) {
+    //   this.cabinet2 = obj;
+    // },
     // 3
-    loaderCabinet3(obj) {
-      this.cabinet3 = obj;
-    },
+    // loaderCabinet3(obj) {
+    //   this.cabinet3 = obj;
+    // },
     loaderJIGUI(obj) {
       // obj.children[0].material[0].color.set("#1e222b"); // 设置材质颜色
       this.JIGUI = obj;
@@ -747,54 +765,78 @@ export default {
       if (item.type_index === 1) {
         geometry = this.cabinet1.children[0].geometry;
         material = this.cabinet1.children[0].material;
-        // if (item.IsParallelX === "N") {
-        //   geometry.scale(1 * item.size[1] / 600, 1 * item.size[0] / 600, 1)
-        // } else {
-        //   geometry.scale(1 * item.size[0] / 600, 1 * item.size[1] / 600, 1)
-        // }
       } else if (item.type_index === 2) {
         geometry = this.lietou.children[0].geometry;
         material = this.lietou.children[0].material;
-        // if (item.IsParallelX === "N") {
-        //   geometry.scale(1 * item.size[1] / 600, 1 * item.size[0] / 600, 1)
-        // } else {
-        //   geometry.scale(1 * item.size[0] / 600, 1 * item.size[1] / 600, 1)
-        // }
+
       } else if (item.type_index === 5) {
         geometry = this.peixian.children[0].geometry;
         material = this.peixian.children[0].material;
-        // if (item.IsParallelX === "N") {
-        //   geometry.scale(1 * item.size[1] / 600, 1 * item.size[0] / 600, 1)
-        // } else {
-        //   geometry.scale(1 * item.size[0] / 600, 1 * item.size[1] / 600, 1)
-        // }
       } else if (item.type_index === 4) {
         geometry = this.ODF.children[0].geometry;
         material = this.ODF.children[0].material;
-        // if (item.IsParallelX === "N") {
-        //   geometry.scale(1 * item.size[1] / 300, 1 * item.size[0] / 840, 1)
-        // } else {
-        //   geometry.scale(1 * item.size[0] / 300, 1 * item.size[1] / 840, 1)
-        // }
       } else if (item.type_index === 7) {
         geometry = this.Men.children[0].geometry;
         material = this.Men.children[0].material;
-        geometry.scale(1, 1, 1.2);
+        // geometry.scale(1, 1, 1.2);
       } else if (item.type_index === 8) {
         geometry = this.kongtiao.children[0].geometry;
         material = this.kongtiao.children[0].material;
-        // if (item.IsParallelX === "N") {
-        //   geometry.scale(1 * item.size[1] / 500, 1 * item.size[0] / 300, 1)
-        // } else {
-        //   geometry.scale(1 * item.size[0] / 500, 1 * item.size[1] / 300, 1)
-        // }
+      } else if (item.type_index === 10) {
+        geometry = this.DDF.children[0].geometry;
+        material = this.DDF.children[0].material;
       }
       mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
+      if (item.type_index === 1) { // 标准机架
+        if (item.IsParallelX === "N") {
+          mesh.scale.set(item.size[1] / 600, item.size[0] / 600, 1);
+        } else {
+          mesh.scale.set(item.size[0] / 600, item.size[1] / 600, 1);
+        }
 
+      }
+      if (item.type_index === 2) { // 列头柜
+        if (item.IsParallelX === "N") {
+          mesh.scale.set(item.size[1] / 600, item.size[0] / 600, 1);
+        } else {
+          mesh.scale.set(item.size[0] / 600, item.size[1] / 600, 1);
+        }
+      }
+      if (item.type_index === 4) { // ODF柜
+        if (item.IsParallelX === "N") {
+          mesh.scale.set(item.size[1] / 600, item.size[0] / 800, 1);
+        } else {
+          mesh.scale.set(item.size[0] / 600, item.size[1] / 800, 1);
+        }
+        console.log(item.size)
+        console.log(mesh.scale)
+      }
+      if (item.type_index === 5) { // 配线柜
+        if (item.IsParallelX === "N") {
+          mesh.scale.set(item.size[1] / 600, item.size[0] / 600, 1);
+        } else {
+          mesh.scale.set(item.size[0] / 600, item.size[1] / 600, 1);
+        }
+      }
+      if (item.type_index === 8) { // 空调
+        if (item.IsParallelX === "N") {
+          mesh.scale.set(item.size[1] / 500, item.size[0] / 300, 1);
+        } else {
+          mesh.scale.set(item.size[0] / 500, item.size[1] / 300, 1);
+        }
+      }
+      if (item.type_index === 10) { // 空调
+        if (item.IsParallelX === "N") {
+          mesh.scale.set(item.size[1] / 300, item.size[0] / 240, 1);
+        } else {
+          mesh.scale.set(item.size[0] / 300, item.size[1] / 240, 1);
+        }
+      }
       // mesh.rotateX(-Math.PI / 2);
       let positionY = item.size[1] / 2;
       // }
-      if (item.IsParallelX === "N") {
+      if (item.IsParallelX === "N") { // 不平行x
+
         if (item.type_index === 7) {
           mesh.rotateX(Math.PI / 2);
           mesh.rotateY(Math.PI / 2);
@@ -802,6 +844,7 @@ export default {
           mesh.position.set(item.position[0] - item.size[1] / 2, item.position[1] + 200, positionY);
         } else {
           mesh.position.set(item.position[0] + item.size[1] / 2, item.position[1] + item.size[0] / 2, positionY);
+
         }
       } else {
         if (item.type_index === 7) {
@@ -1073,10 +1116,53 @@ export default {
         if (this.showMenu2) {
           return;
         }
-        if (intersects[0].object.name !== "门") {
+        if (intersects[0].object.dataInfo.type_index !== 7) {
           const geometry = intersects[0].object.geometry;
           const material = intersects[0].object.material;
           const mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
+          // const mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
+          if (intersects[0].object.dataInfo.type_index === 1) {
+            if (intersects[0].object.dataInfo.IsParallelX === "N") {
+              mesh.scale.set(intersects[0].object.dataInfo.size[1] / 600, intersects[0].object.dataInfo.size[0] / 600, 1);
+            } else {
+              mesh.scale.set(intersects[0].object.dataInfo.size[0] / 600, intersects[0].object.dataInfo.size[1] / 600, 1);
+            }
+          }
+          if (intersects[0].object.dataInfo.type_index === 2) {
+            if (intersects[0].object.dataInfo.IsParallelX === "N") {
+              mesh.scale.set(intersects[0].object.dataInfo.size[1] / 600, intersects[0].object.dataInfo.size[0] / 600, 1);
+            } else {
+              mesh.scale.set(intersects[0].object.dataInfo.size[0] / 600, intersects[0].object.dataInfo.size[1] / 600, 1);
+            }
+          }
+          if (intersects[0].object.dataInfo.type_index === 4) {
+            if (intersects[0].object.dataInfo.IsParallelX === "N") {
+              mesh.scale.set(intersects[0].object.dataInfo.size[1] / 600, intersects[0].object.dataInfo.size[0] / 800, 1);
+            } else {
+              mesh.scale.set(intersects[0].object.dataInfo.size[0] / 600, intersects[0].object.dataInfo.size[1] / 800, 1);
+            }
+          }
+          if (intersects[0].object.dataInfo.type_index === 5) {
+            if (intersects[0].object.dataInfo.IsParallelX === "N") {
+              mesh.scale.set(intersects[0].object.dataInfo.size[1] / 600, intersects[0].object.dataInfo.size[0] / 600, 1);
+            } else {
+              mesh.scale.set(intersects[0].object.dataInfo.size[0] / 600, intersects[0].object.dataInfo.size[1] / 600, 1);
+            }
+          }
+          if (intersects[0].object.dataInfo.type_index === 8) {
+            if (intersects[0].object.dataInfo.IsParallelX === "N") {
+              mesh.scale.set(intersects[0].object.dataInfo.size[1] / 500, intersects[0].object.dataInfo.size[0] / 300, 1);
+            } else {
+              mesh.scale.set(intersects[0].object.dataInfo.size[0] / 500, intersects[0].object.dataInfo.size[1] / 300, 1);
+            }
+          }
+          if (intersects[0].object.dataInfo.type_index === 10) {
+            if (intersects[0].object.dataInfo.IsParallelX === "N") {
+              mesh.scale.set(intersects[0].object.dataInfo.size[1] / 300, intersects[0].object.dataInfo.size[0] / 240, 1);
+            } else {
+              mesh.scale.set(intersects[0].object.dataInfo.size[0] / 300, intersects[0].object.dataInfo.size[1] / 240, 1);
+            }
+          }
           this.scene.updateMatrixWorld(true);
           const worldPosition = new THREE.Vector3();
           intersects[0].object.getWorldPosition(worldPosition);

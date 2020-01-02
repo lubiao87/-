@@ -302,7 +302,7 @@ export default {
     getBuildStatistics() {
       const self = this;
       let param = {
-        url: api2.getBuildStatistics + "?area=广州" //获取request_url.js文件的请求路径
+        url: api2.getBuildStatistics + "?area=广州&queryType=0" //获取request_url.js文件的请求路径
       };
       self.sendReq(param, res => {
         // console.log("--------", res);

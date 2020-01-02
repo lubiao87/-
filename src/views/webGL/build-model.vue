@@ -381,7 +381,8 @@ export default {
     getRoomByIdData() {
       const self = this;
       let formData = new FormData();
-      formData.append("roomId", "ADSMLHYUR01");
+      // formData.append("roomId", "ADSMLHYUR01");
+      formData.append("roomId", "123");
       let param = {
         url: api2.getRoomByIdData, //获取request_url.js文件的请求路径
         data: formData
@@ -746,35 +747,35 @@ export default {
       if (item.type_index === 1) {
         geometry = this.cabinet1.children[0].geometry;
         material = this.cabinet1.children[0].material;
-        if (item.IsParallelX === "N") {
-          geometry.scale(1 * item.size[1] / 600, 1 * item.size[0] / 600, 1)
-        } else {
-          geometry.scale(1 * item.size[0] / 600, 1 * item.size[1] / 600, 1)
-        }
+        // if (item.IsParallelX === "N") {
+        //   geometry.scale(1 * item.size[1] / 600, 1 * item.size[0] / 600, 1)
+        // } else {
+        //   geometry.scale(1 * item.size[0] / 600, 1 * item.size[1] / 600, 1)
+        // }
       } else if (item.type_index === 2) {
         geometry = this.lietou.children[0].geometry;
         material = this.lietou.children[0].material;
-        if (item.IsParallelX === "N") {
-          geometry.scale(1 * item.size[1] / 600, 1 * item.size[0] / 600, 1)
-        } else {
-          geometry.scale(1 * item.size[0] / 600, 1 * item.size[1] / 600, 1)
-        }
+        // if (item.IsParallelX === "N") {
+        //   geometry.scale(1 * item.size[1] / 600, 1 * item.size[0] / 600, 1)
+        // } else {
+        //   geometry.scale(1 * item.size[0] / 600, 1 * item.size[1] / 600, 1)
+        // }
       } else if (item.type_index === 5) {
         geometry = this.peixian.children[0].geometry;
         material = this.peixian.children[0].material;
-        if (item.IsParallelX === "N") {
-          geometry.scale(1 * item.size[1] / 600, 1 * item.size[0] / 600, 1)
-        } else {
-          geometry.scale(1 * item.size[0] / 600, 1 * item.size[1] / 600, 1)
-        }
+        // if (item.IsParallelX === "N") {
+        //   geometry.scale(1 * item.size[1] / 600, 1 * item.size[0] / 600, 1)
+        // } else {
+        //   geometry.scale(1 * item.size[0] / 600, 1 * item.size[1] / 600, 1)
+        // }
       } else if (item.type_index === 4) {
         geometry = this.ODF.children[0].geometry;
         material = this.ODF.children[0].material;
-        if (item.IsParallelX === "N") {
-          geometry.scale(1 * item.size[1] / 300, 1 * item.size[0] / 840, 1)
-        } else {
-          geometry.scale(1 * item.size[0] / 300, 1 * item.size[1] / 840, 1)
-        }
+        // if (item.IsParallelX === "N") {
+        //   geometry.scale(1 * item.size[1] / 300, 1 * item.size[0] / 840, 1)
+        // } else {
+        //   geometry.scale(1 * item.size[0] / 300, 1 * item.size[1] / 840, 1)
+        // }
       } else if (item.type_index === 7) {
         geometry = this.Men.children[0].geometry;
         material = this.Men.children[0].material;
@@ -803,6 +804,9 @@ export default {
           mesh.position.set(item.position[0] + item.size[1] / 2, item.position[1] + item.size[0] / 2, positionY);
         }
       } else {
+        if (item.type_index === 7) {
+          mesh.rotateX(Math.PI / 2);
+        }
         mesh.position.set(item.position[0] + item.size[0] / 2, item.position[1] + item.size[1] / 2, positionY);
       }
       if (item.type_index === 8) {

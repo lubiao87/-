@@ -9,169 +9,99 @@
     <div class="principalHeader"></div>
     <div class="principalContent">
       <!-- 指示栏 -->
-      <Status-Bar :barName="barNames" :barImg="nabarCation"></Status-Bar>
+      <!-- <Status-Bar :barName="barNames" :barImg="nabarCation"></Status-Bar> -->
       <!-- 中间模块 -->
       <div class="parinciRepresent">
         <div class="parinci">
           <!-- form表单组件插入 -->
-          <import-Feed
-            :foremost="applicationStatus"
-            :foremostData="foremostDataVal"
-            :buildData="buildSelectList"
-            :buildTip="buildTip"
-            :areaData="areaSelectList"
-            :areaTip="areaTip"
-            :statusData="statusSelectList"
-            :statusTip="statusTip"
-            :second="CampOn"
-            :secondData="secondDataVal"
-            :IsZoomed="currentStatus"
-            @onSubmit="submitList"
-            @addModule="addModule"
-            @addCabinet="addCabinet"
-            @editSource="editSource"
-            @deleteSource="deleteSource"
-            @loadingFn="loadingFn"
-          >
-          </import-Feed>
+		  <el-select v-model="sourceType" placeholder="请选择" @change='sourceTypeChange'>
+		   <el-option 
+			v-for="item in foremostDataVal"
+			:key="item.value"
+			:label="item.label"
+			:value="item.value">
+		   </el-option>
+		  </el-select>
+		  <el-select v-model="district" placeholder="所属区域" @change='districtChange'>
+		   <el-option 
+				v-for="item in districtSelectList"
+				:key="item.value"
+				:label="item.label"
+				:value="item.value">
+		   </el-option>
+		  </el-select>
+		  <el-row class="demo-autocomplete" style="display: inline-block;top: 14px;margin-left:20px;width: 40%;">
+		    
+		    <el-col :span="12">
+		      <!-- <div class="sub-title">输入后匹配输入建议</div> -->
+		      <el-autocomplete
+		        class="inline-input"
+		        v-model="state2"
+		        :fetch-suggestions="querySearch"
+		        :placeholder="placeholder"
+		        :trigger-on-focus="false"
+		        @select="handleSelect"
+		      ></el-autocomplete>
+		    </el-col>
+		  </el-row>
           <!-- 申请信息table数据 -->
-          <div class="parinciRepreTable">
-            <el-table
+          <div class="parinciRepreTable" >
+            <el-table 
               :data="tableData"
               style="width: 100%"
               @selection-change="changeFun"
             >
-              <el-table-column type="selection" width="55"></el-table-column>
-              <!-- <el-table-column v-if="sourceType == 1" prop="planStatus" label="规划状态" :key="18" :formatter ="moduleFormatter"></el-table-column> -->
+              <!-- <el-table-column type="selection" width="50"></el-table-column> -->
+			  <el-table-column
+			    v-if="sourceType == 1"
+			    prop="name"
+			    label="机楼名称"
+			  	align="center"
+			    :key="1"
+			  ></el-table-column>
               <el-table-column
                 v-if="sourceType == 1"
-                prop="name"
-                label="机房名称"
-                :key="1"
-              ></el-table-column>
-              <el-table-column
-                v-if="sourceType == 1"
-                prop="moduleRoomName"
-                label="所在房间号"
+                prop="area"
+                label="机楼面积（m²）"
+				align="center"
                 :key="2"
               ></el-table-column>
               <el-table-column
                 v-if="sourceType == 1"
-                prop="dCPower"
-                label="所在楼层"
-                :key="4"
-              ></el-table-column>
-              <!-- <el-table-column
-                v-if="sourceType == 1"
-                prop="aCPower"
-                label="所属机楼"
-                :key="5"
-              ></el-table-column> -->
-              <el-table-column
-                v-if="sourceType == 1"
-                prop="row"
+                prop="district"
                 label="所属区域"
+				align="center"
                 :key="6"
               ></el-table-column>
-              <!-- <el-table-column v-if="sourceType == 1" prop="column" label="列号" :key="7"></el-table-column> -->
-              <el-table-column
-                v-if="sourceType == 1"
-                prop="area"
-                label="机房总面积（m²）"
-                :key="3"
-              ></el-table-column>
-              <el-table-column
-                v-if="sourceType == 1"
-                prop="totalMachineCount"
-                label="可放机架数"
-                :key="8"
-              ></el-table-column>
-
               <el-table-column
                 v-if="sourceType == 2"
                 prop="name"
-                label="机架名称"
+                label="接入间名称"
+				align="center"
                 :key="9"
               ></el-table-column>
               <el-table-column
                 v-if="sourceType == 2"
-                prop="moduleName"
-                label="所属机房"
-                :key="10"
-              ></el-table-column>
-              <!-- <el-table-column
-                v-if="sourceType == 2"
-                prop="buildName"
-                label="所属机楼"
-                :key="20"
-              ></el-table-column> -->
-              <el-table-column
-                v-if="sourceType == 2"
-                prop="area"
+                prop="district"
                 label="所属区域"
+				align="center"
                 :key="21"
               ></el-table-column>
               <el-table-column
                 v-if="sourceType == 2"
-                prop="major"
-                label="机架类型"
-                :key="11"
-              ></el-table-column>
-              <!-- <el-table-column v-if="sourceType == 2" prop="remainStandCabient" label="剩余可放标准机柜数" :key="22"></el-table-column> -->
-              <el-table-column
-                v-if="sourceType == 2"
-                prop="totalStandCabient"
-                label="可放标准机柜总数"
-                :key="23"
-              ></el-table-column>
-              <el-table-column
-                v-if="sourceType == 2"
-                prop="longth"
-                label="机架长度（m）"
-                :key="19"
-              ></el-table-column>
-              <!-- :formatter ="specFormatter" -->
-              <el-table-column
-                v-if="sourceType == 2"
-                prop="height"
-                label="机架高度（m）"
-                :key="17"
-              ></el-table-column>
-              <el-table-column
-                v-if="sourceType == 2"
-                prop="width"
-                label="机架宽度（m）"
-                :key="18"
-              ></el-table-column>
-              <el-table-column
-                v-if="sourceType == 2"
-                prop="totalUnitCount"
-                label="机架总U位"
-                :key="15"
-              ></el-table-column>
-              <!-- <el-table-column v-if="sourceType == 2" prop="unuseUnitCount" label="机架可用u位" :key="24"></el-table-column> -->
-              <el-table-column
-                v-if="sourceType == 2"
-                prop="power"
-                label="额定功率（kW）"
-                :formatter="powerFormatter"
-                :key="14"
-              ></el-table-column>
-              <el-table-column
-                v-if="sourceType == 2"
-                prop="dataSources"
-                label="数据来源"
+                prop="area"
+                label="接入间面积（m²）"
+				align="center"
                 :key="34"
               ></el-table-column>
-              <el-table-column
-                v-if="sourceType == 2"
-                prop="totalMachineTime"
-                label="上架时间"
-                :key="66"
-              ></el-table-column>
-              <!-- <el-table-column v-if="sourceType == 2" prop="usePower" label="使用功率（kW）" :formatter ="powerFormatter" :key="13"></el-table-column> -->
-              <!-- <el-table-column v-if="sourceType == 2" prop="cabinetStatus" label="状态" :formatter="cabinetStatusFormatter" :key="16"></el-table-column> -->
-            </el-table>
+			  <el-table-column label="操作" align="center">
+			        <template slot-scope="scope">
+			          <el-button
+			            size="mini" type="primary"
+			            @click="handleEdit(scope.$index, scope.row)">{{sourceType==1?'管理机房': '管理机机架'}}</el-button>
+			        </template>
+			      </el-table-column>
+             </el-table>
           </div>
           <!-- 分页 -->
           <paging
@@ -226,7 +156,8 @@ export default {
       barNames: "可维护资源列表", // 指示栏名称
       nabarCation: imagesSrc.nabarCation, // 图片
       applicationStatus: "请选择资源类型",
-      CampOn: "请输入所属区域",
+	  placeholder: '请按机楼名称查询',
+      district: "所属区域",
       currentStatus: 2, // 根据当前判断时间选择器或者输入框那个展示
       sourceType: 1, //资源类型（1：微机楼，2：机柜）
       cabinetHandleType: 1, //机柜弹出框操作类型（1：添加，2修改）
@@ -239,11 +170,11 @@ export default {
       foremostDataVal: [
         {
           value: 1,
-          label: "机房"
+          label: "机楼"
         },
         {
           value: 2,
-          label: "机架"
+          label: "接入间"
         }
       ], // 资源类型
       buildSelectList: [
@@ -253,13 +184,13 @@ export default {
         { label: "跑马场机楼", value: 3 }
       ],
       buildTip: "请选择所属机楼",
-      areaSelectList: [
-        { label: "", value: "" },
+      districtSelectList: [
+        { label: "所属区域", value: "" },
         { label: "天河区", value: 1 },
         { label: "荔湾区", value: 2 },
         { label: "白云区", value: 3 }
       ],
-      areaTip: "请选择所属区域",
+      districtTip: "请选择所属区域",
       statusSelectList: [
         { label: "", value: "" },
         { label: "规划中", value: 0 },
@@ -272,14 +203,41 @@ export default {
         size: 10,
         currentPage4: 1
       },
-      tableData: []
+      tableData: [],
+	  
+	  tableHead:[
+		  {sourceType: 1, prop: 'name', label: '所属机房',  key: '1'},
+		  {sourceType: 1, prop: 'moduleRoomName', label: '所在房间号', key: '2' },
+		  {sourceType: 1, prop: 'dCPower', label: '所在楼层', key: '4' },
+	  ],
     };
   },
+  watch: {},
   methods: {
     init() {
       // this.getOrganList();
       this.findResourceList();
     },
+	handleEdit(index, row) {
+	  console.log(index, row);
+	  row.type = this.sourceType
+	  if(this.sourceType === 2){
+		  // this.pushPage('')
+	  } else {
+		  this.pushPage('/machineRoomList', row)
+	  }
+	  
+	},
+	sourceTypeChange (e) {
+	  console.log(e)
+	  console.log('我点击了')
+	  if(this.sourceType === 2){
+		  this.placeholder = '请按接入间名称查询'
+	  } else {
+		  this.placeholder = '请按机楼名称查询'
+	  }
+	  this.findResourceList();
+	},
     examineVerify() {},
     changeFun(val) {
       console.log(val);
@@ -299,6 +257,7 @@ export default {
     },
     findResourceList() {
       let _this = this;
+	  console.log(_this.sourceType)
       var paramData = {};
       if (_this.sourceName != null && _this.sourceName != "") {
         paramData["sourceName"] = _this.sourceName;
@@ -314,10 +273,11 @@ export default {
       };
       // 模拟数据
       let res = {};
+	  console.log("_this.sourceType:",_this.sourceType)
       if (_this.sourceType === 1) {
         res = {
           respBody: {
-            total: 4,
+            total: 2,
             rows: [
               {
                 aCPower: "青云机楼",
@@ -329,10 +289,10 @@ export default {
                 longth: 15,
                 moduleId: 1,
                 moduleRoomName: "001",
-                name: "一楼001机房",
+                name: "一楼001机楼",
                 planStatus: 2,
                 roomId: 3,
-                row: "天河区",
+                district: "天河区",
                 totalMachineCount: 200,
                 totalMachineTime: "2019年1月11日 12:00",
                 width: 20
@@ -347,10 +307,10 @@ export default {
                 longth: 20,
                 moduleId: 2,
                 moduleRoomName: "002",
-                name: "二楼002机房",
+                name: "二楼002机楼",
                 planStatus: 0,
                 roomId: 1,
-                row: "荔湾区",
+                district: "荔湾区",
                 totalMachineCount: 100,
                 totalMachineTime: "2019年2月",
                 width: 20
@@ -384,8 +344,9 @@ export default {
                 moduleId: 9,
                 moduleName: "一楼001机房",
                 buildName: "青云机楼",
-                area: "天河区",
-                name: "DDF03-12",
+                district: "天河区",
+                area: "306",
+                name: "2号接入间",
                 power: 100,
                 usePower: 40,
                 row: "2",
@@ -410,8 +371,9 @@ export default {
                 moduleId: 9,
                 moduleName: "二楼002机房",
                 buildName: "跑马场机楼",
-                area: "荔湾区",
-                name: "ODF03-18",
+                district: "荔湾区",
+                area: "850",
+                name: "3号接入间",
                 power: 200,
                 usePower: 50,
                 row: "2",
@@ -436,8 +398,9 @@ export default {
                 moduleId: 9,
                 moduleName: "五楼005机房",
                 buildName: "工业园机楼",
-                area: "荔湾区",
-                name: "ODF08-18",
+                district: "荔湾区",
+                area: "560",
+                name: "4号接入间",
                 power: 200,
                 usePower: 30,
                 row: "2",
@@ -462,8 +425,9 @@ export default {
                 moduleId: 9,
                 moduleName: "三楼003机房",
                 buildName: "跑马场机楼",
-                area: "白云区",
-                name: "ODF09-18",
+                district: "白云区",
+                area: "450",
+                name: "5号接入间",
                 power: 290,
                 usePower: 80,
                 row: "2",
@@ -488,17 +452,18 @@ export default {
         this.$message.error(res.respHeader.message);
       }
       // 请求后台接口
-      /* _this.sendReq(param, (res) => {
-                    if(res.respHeader.resultCode == 0){
-                        _this.tableData = res.respBody.rows;
-                        _this.tableParams.total = res.respBody.total;
-                    }else{
-                        this.$message.error(res.respHeader.message);
-                    }
-                }) */
+       _this.sendReq(param, (res) => {
+			if(res.respHeader.resultCode == 0){
+				_this.tableData = res.respBody.rows;
+				_this.tableParams.total = res.respBody.total;
+			}else{
+				this.$message.error(res.respHeader.message);
+			}
+		}) 
     },
     submitList(formInline) {
       console.log("submitList");
+      console.log(formInline);
       let _this = this;
       _this.countyId = formInline.county_id;
       _this.sourceType = formInline.sourceType;

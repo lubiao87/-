@@ -63,7 +63,7 @@
       <!-- 接入间列表 -->
       <div style="margin-top: 20px; ">
         <h5 class="ui-city-title ui-height48">
-          <span class="ui-linebg"></span>接入间列表
+          <!-- <span class="ui-linebg"></span>接入间列表 -->
           <el-radio-group v-model="tabPosition" style="margin-left: 10px;">
             <el-radio-button label="机楼">机楼</el-radio-button>
             <el-radio-button label="接入间">接入间</el-radio-button>
@@ -290,6 +290,7 @@ export default {
   },
   created() {
     this.$emit("getNavShow", true);
+    this.getBuildStatistics();
   },
   mounted() {
     this.$nextTick(() => {
@@ -297,7 +298,20 @@ export default {
     });
   },
   methods: {
-    // 获取区域数据
+    // 获取区域其它数据
+    getBuildStatistics() {
+      const self = this;
+      let param = {
+        url: api2.getBuildStatistics + "?area=广州" //获取request_url.js文件的请求路径
+      };
+      self.sendReq(param, res => {
+        // console.log("--------", res);
+        if (res.respHeader.resultCode === 0) {
+          self.moduleStatistics = res.respBody.moduleStatistics;
+        }
+      });
+    },
+    // 获取区域数量
     getAreasData() {
       const self = this;
       let param = {

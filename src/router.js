@@ -2,6 +2,7 @@ import Vue from "vue";
 import Router from "vue-router";
 import resourcePlanList from "./views/resourcePlanning/resourcePlanList"; // 资源管理 /资源规划
 import maintainList from "./views/maintainList/maintainList"; // 资源管理 /可维护列表
+import machineRoomList from "./views/maintainList/machineRoomList"; // 资源管理 /可维护列表
 
 import preemptMessage from "./views/preemptMessage/preemptMessage"; //资源管理 /预占设备信息
 import userManagement from "./views/naturalManagement/application"; // 资源管理 /申请单信息
@@ -61,6 +62,15 @@ const routes = [
           keepAlive: true
         }
       },
+	  {
+	    path: "/machineRoomList",
+	    name: "machineRoomList",
+	    component: machineRoomList,
+	    meta: {
+	      auth: false, // 这里设置，当前路由需要校验
+	      keepAlive: true
+	    }
+	  },
       {
         path: "/buildModel",
         name: "buildModel",

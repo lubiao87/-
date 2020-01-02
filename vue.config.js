@@ -16,7 +16,8 @@ module.exports = {
     proxy: {
       "/AccessRoom": {
         target: "http://192.168.1.73:8033/AccessRoom", // 向航
-        // target: "http://192.168.1.178:8022/infoCollectTool",
+        // target: "http://192.168.1.178:8022/infoCollectTool", // 向航
+		// target: "http://192.168.1.75:8022/infoCollectTool", // 苗昌建
         changeOrigin: true,
         ws: true,
         pathRewrite: {

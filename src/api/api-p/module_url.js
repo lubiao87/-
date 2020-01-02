@@ -4,6 +4,7 @@ export default BSEURL => {
     getRoomByIdData: BSEURL + "/data/getRoomByIdData", // 根据id获取机房信息
     getJiLouData: BSEURL + "/data/getJiLouData", // 获取机楼分布
     getJieRuJianData: BSEURL + "/data/getJieRuJianData", // 获取机楼分布
+    getBuildStatistics: BSEURL + "/data/getBuildStatistics", // 获取区市其它数据
     getAreaNumberData: BSEURL + "/data/getAreaNumberData" // 获取区域数量
   };
 };

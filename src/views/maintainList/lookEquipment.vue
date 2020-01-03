@@ -16,14 +16,14 @@
           <!-- form表单组件插入 -->
 		  <!-- <div class="sub-title">输入后匹配输入建议</div> -->
 		  <el-autocomplete style="width: 20%; "
-			class="fn-d-i-b"
+			class=" fn-d-i-b"
 			v-model="state2"
 			:fetch-suggestions="querySearch"
-			placeholder="请按机房名称、所属机楼查询"
+			placeholder="请按设备名称、设备专业查询"
 			:trigger-on-focus="false"
 			@select="handleSelect"
 		  ></el-autocomplete>
-		  <el-select  v-model="sourceType" placeholder="请选择" @change='sourceTypeChange'>
+		  <el-select v-model="sourceType" placeholder="设备状态" @change='sourceTypeChange'>
 		   <el-option 
 			v-for="item in foremostDataVal"
 			:key="item.value"
@@ -31,94 +31,50 @@
 			:value="item.value">
 		   </el-option>
 		  </el-select>
-		  <el-select class="fn-mr030" v-model="district" placeholder="所属区域" @change='districtChange'>
-		   <el-option 
-				v-for="item in districtSelectList"
-				:key="item.value"
-				:label="item.label"
-				:value="item.value">
-		   </el-option>
-		  </el-select>
-		  <div class="fn-mt14 fn-d-i-b">
-			  <el-button type='primary' @click=" addRoom = true ">新增机房</el-button>
-			  <el-button type='primary'>修改</el-button>
-			  <el-button type='primary'>删除</el-button>
-		  </div>
           <!-- 申请信息table数据 -->
           <div class="parinciRepreTable" >
             <el-table 
               :data="tableData"
-              style="width: 100%"
+              class="fn-w100"
               @selection-change="changeFun"
             >
               <el-table-column type="selection" width="50"></el-table-column>
 			  <el-table-column
 			    prop="name"
-			    label="创建时间"
+			    label="上架时间"
 			  	align="center"
 			    :key="1"
 			  ></el-table-column>
 			  <el-table-column
 			    prop="name"
-			    label="机房名称"
+			    label="设备名称"
 			  	align="center"
 			    :key="2"
 			  ></el-table-column>
 			  <el-table-column
 			    prop="name"
-			    label="房间号"
+			    label="设备专业"
 			  	align="center"
 			    :key="3"
 			  ></el-table-column>
 			  <el-table-column
 			    prop="name"
-			    label="所在楼层"
+			    label="设备额定功率"
 			  	align="center"
 			    :key="4"
 			  ></el-table-column>
-			  <el-table-column
-			    prop="name"
-			    label="所属机楼"
-			  	align="center"
-			    :key="5"
-			  ></el-table-column>
-			  <el-table-column
-			    prop="name"
-			    label="所属区域"
-			  	align="center"
-			    :key="6"
-			  ></el-table-column>
               <el-table-column
                 prop="area"
-                label="机房面积（m²）"
+                label="设备实时功率"
 				align="center"
-                :key="7"
+                :key="5"
               ></el-table-column>
               <el-table-column
                 prop="district"
-                label="可放机架数"
+                label="设备状态"
 				align="center"
-                :key="8"
+                :key="6"
               ></el-table-column>
-              <el-table-column
-                prop="name"
-                label="重要等级"
-				align="center"
-                :key="9"
-              ></el-table-column>
-              <el-table-column
-                prop="district"
-                label="审核权限"
-				align="center"
-                :key="10"
-              ></el-table-column>
-			  <el-table-column label="操作" align="center">
-				<template slot-scope="scope">
-				  <el-button
-					size="mini" type="primary"
-					@click="handleEdit(scope.$index, scope.row)">管理机架</el-button>
-				</template>
-			  </el-table-column>
              </el-table>
           </div>
           <!-- 分页 -->
@@ -145,90 +101,6 @@
       @cabinetUpdate="cabinetUpdate"
     >
     </cabinetBar>
-	
-	<el-dialog title="新增" :visible.sync="addRoom" custom-class="dialogClass" width="50%">
-	  <el-form :model="form" >
-	    <el-form-item class="fn-d-i-b" label="机架名称:" :label-width="formLabelWidth">
-	      <el-input v-model="form.name" autocomplete="off" class="fn-m100"></el-input>
-	    </el-form-item>
-		<el-form-item class="fn-d-i-b" label="可放机架数:" :label-width="formLabelWidth">
-		  <el-input v-model="form.name" autocomplete="off" class="fn-m100"></el-input>
-		</el-form-item>
-		<el-form-item class="fn-d-i-b" label="编码:" :label-width="formLabelWidth">
-		  <el-input v-model="form.name" autocomplete="off" class="fn-m100"></el-input>
-		</el-form-item>
-		<el-form-item class="fn-d-i-b" label="机房长度(cm):" :label-width="formLabelWidth">
-		  <el-input v-model="form.name" autocomplete="off" class="fn-m100"></el-input>
-		</el-form-item>
-		<el-form-item class="fn-d-i-b" label="房间号:" :label-width="formLabelWidth">
-		  <el-input v-model="form.name" autocomplete="off" class="fn-m100"></el-input>
-		</el-form-item>
-		<el-form-item class="fn-d-i-b" label="机房宽度(cm):" :label-width="formLabelWidth">
-		  <el-input v-model="form.name" autocomplete="off" class="fn-m100"></el-input>
-		</el-form-item>
-		<el-form-item class="fn-d-i-b" label="所在楼层:" :label-width="formLabelWidth">
-		  <el-input v-model="form.name" autocomplete="off" class="fn-m100"></el-input>
-		</el-form-item>
-		<el-form-item class="fn-d-i-b" label="机房高度(cm):" :label-width="formLabelWidth">
-		  <el-input v-model="form.name" autocomplete="off" class="fn-m100"></el-input>
-		</el-form-item>
-	    <el-form-item class="fn-d-i-b" label="所属机楼:" :label-width="formLabelWidth">
-	      <el-select v-model="form.region" placeholder="请选择活动区域">
-	        <el-option label="机楼一" value="shanghai"></el-option>
-	        <el-option label="机楼二" value="beijing"></el-option>
-	      </el-select>
-	    </el-form-item>
-		<el-form-item class="fn-d-i-b" label="外电开关容量:" :label-width="formLabelWidth">
-		  <el-input v-model="form.name" autocomplete="off" class="fn-m100"></el-input>
-		</el-form-item>
-		<el-form-item class="fn-d-i-b" label="所属区域:" :label-width="formLabelWidth">
-		  <el-select v-model="form.region" placeholder="请选择活动区域">
-		    <el-option label="区域1" value="shanghai"></el-option>
-		    <el-option label="区域2" value="beijing"></el-option>
-		  </el-select>
-		</el-form-item>
-		<el-form-item class="fn-d-i-b" label="是否租用:" :label-width="formLabelWidth">
-		  <el-select v-model="form.region" placeholder="请选择活动区域">
-		    <el-option label="是" value="shanghai"></el-option>
-		    <el-option label="否" value="beijing"></el-option>
-		  </el-select>
-		</el-form-item>
-		<el-form-item class="fn-d-i-b" label="机房面积(㎡):" :label-width="formLabelWidth">
-		  <el-input v-model="form.name" autocomplete="off" class="fn-m100"></el-input>
-		</el-form-item>
-		<el-form-item class="fn-d-i-b" label="综合接入局:" :label-width="formLabelWidth">
-		  <el-select v-model="form.region" placeholder="请选择活动区域">
-		    <el-option label="是" value="shanghai"></el-option>
-		    <el-option label="否" value="beijing"></el-option>
-		  </el-select>
-		</el-form-item>
-		<el-form-item class="fn-d-i-b" label="重要等级:" :label-width="formLabelWidth">
-		  <el-select v-model="form.region" placeholder="请选择活动区域">
-		    <el-option label="A" value="shanghai"></el-option>
-		    <el-option label="B" value="beijing"></el-option>
-		    <el-option label="C" value="beijing"></el-option>
-		  </el-select>
-		</el-form-item>
-		<el-form-item class="fn-d-i-b" label="是否直供电:" :label-width="formLabelWidth">
-		  <el-select v-model="form.region" placeholder="请选择活动区域">
-		    <el-option label="是" value="shanghai"></el-option>
-		    <el-option label="否" value="beijing"></el-option>
-		  </el-select>
-		</el-form-item>
-		<el-form-item class="fn-d-i-b" label="审核权限:" :label-width="formLabelWidth">
-		  <el-select v-model="form.region" placeholder="请选择活动区域">
-		    <el-option label="省级" value="shanghai"></el-option>
-		    <el-option label="市级" value="beijing"></el-option>
-		    <el-option label="县级" value="beijing"></el-option>
-		  </el-select>
-		</el-form-item>
-	  </el-form>
-	  <div slot="footer" class="dialog-footer">
-	    <el-button @click="addRoom = false">取 消</el-button>
-	    <el-button type="primary" @click="addRoom = false">确 定</el-button>
-	  </div>
-	</el-dialog>
-	
   </div>
 </template>
 
@@ -255,7 +127,6 @@ export default {
   data() {
     return {
       loading: false,
-      addRoom: false,
       barNames: "可维护资源列表", // 指示栏名称
       nabarCation: imagesSrc.nabarCation, // 图片
       applicationStatus: "请选择资源类型",
@@ -270,17 +141,6 @@ export default {
       page: 1,
       pageSize: 10,
       multipleSelection: [], //选择行
-	  form: {
-		name: '',
-		region: '',
-		date1: '',
-		date2: '',
-		delivery: false,
-		type: [],
-		resource: '',
-		desc: ''
-	  },
-	  formLabelWidth: '120px',
       foremostDataVal: [
         {
           value: 1,
@@ -333,9 +193,14 @@ export default {
       this.findResourceList();
     },
 	handleEdit(index, row) {
-	  row.type = this.sourceType
 	  console.log(index, row);
-	  this.pushPage('/frameList', row)
+	  row.type = this.sourceType
+	  if(this.sourceType === 2){
+		  // this.pushPage('')
+	  } else {
+		  this.pushPage('/machineRoomList', row)
+	  }
+	  
 	},
 	sourceTypeChange (e) {
 	  console.log(e)
@@ -841,15 +706,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
-.button-list {
-  margin-top:14px;
-  margin-left:30%; 
-  // display: inline-block;
-}
-.display-inline-block {
-  display: inline-block;
-}
 .parinciRepresent::-webkit-scrollbar {
   /*滚动条整体样式*/
   width: 6px; /*高宽分别对应横竖滚动条的尺寸*/
@@ -905,15 +761,6 @@ export default {
 
 <style>
 /*表格样式 */
-.el-form-item__label {
-	color: #0086B3;
-}
-.dialogClass {
-	background-color: #FFFFFF;
-}
-.custonStyle>div:nth-child(1){
-　　background-color: #FFFFFF;
-}
 .parinciRepreTable .el-table tr {
   background-color: transparent;
   cursor: pointer;

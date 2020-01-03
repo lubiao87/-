@@ -222,7 +222,7 @@ export default {
 	  console.log(index, row);
 	  row.type = this.sourceType
 	  if(this.sourceType === 2){
-		  // this.pushPage('')
+		  this.pushPage('/frameList', row)
 	  } else {
 		  this.pushPage('/machineRoomList', row)
 	  }

@@ -2,7 +2,9 @@ import Vue from "vue";
 import Router from "vue-router";
 import resourcePlanList from "./views/resourcePlanning/resourcePlanList"; // 资源管理 /资源规划
 import maintainList from "./views/maintainList/maintainList"; // 资源管理 /可维护列表
-import machineRoomList from "./views/maintainList/machineRoomList"; // 资源管理 /可维护列表
+import machineRoomList from "./views/maintainList/machineRoomList"; // 资源管理 /机房可维护列表
+import frameList from "./views/maintainList/frameList"; // 资源管理 /机架可维护列表
+import lookEquipment from "./views/maintainList/lookEquipment"; // 资源管理 /设备可维护列表
 
 import preemptMessage from "./views/preemptMessage/preemptMessage"; //资源管理 /预占设备信息
 import userManagement from "./views/naturalManagement/application"; // 资源管理 /申请单信息
@@ -66,6 +68,22 @@ const routes = [
 	    path: "/machineRoomList",
 	    name: "machineRoomList",
 	    component: machineRoomList,
+	    meta: {
+	      auth: false, // 这里设置，当前路由需要校验
+	      keepAlive: true
+	    }
+	  },{
+	    path: "/frameList",
+	    name: "frameList",
+	    component: frameList,
+	    meta: {
+	      auth: false, // 这里设置，当前路由需要校验
+	      keepAlive: true
+	    }
+	  },{
+	    path: "/lookEquipment",
+	    name: "lookEquipment",
+	    component: lookEquipment,
 	    meta: {
 	      auth: false, // 这里设置，当前路由需要校验
 	      keepAlive: true

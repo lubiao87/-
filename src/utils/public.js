@@ -118,6 +118,7 @@ function createMesh(geom) {
 
   return mesh;
 }
+// 创建机房
 export function _NowRoom(arr) {
   let listGroup = new THREE.Group();
   if (Array.isArray(arr)) {
@@ -194,4 +195,27 @@ export function _NowRoom(arr) {
     console.error("未传入数组");
   }
   return listGroup;
+}
+// 创建朔源精灵图标3
+export function newCSS3DSprite3(name) {
+  let canvas = document.createElement("canvas");
+  canvas.width = 400;
+  canvas.height = 400;
+  let ctx = canvas.getContext("2d");
+  let arrText = name;
+  ctx.beginPath();
+  ctx.fillStyle = "rgba(91, 120, 231, 0.95)";
+  // ctx.fillRect(0, 0, width, height);
+  ctx.arc(200, 200, 200, 0, 2 * Math.PI);
+  // this.drawRoundRect(ctx, 0, 0, width, height, 200);
+  ctx.closePath(); //关闭路径
+  ctx.fill(); //开始填充
+  ctx.font = 160 + 'px " bold';
+  ctx.fillStyle = "#fff";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(arrText, 200, 200);
+  // ctx.strokeStyle = "#0078AA";
+  ctx.stroke();
+  return canvas;
 }

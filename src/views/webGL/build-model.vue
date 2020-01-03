@@ -94,6 +94,7 @@
         node-key="buildId"
         :default-expanded-keys="expandedKeys"
         :default-checked-keys="checkedKeys"
+        v-if="modelType === 2"
       ></el-tree>
     </div>
     <div class="yhui-real-timeimg"></div>
@@ -217,7 +218,7 @@ export default {
       panelShow: true,
       lookAround: false,
       cameraX: 0,
-      cameraY: -30000,
+      cameraY: 30000,
       cameraZ: 20000,
       floorName: "工业园机楼",
       cabinetType: [
@@ -363,9 +364,10 @@ export default {
   created() {
     const self = this;
     console.log("this.$route.params---", this.$route.params);
-    this.floorName = this.$route.params.name;
+    this.floorName = this.$route.params.modelName;
     this.modelType = this.$route.params.modelType;
     this.buildId = this.$route.params.buildId;
+    this.boxTitle = this.$route.params.modelName;
     this.getRoomByIdData();
     this.getJieRuJianStatistics();
   },
@@ -408,12 +410,12 @@ export default {
         self.cabinetplaced = [];
         if (res.respHeader.resultCode === 0) {
           self.cabinetType.push(...[
-            {
-              name: "全部",
-              size: [0, 0, 0],
-              type_index: 0
-            }
-          ]);
+              {
+                name: "全部",
+                size: [0, 0, 0],
+                type_index: 0
+              }
+            ]);
           let arr1 = res.respBody.cabinetType;
           self.cabinetType.push(...arr1);
           let arr2 = res.respBody.cabinetplaced.map(item => {
@@ -508,30 +510,26 @@ export default {
         self.scene.remove(list);
       }
       self.scene.remove(this.modernBuilding);
-      self.scene.remove(this.FloorTwo);
-      self.scene.remove(this.FloorOne);
-      self.scene.remove(this.FloorThree);
-      self.scene.remove(this.FloorFour);
-      self.scene.remove(this.meshZL);
-      self.scene.remove(this.roomModel);
+      self.scene.remove(this.methNow2);
+      // self.scene.remove(this.FloorTwo);
+      // self.scene.remove(this.FloorOne);
+      // self.scene.remove(this.FloorThree);
+      // self.scene.remove(this.FloorFour);
+      // self.scene.remove(this.meshZL);
+      // self.scene.remove(this.roomModel);
       self.scene.remove(this.spriteGroup);
       self.scene.remove(this.capacityGroup);
     },
     loaderAur() {
       const self = this;
       this.FBXloader.load("./Assets/fbx/biaozhun.FBX", self.loaderCabinet1);
-      // this.FBXloader.load("./Assets/fbx/2.FBX", self.loaderCabinet2);
-      // this.FBXloader.load("./Assets/fbx/3.FBX", self.loaderCabinet3);
+
       this.FBXloader.load("./Assets/fbx/DDF.FBX", self.loaderDDF);
       this.FBXloader.load("./Assets/fbx/kongtiao.FBX", self.loaderKongtiao);
       this.FBXloader.load("./Assets/fbx/lietou.FBX", self.loaderLieTou);
       this.FBXloader.load("./Assets/fbx/ODF.FBX", self.loaderODF);
       this.FBXloader.load("./Assets/fbx/peixian.FBX", self.loaderPeixian);
       this.FBXloader.load("./Assets/fbx/men.FBX", self.loaderMen);
-      // this.FBXloader.load(
-      //   "./Assets/fbx/floorFourChilder.FBX",
-      //   self.floorFourChilder
-      // );
     },
     propsFlagFn(e) {
       console.log("propsFlag-------", e);
@@ -540,33 +538,33 @@ export default {
     // 整流器
     zlLiFn(item) {
       const that = this;
-      if (item === "整流器01") {
-        // console.log("你想看整流器？");
-        // console.log("this.meshZL.position", this.meshZL);
-        // this.camera.lookAt(this.meshZL.position);
-        this.scene.position.set(
-          -this.meshZL.position.x,
-          -this.meshZL.position.y,
-          -this.meshZL.position.z
-        );
+      // if (item === "整流器01") {
+      //   // console.log("你想看整流器？");
+      //   // console.log("this.meshZL.position", this.meshZL);
+      //   // this.camera.lookAt(this.meshZL.position);
+      //   this.scene.position.set(
+      //     -this.meshZL.position.x,
+      //     -this.meshZL.position.y,
+      //     -this.meshZL.position.z
+      //   );
 
-        this.meshZL.material.transparent = true;
-        this.meshZL.material.opacity = 0.1;
-        window.startTime = 0;
-        window.ns = 0;
-        let times = setInterval(function() {
-          window.startTime += 0.05;
-          window.ns += 0.02;
-          if (window.ns >= 1) {
-            window.ns = 0.1;
-          }
-          that.meshZL.material.opacity = window.ns;
-          if (window.startTime >= 10) {
-            window.clearInterval(times);
-            that.meshZL.material.opacity = 1;
-          }
-        });
-      }
+      //   this.meshZL.material.transparent = true;
+      //   this.meshZL.material.opacity = 0.1;
+      //   window.startTime = 0;
+      //   window.ns = 0;
+      //   let times = setInterval(function() {
+      //     window.startTime += 0.05;
+      //     window.ns += 0.02;
+      //     if (window.ns >= 1) {
+      //       window.ns = 0.1;
+      //     }
+      //     that.meshZL.material.opacity = window.ns;
+      //     if (window.startTime >= 10) {
+      //       window.clearInterval(times);
+      //       that.meshZL.material.opacity = 1;
+      //     }
+      //   });
+      // }
     },
     // 选择统计
     setSelectBox(index) {
@@ -644,15 +642,7 @@ export default {
       // }
       window.requestAnimationFrame(this.render);
     },
-    // floorFourChilder(obj) {
-    //   console.log("floorFourChilder", obj);
-    //   // obj.scale.set(10, 10, 10)
-    //   this.roomModel = obj;
-    //   this.roomModel.position.y = -4000;
-    //   this.roomModel.position.z = -10000;
-    //   // this.roomModel.children[6].geometry.position(820, 0, 0);
-    //   // this.roomModel.children[6].position(-820, 0, 0);
-    // },
+
     loaderObj(obj) {
       // console.log(obj);
       this.loading = false;
@@ -660,7 +650,8 @@ export default {
       obj.name = "整栋楼房";
       this.scene.add(obj);
       this.modernBuilding = obj;
-      obj.rotateX(Math.PI / 2);
+      // obj.rotateX(-Math.PI / 2);
+      // this.methNow2.rotateX(-Math.PI / 2); //------------旋转
       obj.traverse(function(child) {
         if (child.isMesh) {
           child.castShadow = true;
@@ -700,20 +691,6 @@ export default {
     loaderCabinet1(obj) {
       this.cabinet1 = obj;
     },
-    // 2
-    // loaderCabinet2(obj) {
-    //   this.cabinet2 = obj;
-    // },
-    // 3
-    // loaderCabinet3(obj) {
-    //   this.cabinet3 = obj;
-    // },
-    loaderJIGUI(obj) {
-      // obj.children[0].material[0].color.set("#1e222b"); // 设置材质颜色
-      this.JIGUI = obj;
-      this.JIGUI.name = "机柜类型all";
-      // this.scene.add(this.JIGUI);
-    },
     setCamera() {
       const self = this;
       var width = window.innerWidth; //窗口宽度
@@ -735,13 +712,7 @@ export default {
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       // this.CSS3Renderer.setSize(window.innerWidth, window.innerHeight);
     },
-    // 右键查看机架详情
-    // showProps() {
-    //   this.propsFlag = true;
-    //   this.showMenu = false;
-    // },
     addMeth(item) {
-
       let geometry = null;
       let material = new THREE.MeshLambertMaterial({
         color: "#9fc1dd",
@@ -808,8 +779,8 @@ export default {
         } else {
           mesh.scale.set(item.size[0] / 600, item.size[1] / 800, 1);
         }
-        console.log(item.size)
-        console.log(mesh.scale)
+        // console.log(item.size)
+        // console.log(mesh.scale)
       }
       if (item.type_index === 5) { // 配线柜
         if (item.IsParallelX === "N") {
@@ -858,16 +829,6 @@ export default {
       mesh.TYPE = item.name;
       mesh.name = item.name;
       mesh.dataInfo = item;
-      if (item.parentId) {
-        mesh.parentId = item.parentId;
-        // 创建精灵图标
-        this.newCSS3DSprite3(
-          "子",
-          item.position[1] - item.size[0] / 2,
-          item.position[0] + item.size[1] / 2,
-          positionY + 1600
-        );
-      }
       if (item.setId) {
         mesh.setId = item.setId;
       }
@@ -882,7 +843,9 @@ export default {
       this.spriteGroup = new THREE.Group();
       this.spriteGroup.name = "图标集合";
 
-      this.spriteArr = new THREE.Group();
+      this.listGroup.rotateX(-Math.PI / 2); //------------旋转
+      this.spriteGroup.rotateX(-Math.PI / 2); //------------旋转
+      this.capacityGroup.rotateX(-Math.PI / 2); //------------旋转
 
       // console.log("this.scene ---------- ", this.scene);
       this.floorData2.forEach((item, index) => {
@@ -920,13 +883,6 @@ export default {
       });
 
       this.controls.addEventListener("change", this.tag);
-      // 整流器
-      var geometryZL = new THREE.BoxGeometry(1000, 600, 400); //创建一个立方体几何对象Geometry
-      var materialZL = new THREE.MeshLambertMaterial({
-        color: "#666"
-      }); //材质对象Material
-      this.meshZL = new THREE.Mesh(geometryZL, materialZL); //网格模型对象Mesh
-      this.meshZL.position.y = 14000;
       this.cabinetplaced.forEach((item, index) => {
         let mesh = self.addMeth(item, index);
         self.listGroup.add(mesh);
@@ -934,14 +890,14 @@ export default {
           self.addBox(item);
         }
       });
-      let methNow2 = _NowRoom(this.froomData);
-      methNow2.position.z = -1400;
-      this.loading = false;
+      this.methNow2 = _NowRoom(this.froomData);
 
+      this.loading = false;
+      this.methNow2.rotateX(-Math.PI / 2); //------------旋转
+      this.methNow2.position.y = -1400;
       this.scene.add(this.listGroup); // 设备列表
-      this.scene.add(this.meshZL); // 整流器
       this.scene.add(this.spriteGroup); // 标签
-      this.scene.add(methNow2); // 机房
+      this.scene.add(this.methNow2); // 机房
       //创建一个屏幕和场景转换工具
       // self.projector = new THREE.Projector();
       self.mouse = new THREE.Vector2();
@@ -952,6 +908,7 @@ export default {
       };
       this.removeEventListenerFn();
       this.addEventListenerFn();
+
     },
     // 改变场数
     changefield: _debounce(function(e) {
@@ -1047,8 +1004,7 @@ export default {
 
       let mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
       let mesh1 = new THREE.Mesh(geometry1, material1); //网格模型对象Mesh
-      let positionY1 =
-        (item.size[2] * item.capacity) / 2;
+      let positionY1 = (item.size[2] * item.capacity) / 2;
       let positionY = item.size[2] / 2;
 
       mesh.position.set(
@@ -1174,8 +1130,10 @@ export default {
           if (intersects[0].object.dataInfo.type === "空调") {
             mesh.rotateZ(Math.PI / 2);
           }
+          mesh.rotateX(-Math.PI / 2); //------------旋转
           this.border = new THREE.BoxHelper(mesh, "#5b78e7"); //设置边框，这个边框不会旋转
           this.border.name = "高亮显示柜";
+
           this.scene.add(this.border); //网格模型添加到场景中
           var scrollTop =
             document.documentElement.scrollTop || document.body.scrollTop;
@@ -1195,13 +1153,6 @@ export default {
             }
           }
 
-          // 朔源
-          // if (intersects[0].object.setId === 22) {
-          //   this.scene.add(this.spriteArr);
-          // } else {
-          //   this.scene.remove(this.spriteArr);
-          // }
-          // console.log(this.scene);
         }
       } else {
         // if (this.objCSS3D) {
@@ -1213,45 +1164,13 @@ export default {
         if (this.sprite) {
           this.scene.remove(this.sprite);
         }
-        if (this.spriteArr) {
-          this.scene.remove(this.spriteArr);
-        }
+
         if (!this.freezeShowMenu2) {
           this.showMenu2 = false;
         }
         this.showMenu3 = false;
         this.showMenu = false;
       }
-    },
-    // 创建朔源精灵图标3
-    newCSS3DSprite3(name, x, y, z) {
-      let canvas = document.createElement("canvas");
-      canvas.width = 400;
-      canvas.height = 400;
-      let ctx = canvas.getContext("2d");
-      let arrText = name;
-      ctx.beginPath();
-      ctx.fillStyle = "rgba(91, 120, 231, 0.95)";
-      // ctx.fillRect(0, 0, width, height);
-      ctx.arc(200, 200, 200, 0, 2 * Math.PI);
-      // this.drawRoundRect(ctx, 0, 0, width, height, 200);
-      ctx.closePath(); //关闭路径
-      ctx.fill(); //开始填充
-      ctx.font = 160 + 'px " bold';
-      ctx.fillStyle = "#fff";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(arrText, 200, 200);
-      // ctx.strokeStyle = "#0078AA";
-      ctx.stroke();
-
-      this.spriteMaterial = new THREE.SpriteMaterial({
-        map: new THREE.CanvasTexture(canvas) //设置精灵纹理贴图
-      });
-      let sprite = new THREE.Sprite(this.spriteMaterial);
-      this.spriteArr.add(sprite);
-      sprite.scale.set(400, 400, 1); // 只需要设置x、y两个分量就可以
-      sprite.position.set(x, y, z);
     },
     onDocumentDblclick(event) {
       //阻止本来的默认事件，比如浏览器的默认右键事件是弹出浏览器的选项
@@ -1264,13 +1183,6 @@ export default {
         self.listGroup.children
       );
       if (intersects.length > 0) {
-        // console.log(intersects);
-        // window.open(
-        //   "http://www.yijushch.com/jmrv/www_wmk/#/device-module-details"
-        // );
-        // this.scene.updateMatrixWorld(true);
-        // const worldPosition = new THREE.Vector3();
-        // intersects[0].object.getWorldPosition(worldPosition);
         this.propsFlag = true;
       }
     },
@@ -1285,21 +1197,6 @@ export default {
       const intersects = this.raycaster.intersectObjects(
         self.listGroup.children
       );
-      // const intersects2 = this.raycaster.intersectObjects(
-      //   self.roomModel.children
-      // );
-      // if (intersects2.length > 0) {
-      //   // console.log(intersects2[0]);
-      //   if (intersects2[0].object.name.indexOf("右") > -1) {
-      //     this.intersects2 = intersects2[0].object;
-      //     this.animationMenTop = false;
-      //     this.animationZF = !this.animationZF;
-      //   } else if (intersects2[0].object.name.indexOf("左") > -1) {
-      //     this.intersects3 = intersects2[0].object;
-      //     this.animationMenTop2 = false;
-      //     this.animationZF2 = !this.animationZF2;
-      //   }
-      // }
       if (intersects.length && intersects[0].object.name === "列头柜") {
         this.freezeShowMenu2 = true;
         this.intersectsObj = intersects[0].object;

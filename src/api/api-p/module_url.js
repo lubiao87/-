@@ -6,6 +6,7 @@ export default BSEURL => {
     getJieRuJianData: BSEURL + "/data/getJieRuJianData", // 获取机楼分布
     getBuildStatistics: BSEURL + "/data/getBuildStatistics", // 获取区市其它数据
     getJieRuJianStatistics: BSEURL + "/data/getJieRuJianStatistics", // 接入间详情统计数据
+    getFloorTreeData: BSEURL + "/data/getFloorTreeData", // 楼层列表
     getAreaNumberData: BSEURL + "/data/getAreaNumberData" // 获取区域数量
   };
 };

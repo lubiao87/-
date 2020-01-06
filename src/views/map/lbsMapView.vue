@@ -152,8 +152,7 @@
 import { listSearchMixin } from "../../mixin"; //混淆请求
 // 局部组件引用
 import Cesium from "cesium/Cesium";
-// import JiLou from "@/json/mapData1.js"; //api配置请求的路径
-// import JieRuJian from "@/json/mapData2.js"; //api配置请求的路径
+import {Message} from 'element-ui';
 import { api2 } from "../../api/api"; //api配置请求的路径
 // noinspection ES6UnusedImports
 import widget from "cesium/Widgets/widgets.css";
@@ -308,6 +307,13 @@ export default {
         // console.log("--------", res);
         if (res.respHeader.resultCode === 0) {
           self.moduleStatistics = res.respBody.moduleStatistics;
+        } else {
+          Message({
+            showClose: true,
+            message: res.respHeader.message,
+            type: 'error',
+            duration: 2000
+          })
         }
       });
     },
@@ -321,6 +327,13 @@ export default {
         // console.log("--------", res);
         if (res.respHeader.resultCode === 0) {
           self.areas = res.respBody.areas;
+        } else {
+          Message({
+            showClose: true,
+            message: res.respHeader.message,
+            type: 'error',
+            duration: 2000
+          })
         }
         if (self.tabPosition === "接入间") {
           self.getJieRuJianDataMap();

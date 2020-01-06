@@ -45,8 +45,8 @@
 		  </el-select>
 		  <div class="fn-mt14 fn-d-i-b">
 			  <el-button>导入</el-button>
-			  <el-button v-if="radio === '1'">新增机架</el-button>
-			  <el-button v-if="radio === '2'">新增其他物体</el-button>
+			  <el-button v-if="radio === '1'" @click="add1 = true">新增机架</el-button>
+			  <el-button v-if="radio === '2'" @click="add1 = true">新增其他物体</el-button>
 			  <el-button>修改</el-button>
 			  <el-button>删除</el-button>
 		  </div>
@@ -54,12 +54,13 @@
           <div class="parinciRepreTable">
             <el-table 
               :data="tableData"
-              style="width: 100%"
+              class="fn-w100"
+			  height= '600'
               @selection-change="changeFun"
             >
               <el-table-column type="selection" width="50"></el-table-column>
 			  <el-table-column
-			    prop="name"
+			    prop="createTime"
 			    label="创建时间"
 			  	align="center"
 			    :key="1"
@@ -80,25 +81,26 @@
 			  ></el-table-column>
 			  <el-table-column
 			    v-if=" radio === '1'"
-			    prop="name"
+			    prop="frameSource"
 			    label="机架来源"
 			  	align="center"
 			    :key="4"
 			  ></el-table-column>
 			  <el-table-column
-			    v-if="sourceType == 1"
-			    prop="name"
-			    label="所属机房"
-			  	align="center"
-			    :key="5"
-			  ></el-table-column>
-			  <el-table-column
 			    v-if="sourceType == 1 "
-			    prop="name"
+			    prop="buildName"
 			    label="所属机楼"
 			  	align="center"
 			    :key="6"
 			  ></el-table-column>
+			  <el-table-column
+			    v-if="sourceType == 1"
+			    prop="roomName"
+			    label="所属机房"
+			  	align="center"
+			    :key="5"
+			  ></el-table-column>
+			  
 			  <el-table-column
 			    v-if="sourceType == 2 "
 			    prop="name"
@@ -108,35 +110,35 @@
 			  ></el-table-column>
 			  <el-table-column
 			    v-if=" radio === '1'"
-			    prop="name"
+			    prop="countyName"
 			    label="所属区域"
 			  	align="center"
 			    :key="8"
 			  ></el-table-column>
 			  <el-table-column
 			    v-if=" radio === '1'"
-			    prop="name"
+			    prop="type"
 			    label="机架类型"
 			  	align="center"
 			    :key="9"
 			  ></el-table-column>
 			  <el-table-column
 			    v-if=" radio === '2'"
-			    prop="name"
+			    prop="type"
 			    label="物体类型"
 			  	align="center"
 			    :key="10"
 			  ></el-table-column>
 			  <el-table-column
 			    v-if=" radio === '1'"
-			    prop="name"
+			    prop="standardCabinetTotal"
 			    label="可放标准机柜总数"
 			  	align="center"
 			    :key="11"
 			  ></el-table-column>
               <el-table-column
                 v-if=" radio === '1'"
-                prop="area"
+                prop="totalU"
                 label="机架总U位"
 				align="center"
                 :key="12"
@@ -195,6 +197,185 @@
       @cabinetUpdate="cabinetUpdate"
     >
     </cabinetBar>
+	<el-dialog title="新增" :visible.sync="add1" custom-class="dialogClass" width="50%">
+	  <el-form :model="form" v-if="radio === '1'">
+	    <el-form-item class="fn-d-i-b" prop="form.name" 
+		:rules="[ { required: true, message: '机架名称不能为空'},
+				  { type: 'number', message: '年龄必须为数字值'}]"
+	    label="机架名称:" :label-width="formLabelWidth">
+	      <el-input v-model="form.name" placeholder="请输入机架名称" autocomplete="off" class="fn-m-220"></el-input>
+	    </el-form-item>
+		<el-form-item class="fn-d-i-b" label="编码:" :label-width="formLabelWidth">
+		  <el-input v-model="form.name" placeholder="请输入编码" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		<el-form-item v-if="sourceType === '2'" class="fn-d-i-b" label="所属接入间:" :label-width="formLabelWidth">
+		  <el-select v-model="form.region" placeholder="请选择所属机楼" class="fn-m-220">
+		    <el-option label="接入间一" value="shanghai"></el-option>
+		    <el-option label="接入间二" value="beijing"></el-option>
+		  </el-select>
+		</el-form-item>
+		<el-form-item v-if="sourceType === '1'" class="fn-d-i-b" label="所属机楼:" :label-width="formLabelWidth">
+		  <el-select v-model="form.region" placeholder="请选择所属机楼" class="fn-m-220">
+		    <el-option label="机楼一" value="shanghai"></el-option>
+		    <el-option label="机楼二" value="beijing"></el-option>
+		  </el-select>
+		</el-form-item>
+		
+		<el-form-item v-if="sourceType === '1'" class="fn-d-i-b" label="所属机房:" :label-width="formLabelWidth">
+		  <el-select v-model="form.region" placeholder="请选择所属机房" class="fn-m-220">
+		    <el-option label="机房一" value="shanghai"></el-option>
+		    <el-option label="机房二" value="beijing"></el-option>
+		  </el-select>
+		</el-form-item>
+		<el-form-item class="fn-d-i-b" label="机架类型:" :label-width="formLabelWidth">
+		  <el-select v-model="form.region" placeholder="请选择机架类型" class="fn-m-220">
+		    <el-option label="机架一" value="shanghai"></el-option>
+		    <el-option label="机架二" value="beijing"></el-option>
+		  </el-select>
+		</el-form-item>
+		<el-form-item class="fn-d-i-b" label="可放标准机柜总数:" :label-width="formLabelWidth">
+		  <el-input v-model="form.name" placeholder="请输入可放标准机柜总数" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		<el-form-item class="fn-d-i-b" label="机架总U位:" :label-width="formLabelWidth">
+		  <el-input v-model="form.name" placeholder="请输入机架总U位" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		<el-form-item class="fn-d-i-b" label="机架可用U位:" :label-width="formLabelWidth">
+		  <el-input v-model="form.name" placeholder="请输入机架可用U位" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		<el-form-item class="fn-d-i-b" label="机架长度(cm):" :label-width="formLabelWidth">
+		  <el-input v-model="form.name" placeholder="请输入" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		<el-form-item class="fn-d-i-b" label="机架宽度(cm):" :label-width="formLabelWidth">
+		  <el-input v-model="form.name" placeholder="请输入" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		<el-form-item class="fn-d-i-b" label="机架高度(cm):" :label-width="formLabelWidth">
+		  <el-input v-model="form.name" placeholder="请输入" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		<el-form-item class="fn-d-i-b" label="额定功率(KW):" :label-width="formLabelWidth">
+		  <el-input v-model="form.name" placeholder="请输入额定功率" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		<el-form-item class="fn-d-i-b" label="使用功率(KW):" :label-width="formLabelWidth">
+		  <el-input v-model="form.name" placeholder="请输入使用功率" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		<el-form-item class="fn-d-i-b" label="列号:" :label-width="formLabelWidth">
+		  <el-input v-model="form.name" placeholder="请输入列号" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		<el-form-item class="fn-d-i-b" label="位号:" :label-width="formLabelWidth">
+		  <el-input v-model="form.name" placeholder="请输入位号" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+	    <el-form-item class="fn-d-i-b" label="所属区域:" :label-width="formLabelWidth">
+	      <el-select v-model="form.region" placeholder="请选择所属区域" class="fn-m-220">
+	        <el-option label="区域一" value="shanghai"></el-option>
+	        <el-option label="区域二" value="beijing"></el-option>
+	      </el-select>
+	    </el-form-item>
+		<el-form-item class="fn-d-i-b" label="退网设备数:" :label-width="formLabelWidth">
+		  <el-input v-model="form.name" placeholder="请输入退网设备数" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		<el-form-item class="fn-d-i-b" label="退网设备所占U位:" :label-width="formLabelWidth">
+		  <el-input v-model="form.name" placeholder="请输入退网设备所占U位" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		<el-form-item class="fn-d-i-b" label="机架来源:" :label-width="formLabelWidth">
+		  <el-select v-model="form.region" placeholder="请选择机架来源" class="fn-m-220">
+		    <el-option label="手动录入" value="shanghai"></el-option>
+		    <el-option label="资源录入" value="beijing"></el-option>
+		  </el-select>
+		</el-form-item>
+		<el-form-item class="fn-d-i-b" label="是否租用:" :label-width="formLabelWidth">
+		  <el-select v-model="form.region" placeholder="请选择活动区域" class="fn-m-220">
+		    <el-option label="是" value="shanghai"></el-option>
+		    <el-option label="否" value="beijing"></el-option>
+		  </el-select>
+		</el-form-item>
+		<el-form-item class="fn-d-i-b" label="额定电压(v):" :label-width="formLabelWidth">
+		  <el-input v-model="form.name" placeholder="请输入额定电压" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		<el-form-item class="fn-d-i-b" label="所属列头柜:" :label-width="formLabelWidth">
+		  <el-select v-model="form.region" placeholder="请选择所属列头柜" class="fn-m-220">
+		    <el-option label="是" value="shanghai"></el-option>
+		    <el-option label="否" value="beijing"></el-option>
+		  </el-select>
+		</el-form-item>
+		
+	  </el-form>
+	  <el-form :model="form" v-if="radio === '2'">
+	    <el-form-item class="fn-d-i-b" prop="form.name" 
+	  		:rules="[ { required: true, message: '物体名称不能为空'}]"
+	    label="物体名称:" :label-width="formLabelWidth">
+	      <el-input v-model="form.name" placeholder="请输入物体名称" autocomplete="off" class="fn-m-220"></el-input>
+	    </el-form-item>
+		<el-form-item class="fn-d-i-b" label="编码:" :label-width="formLabelWidth">
+		  <el-input v-model="form.name" placeholder="请输入编码" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		<el-form-item v-if="sourceType === 2" class="fn-d-i-b" label="所属接入间:" :label-width="formLabelWidth">
+		  <el-select v-model="form.region" placeholder="请选择所属机楼" class="fn-m-220">
+			<el-option label="接入间一" value="shanghai"></el-option>
+			<el-option label="接入间二" value="beijing"></el-option>
+		  </el-select>
+		</el-form-item>
+		<el-form-item v-if="sourceType === 1" class="fn-d-i-b" label="所属机楼:" :label-width="formLabelWidth">
+		  <el-select v-model="form.region" placeholder="请选择所属机楼" class="fn-m-220">
+			<el-option label="机楼一" value="shanghai"></el-option>
+			<el-option label="机楼二" value="beijing"></el-option>
+		  </el-select>
+		</el-form-item>
+		<el-form-item v-if="sourceType === 1" class="fn-d-i-b" label="所属机房:" :label-width="formLabelWidth">
+		  <el-select v-model="form.region" placeholder="请选择所属机房" class="fn-m-220">
+			<el-option label="机房一" value="shanghai"></el-option>
+			<el-option label="机房二" value="beijing"></el-option>
+		  </el-select>
+		</el-form-item>
+		<el-form-item class="fn-d-i-b" label="物体类型:" :label-width="formLabelWidth">
+		  <el-select v-model="form.region" placeholder="请选择机架类型" class="fn-m-220">
+			<el-option label="列头柜" value="shanghai"></el-option>
+			<el-option label="其他" value="beijing"></el-option>
+		  </el-select>
+		</el-form-item>
+		<el-form-item v-if='true' class="fn-d-i-b" label="输出屏:" :label-width="formLabelWidth">
+		  <el-input v-model="form.name" placeholder="请输入输出屏" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		<el-form-item v-if='true' class="fn-d-i-b" label="整流器:" :label-width="formLabelWidth">
+		  <el-input v-model="form.name" placeholder="请输入整流器" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		<el-form-item v-if='true' class="fn-d-i-b" label="低压系统开关:" :label-width="formLabelWidth">
+		  <el-input v-model="form.name" placeholder="请输入低压系统开关" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		<el-form-item v-if='true' class="fn-d-i-b" label="上联设备编号:" :label-width="formLabelWidth">
+		  <el-input v-model="form.name" placeholder="请输入上联设备编号" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		<el-form-item class="fn-d-i-b" label="物体长度(cm):" :label-width="formLabelWidth">
+		  <el-input v-model="form.name" placeholder="请输入" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		<el-form-item class="fn-d-i-b" label="物体宽度(cm):" :label-width="formLabelWidth">
+		  <el-input v-model="form.name" placeholder="请输入" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		<el-form-item class="fn-d-i-b" label="物体高度(cm):" :label-width="formLabelWidth">
+		  <el-input v-model="form.name" placeholder="请输入" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		<el-form-item v-if='true' class="fn-d-i-b" label="额定功率(KW):" :label-width="formLabelWidth">
+		  <el-input v-model="form.name" placeholder="请输入额定功率" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		<el-form-item v-if='true' class="fn-d-i-b" label="变压器:" :label-width="formLabelWidth">
+		  <el-input v-model="form.name" placeholder="请输入变压器" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		<el-form-item v-if='true' class="fn-d-i-b" label="变电站:" :label-width="formLabelWidth">
+		  <el-input v-model="form.name" placeholder="请输入变电站" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		<el-form-item v-if='true' class="fn-d-i-b" label="整流器数:" :label-width="formLabelWidth">
+		  <el-input v-model="form.name" placeholder="请输入整流器数" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		<el-form-item v-if='true' class="fn-d-i-b" label="列号:" :label-width="formLabelWidth">
+		  <el-input v-model="form.name" placeholder="请输入列号" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		<el-form-item v-if='true' class="fn-d-i-b" label="位号:" :label-width="formLabelWidth">
+		  <el-input v-model="form.name" placeholder="请输入位号" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+	  </el-form>
+	  <div slot="footer" class="dialog-footer">
+	    <el-button @click="addRoom = false">取 消</el-button>
+	    <el-button type="primary" @click="addRoom = false">确 定</el-button>
+	  </div>
+	</el-dialog>
   </div>
 </template>
 
@@ -205,7 +386,7 @@ import importFeed from "./importFeed"; // form表单组件注册
 import paging from "./paging"; // 分页
 import qs from "qs";
 import { listSearchMixin } from "../../mixin"; //请求
-import { api } from "../../api/api"; //请求
+import { api, api3 } from "../../api/api"; //请求
 import moduleBar from "./moduleBar"; //微模块修改添加
 import cabinetBar from "./cabinetBar"; //机架修改添加
 export default {
@@ -221,6 +402,7 @@ export default {
   data() {
     return {
       loading: false,
+      add1: false,
 	  radio: '1',
       barNames: "可维护资源列表", // 指示栏名称
       nabarCation: imagesSrc.nabarCation, // 图片
@@ -236,6 +418,17 @@ export default {
       page: 1,
       pageSize: 10,
       multipleSelection: [], //选择行
+	  formLabelWidth: '140px',
+	  form: {
+	  		name: '',
+	  		region: '',
+	  		date1: '',
+	  		date2: '',
+	  		delivery: false,
+	  		type: [],
+	  		resource: '',
+	  		desc: ''
+	  },
       foremostDataVal: [
         {
           value: 1,
@@ -281,21 +474,70 @@ export default {
 	  ],
     };
   },
+  created() {
+	 this.getTableList(); 
+  },
   watch: {},
   methods: {
     init() {
-      // this.getOrganList();
-      this.findResourceList();
+		var that = this
+		let query = that.$route.query
+		that.sourceType = query.sourceType
+		// this.getOrganList();
+		this.getTableList();
     },
+	getTableList () {
+	  var that = this
+	  console.log(that.$route.query)
+	  // let data = qs.stringify({
+			//   'page': that.page,
+			//   'pageSize': that.pageSize,
+			//   'buildName': that.$route.query.name, // 机楼名称
+			//   'roomName': that.searchName, // 机房名称
+			//   'importantLevel': that.searchName, // 重要等级
+			//   'examinePower': that.searchName, // 审核权限
+			//   'buildId': that.$route.query.rsId // 机楼rsId
+		 //  })
+	  let param = {
+		  // url: api3.getFrameListByParamPage +'?page=' + that.page + '&pageSize =' + that.pageSize + '&buildName =' + that.buildName + '&roomName =' + that.roomName + '&buildId =' + that.$route.query.rsId,
+		  url: api3.getFrameListByParamPage,
+		  method: 'POST',
+		  contentType : 'application/x-www-form-urlencoded',
+		  data: qs.stringify({
+			  'page': that.page,
+			  'pageSize': that.pageSize,
+			  'buildName': that.$route.query.name, // 机楼名称
+			  'roomName': that.searchName, // 机房名称
+			  'importantLevel': that.searchName, // 重要等级
+			  'examinePower': that.searchName, // 审核权限
+			  'buildId': that.$route.query.rsId // 机楼rsId
+		  })
+	  }
+	  that.sendReq( param, (res) => {
+		console.log(res)
+		if (res.respHeader.resultCode == 0) {
+			res.respBody.data.list.forEach((val) =>{
+				console.log(val.createTime)
+				let data = new Date(val.createTime)
+				val.createTime = data.getFullYear() + '/' + (data.getMonth() + 1) + '/' + data.getDate()
+				// let time = new Date(parseInt(val.createTime)).toLocaleString().replace(/:\d{1,2}$/,' ');
+				if (val.frameSource == 0) {
+					val.frameSource = '手动录入'
+				} else {
+					val.frameSource = '资源生成'
+				}
+			})
+		  that.tableData = res.respBody.data.list;
+		  that.tableParams.total = res.respBody.data.totals;
+		} else {
+		  that.$message.error(res.respHeader.message);
+		}
+	  })
+	},
 	handleEdit(index, row) {
 	  console.log(index, row);
-	  row.type = this.sourceType
-	  if(this.sourceType === 2){
-		  // this.pushPage('')
-	  } else {
-		  this.pushPage('/lookEquipment', row)
-	  }
-	  
+	  row.sourceType = this.sourceType
+	  this.pushPage('/lookEquipment', row)
 	},
 	sourceTypeChange (e) {
 	  console.log(e)
@@ -305,7 +547,7 @@ export default {
 	  } else {
 		  this.placeholder = '请按机楼名称查询'
 	  }
-	  this.findResourceList();
+	  this.getFrameListByParamPage();
 	},
     examineVerify() {},
     changeFun(val) {
@@ -537,7 +779,7 @@ export default {
       _this.countyId = formInline.county_id;
       _this.sourceType = formInline.sourceType;
       _this.sourceName = formInline.sourceName;
-      _this.findResourceList();
+      _this.getFrameListByParamPage();
     },
     getOrganList() {
       let _this = this;
@@ -610,11 +852,11 @@ export default {
     handleSizeChange(val) {
       this.pageSize = val;
       this.page = 1;
-      this.findResourceList();
+      this.getTableList();
     },
     handleCurrentChange(val) {
       this.page = val;
-      this.findResourceList();
+      this.getTableList();
     },
     // updateBuilding(val){
     //     let _this = this;
@@ -655,7 +897,7 @@ export default {
       _this.sendReq(param, res => {
         if (res.respHeader.resultCode == 0) {
           this.$message({ type: "success", message: "修改成功" });
-          _this.findResourceList();
+          _this.getTableList();
         } else {
           this.$message.error(res.respHeader.message);
         }
@@ -670,7 +912,7 @@ export default {
       _this.sendReq(param, res => {
         if (res.respHeader.resultCode == 0) {
           this.$message({ type: "success", message: "修改成功" });
-          _this.findResourceList();
+          _this.getTableList();
         } else {
           this.$message.error(res.respHeader.message);
         }
@@ -769,7 +1011,7 @@ export default {
         } else {
           this.$message.error(res.respHeader.message);
         }
-        _this.findResourceList();
+        _this.getTableList();
       });
     },
     deleteCabinets(ids) {
@@ -788,7 +1030,7 @@ export default {
         } else {
           this.$message.error(res.respHeader.message);
         }
-        _this.findResourceList();
+        _this.getTableList();
       });
     }
   },

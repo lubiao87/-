@@ -3,6 +3,8 @@ export default BSEURL => {
     // 机楼模块
     getCountyList: BSEURL + "/build/getCountyList", // 获取广州市内区县分公司
     getBuildListByParamPage: BSEURL + "/build/getBuildListByParamPage", // 按条件分页查询机楼列表
+	// 接入间
+    getAccessRoomListByPage: BSEURL + "/room/getAccessRoomListByPage", // 按条件分页查询接入间列表
 	// 机房模块
     getFloorListByBuildId: BSEURL + "/room/getFloorListByBuildId", // 根据机楼Id查询楼层列表
     insertRoomSelective: BSEURL + "/room/insertRoomSelective", // 新增机房

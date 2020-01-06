@@ -25,18 +25,18 @@
 		  <el-select v-model="district" placeholder="所属区域" @change='districtChange'>
 		   <el-option 
 				v-for="item in districtSelectList"
-				:key="item.value"
-				:label="item.label"
-				:value="item.value">
+				:key="item.id"
+				:label="item.name"
+				:value="item.id">
 		   </el-option>
 		  </el-select>
 		  <el-row class="demo-autocomplete" style="display: inline-block;top: 14px;margin-left:20px;width: 40%;">
 		    
-		    <el-col :span="12">
+		    <el-col :span="14">
 		      <!-- <div class="sub-title">输入后匹配输入建议</div> -->
 		      <el-autocomplete
 		        class="inline-input"
-		        v-model="state2"
+		        v-model="searchName"
 		        :fetch-suggestions="querySearch"
 		        :placeholder="placeholder"
 		        :trigger-on-focus="false"
@@ -48,7 +48,8 @@
           <div class="parinciRepreTable" >
             <el-table 
               :data="tableData"
-              style="width: 100%"
+              class="fn-w100"
+			  height="600"
               @selection-change="changeFun"
             >
               <!-- <el-table-column type="selection" width="50"></el-table-column> -->
@@ -68,7 +69,7 @@
               ></el-table-column>
               <el-table-column
                 v-if="sourceType == 1"
-                prop="district"
+                prop="countyName"
                 label="所属区域"
 				align="center"
                 :key="6"
@@ -82,14 +83,14 @@
               ></el-table-column>
               <el-table-column
                 v-if="sourceType == 2"
-                prop="district"
+                prop="countyName"
                 label="所属区域"
 				align="center"
                 :key="21"
               ></el-table-column>
               <el-table-column
                 v-if="sourceType == 2"
-                prop="area"
+                prop="measureArea"
                 label="接入间面积（m²）"
 				align="center"
                 :key="34"
@@ -98,7 +99,7 @@
 			        <template slot-scope="scope">
 			          <el-button
 			            size="mini" type="primary"
-			            @click="handleEdit(scope.$index, scope.row)">{{sourceType==1?'管理机房': '管理机机架'}}</el-button>
+			            @click="handleEdit(scope.$index, scope.row)">{{sourceType==1?'管理机房': '管理机架'}}</el-button>
 			        </template>
 			      </el-table-column>
              </el-table>
@@ -137,14 +138,13 @@ import importFeed from "./importFeed"; // form表单组件注册
 import paging from "./paging"; // 分页
 import qs from "qs";
 import { listSearchMixin } from "../../mixin"; //请求
-import { api } from "../../api/api"; //请求
+import { api, api3 } from "../../api/api"; //请求
 import moduleBar from "./moduleBar"; //微模块修改添加
 import cabinetBar from "./cabinetBar"; //机架修改添加
 export default {
   name: "maintainList",
   components: { StatusBar, importFeed, paging, moduleBar, cabinetBar },
   mixins: [listSearchMixin],
-  mounted: function() {},
   beforeRouteEnter: function(to, from, next) {
     next(vm => {
       vm.init();
@@ -156,10 +156,13 @@ export default {
       barNames: "可维护资源列表", // 指示栏名称
       nabarCation: imagesSrc.nabarCation, // 图片
       applicationStatus: "请选择资源类型",
+	  searchName: '',
+	  searchNameList: [],
+	  countyId: '',
 	  placeholder: '请按机楼名称查询',
       district: "所属区域",
       currentStatus: 2, // 根据当前判断时间选择器或者输入框那个展示
-      sourceType: 1, //资源类型（1：微机楼，2：机柜）
+      sourceType: 1, //资源类型（1：机楼，2：接入间）
       cabinetHandleType: 1, //机柜弹出框操作类型（1：添加，2修改）
       moduleHandleType: 1, //微模块弹出框操作类型（1：添加，2修改）
       county_id: null,
@@ -205,28 +208,126 @@ export default {
       },
       tableData: [],
 	  
-	  tableHead:[
-		  {sourceType: 1, prop: 'name', label: '所属机房',  key: '1'},
-		  {sourceType: 1, prop: 'moduleRoomName', label: '所在房间号', key: '2' },
-		  {sourceType: 1, prop: 'dCPower', label: '所在楼层', key: '4' },
-	  ],
     };
   },
-  watch: {},
+  created () {
+    var that = this
+	that.getCountyList()
+	this.getDataList();
+  },
+  mounted () {
+	  this.searchNameList = this.loadAll();
+  },
+  watch: {
+    applicationStatus(val) {
+      console.log("multipleSelection", val);
+    }
+  },
   methods: {
     init() {
       // this.getOrganList();
-      this.findResourceList();
+      this.getDataList();
+    },
+	getCountyList () {
+	  var that = this
+	  let param = {
+		  url: api3.getCountyList,
+		  method: 'GET',
+	  }
+	  that.sendReq( param, (res) => {
+		console.log(res)
+		that.districtSelectList = res.respBody.countyList
+	  })
+    },
+	getDataList () {
+	  var that = this
+	  let url = ''
+	  if (that.sourceType === 2) {
+		  url = api3.getAccessRoomListByPage
+	  } else {
+		  url = api3.getBuildListByParamPage
+	  }
+	  let param = {
+		  url: url,
+		  method: 'POST',
+		  data: qs.stringify({
+			  'page': that.page,
+			  'pageSize': that.pageSize,
+			  'name': that.searchName,
+			  'countyId': that.countyId
+		  })
+	  }
+	  that.sendReq( param, (res) => {
+		console.log(res)
+		if (res.respHeader.resultCode == 0) {
+		  that.tableData = res.respBody.data.list;
+		  that.tableParams.total = res.respBody.data.totals;
+		} else {
+		  that.$message.error(res.respHeader.message);
+		}
+	  })
+	},
+	districtChange (val) {
+		var that = this
+		that.countyId = val
+		that.getDataList()
+	},
+	querySearch(queryString, cb) {
+		var searchNameList = this.tableData;
+		console.log(queryString)
+		console.log(searchNameList)
+		// var results = queryString ? searchNameList.filter(this.createFilter(queryString)) : searchNameList;
+		var results = queryString ? searchNameList.filter(this.createFilter(queryString)) : searchNameList;
+		console.log(results)
+		// 调用 callback 返回建议列表的数据
+		cb(results);
+    },
+	createFilter(queryString) {
+		return (restaurant) => {
+		  return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+		};
+	},
+	loadAll() {
+		return [
+		  { "value": "三全鲜食（北新泾店）", "address": "长宁区新渔路144号" },
+		  { "value": "三全鲜食（北新泾店1）", "address": "长宁区新渔路144号" },
+		  { "value": "三全鲜食（北新泾店2）", "address": "长宁区新渔路144号" },
+		  { "value": "三全鲜食（北新泾店3）", "address": "长宁区新渔路144号" },
+		  { "value": "三全鲜食（北新泾店4）", "address": "长宁区新渔路144号" },
+		  { "value": "三全鲜食（北新泾店5）", "address": "长宁区新渔路144号" },
+		  { "value": "三全鲜食（北新泾店6）", "address": "长宁区新渔路144号" },
+		  { "value": "三全鲜食（北新泾店7）", "address": "长宁区新渔路144号" },
+		  { "value": "三全鲜食（北新泾店8）", "address": "长宁区新渔路144号" },
+		  { "value": "三全鲜食（北新泾店9）", "address": "长宁区新渔路144号" },
+		  { "value": "三全鲜食（北新泾店23）", "address": "长宁区新渔路144号" },
+		  { "value": "三全鲜食（北新泾店34）", "address": "长宁区新渔路144号" },
+		  { "value": "三全鲜食（北新泾店53）", "address": "长宁区新渔路144号" },
+		  { "value": "三全鲜食（北新泾店63）", "address": "长宁区新渔路144号" },
+		  { "value": "三全鲜食（北新泾店243）", "address": "长宁区新渔路144号" },
+		  { "value": "三全鲜食（北新泾店123）", "address": "长宁区新渔路144号" },
+		  { "value": "三全鲜食（北新泾店234）", "address": "长宁区新渔路144号" },
+		  { "value": "三全鲜食（北新4213泾店）", "address": "长宁区新渔路144号" },
+		  { "value": "三全鲜食（北新泾1234店）", "address": "长宁区新渔路144号" },
+		  { "value": "三全鲜食（1北新4泾店）", "address": "长宁区新渔路144号" },
+		  { "value": "三全鲜食（北新14123泾店）", "address": "长宁区新渔路144号" },
+		  { "value": "Hot honey 首尔炸鸡（仙霞路）", "address": "上海市长宁区淞虹路661号" },
+		  { "value": "新旺角茶餐厅", "address": "上海市普陀区真北路988号创邑金沙谷6号楼113" },
+		  { "value": "泷千家(天山西路店)", "address": "天山西路438号" },
+		];
+	},
+    handleSelect(item) {
+	  console.log('开始搜索');
+	  console.log(item);
+	  this.getDataList()
     },
 	handleEdit(index, row) {
 	  console.log(index, row);
-	  row.type = this.sourceType
+	  row.sourceType = this.sourceType
 	  if(this.sourceType === 2){
 		  this.pushPage('/frameList', row)
 	  } else {
 		  this.pushPage('/machineRoomList', row)
 	  }
-	  
 	},
 	sourceTypeChange (e) {
 	  console.log(e)
@@ -236,19 +337,14 @@ export default {
 	  } else {
 		  this.placeholder = '请按机楼名称查询'
 	  }
-	  this.findResourceList();
+	  // this.findResourceList();
+	  this.getDataList()
 	},
     examineVerify() {},
     changeFun(val) {
       console.log(val);
       this.multipleSelection = val;
     },
-    // buildingUpdate (row) {
-    //     this.$refs.buildingUpdateBar.show(row);
-    // },
-    // machineModuleRoomUpdate(row){
-    //     this.$refs.machineModuleRoomUpdateBar.show(row);
-    // },
     moduleUpdateBar(row) {
       this.$refs.moduleBar.show(row);
     },
@@ -468,7 +564,8 @@ export default {
       _this.countyId = formInline.county_id;
       _this.sourceType = formInline.sourceType;
       _this.sourceName = formInline.sourceName;
-      _this.findResourceList();
+      // _this.findResourceList();
+	  this.getDataList()
     },
     getOrganList() {
       let _this = this;
@@ -541,11 +638,13 @@ export default {
     handleSizeChange(val) {
       this.pageSize = val;
       this.page = 1;
-      this.findResourceList();
+      // this.findResourceList();
+	  this.getDataList()
     },
     handleCurrentChange(val) {
       this.page = val;
-      this.findResourceList();
+      // this.findResourceList();
+	  this.getDataList()
     },
     // updateBuilding(val){
     //     let _this = this;
@@ -586,7 +685,8 @@ export default {
       _this.sendReq(param, res => {
         if (res.respHeader.resultCode == 0) {
           this.$message({ type: "success", message: "修改成功" });
-          _this.findResourceList();
+          // _this.findResourceList();
+		  this.getDataList()
         } else {
           this.$message.error(res.respHeader.message);
         }
@@ -601,7 +701,8 @@ export default {
       _this.sendReq(param, res => {
         if (res.respHeader.resultCode == 0) {
           this.$message({ type: "success", message: "修改成功" });
-          _this.findResourceList();
+          // _this.findResourceList();
+		  this.getDataList()
         } else {
           this.$message.error(res.respHeader.message);
         }
@@ -700,7 +801,8 @@ export default {
         } else {
           this.$message.error(res.respHeader.message);
         }
-        _this.findResourceList();
+        // _this.findResourceList();
+		this.getDataList()
       });
     },
     deleteCabinets(ids) {
@@ -719,15 +821,10 @@ export default {
         } else {
           this.$message.error(res.respHeader.message);
         }
-        _this.findResourceList();
+		this.getDataList()
       });
     }
   },
-  watch: {
-    applicationStatus(val) {
-      console.log("multipleSelection", val);
-    }
-  }
 };
 </script>
 

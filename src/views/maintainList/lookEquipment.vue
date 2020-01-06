@@ -36,6 +36,7 @@
             <el-table 
               :data="tableData"
               class="fn-w100"
+			  height="600"
               @selection-change="changeFun"
             >
               <el-table-column type="selection" width="50"></el-table-column>

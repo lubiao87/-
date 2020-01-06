@@ -402,7 +402,7 @@ export default {
     getRoomByIdData() {
       const self = this;
       let formData = new FormData();
-      formData.append("roomId", "123");
+      formData.append("roomId", "ADSMLHYUR01");
       // formData.append("roomId", "123");
       let param = {
         url: api2.getRoomByIdData, //获取request_url.js文件的请求路径

@@ -48,12 +48,13 @@
           <div class="parinciRepreTable" >
             <el-table 
               :data="tableData"
-              style="width: 100%"
+              class="fn-w100"
+			  height="600"
               @selection-change="changeFun"
             >
               <el-table-column type="selection" width="50"></el-table-column>
 			  <el-table-column
-			    prop="name"
+			    prop="createTime"
 			    label="创建时间"
 			  	align="center"
 			    :key="1"
@@ -65,31 +66,31 @@
 			    :key="2"
 			  ></el-table-column>
 			  <el-table-column
-			    prop="name"
+			    prop="roomNo"
 			    label="房间号"
 			  	align="center"
 			    :key="3"
 			  ></el-table-column>
 			  <el-table-column
-			    prop="name"
+			    prop="floorName"
 			    label="所在楼层"
 			  	align="center"
 			    :key="4"
 			  ></el-table-column>
 			  <el-table-column
-			    prop="name"
+			    prop="buildName"
 			    label="所属机楼"
 			  	align="center"
 			    :key="5"
 			  ></el-table-column>
 			  <el-table-column
-			    prop="name"
+			    prop="countyName"
 			    label="所属区域"
 			  	align="center"
 			    :key="6"
 			  ></el-table-column>
               <el-table-column
-                prop="area"
+                prop="measureArea"
                 label="机房面积（m²）"
 				align="center"
                 :key="7"
@@ -101,13 +102,13 @@
                 :key="8"
               ></el-table-column>
               <el-table-column
-                prop="name"
+                prop="importantLevel"
                 label="重要等级"
 				align="center"
                 :key="9"
               ></el-table-column>
               <el-table-column
-                prop="district"
+                prop="examinePower"
                 label="审核权限"
 				align="center"
                 :key="10"
@@ -148,80 +149,80 @@
 	
 	<el-dialog title="新增" :visible.sync="addRoom" custom-class="dialogClass" width="50%">
 	  <el-form :model="form" >
-	    <el-form-item class="fn-d-i-b" label="机架名称:" :label-width="formLabelWidth">
-	      <el-input v-model="form.name" autocomplete="off" class="fn-m100"></el-input>
+	    <el-form-item class="fn-d-i-b" label="机房名称:" :label-width="formLabelWidth">
+	      <el-input v-model="form.name" placeholder="请输入" autocomplete="off" class="fn-m-220"></el-input>
 	    </el-form-item>
-		<el-form-item class="fn-d-i-b" label="可放机架数:" :label-width="formLabelWidth">
-		  <el-input v-model="form.name" autocomplete="off" class="fn-m100"></el-input>
-		</el-form-item>
-		<el-form-item class="fn-d-i-b" label="编码:" :label-width="formLabelWidth">
-		  <el-input v-model="form.name" autocomplete="off" class="fn-m100"></el-input>
-		</el-form-item>
-		<el-form-item class="fn-d-i-b" label="机房长度(cm):" :label-width="formLabelWidth">
-		  <el-input v-model="form.name" autocomplete="off" class="fn-m100"></el-input>
-		</el-form-item>
-		<el-form-item class="fn-d-i-b" label="房间号:" :label-width="formLabelWidth">
-		  <el-input v-model="form.name" autocomplete="off" class="fn-m100"></el-input>
-		</el-form-item>
-		<el-form-item class="fn-d-i-b" label="机房宽度(cm):" :label-width="formLabelWidth">
-		  <el-input v-model="form.name" autocomplete="off" class="fn-m100"></el-input>
-		</el-form-item>
-		<el-form-item class="fn-d-i-b" label="所在楼层:" :label-width="formLabelWidth">
-		  <el-input v-model="form.name" autocomplete="off" class="fn-m100"></el-input>
-		</el-form-item>
-		<el-form-item class="fn-d-i-b" label="机房高度(cm):" :label-width="formLabelWidth">
-		  <el-input v-model="form.name" autocomplete="off" class="fn-m100"></el-input>
-		</el-form-item>
+	  		<el-form-item class="fn-d-i-b" label="可放机架数:" :label-width="formLabelWidth">
+	  		  <el-input v-model="form.name" placeholder="请输入" autocomplete="off" class="fn-m-220"></el-input>
+	  		</el-form-item>
+	  		<el-form-item class="fn-d-i-b" label="编码:" :label-width="formLabelWidth">
+	  		  <el-input v-model="form.name" placeholder="请输入" autocomplete="off" class="fn-m-220"></el-input>
+	  		</el-form-item>
+	  		<el-form-item class="fn-d-i-b" label="机房长度(cm):" :label-width="formLabelWidth">
+	  		  <el-input v-model="form.name" placeholder="请输入" autocomplete="off" class="fn-m-220"></el-input>
+	  		</el-form-item>
+	  		<el-form-item class="fn-d-i-b" label="房间号:" :label-width="formLabelWidth">
+	  		  <el-input v-model="form.name" placeholder="请输入" autocomplete="off" class="fn-m-220"></el-input>
+	  		</el-form-item>
+	  		<el-form-item class="fn-d-i-b" label="机房宽度(cm):" :label-width="formLabelWidth">
+	  		  <el-input v-model="form.name" placeholder="请输入" autocomplete="off" class="fn-m-220"></el-input>
+	  		</el-form-item>
+	  		<el-form-item class="fn-d-i-b" label="所在楼层:" :label-width="formLabelWidth">
+	  		  <el-input v-model="form.name" placeholder="请输入" autocomplete="off" class="fn-m-220"></el-input>
+	  		</el-form-item>
+	  		<el-form-item class="fn-d-i-b" label="机房高度(cm):" :label-width="formLabelWidth">
+	  		  <el-input v-model="form.name" placeholder="请输入" autocomplete="off" class="fn-m-220"></el-input>
+	  		</el-form-item>
 	    <el-form-item class="fn-d-i-b" label="所属机楼:" :label-width="formLabelWidth">
-	      <el-select v-model="form.region" placeholder="请选择活动区域">
+	      <el-select v-model="form.region" placeholder="请选择活动区域" class="fn-m-220">
 	        <el-option label="机楼一" value="shanghai"></el-option>
 	        <el-option label="机楼二" value="beijing"></el-option>
 	      </el-select>
 	    </el-form-item>
-		<el-form-item class="fn-d-i-b" label="外电开关容量:" :label-width="formLabelWidth">
-		  <el-input v-model="form.name" autocomplete="off" class="fn-m100"></el-input>
-		</el-form-item>
-		<el-form-item class="fn-d-i-b" label="所属区域:" :label-width="formLabelWidth">
-		  <el-select v-model="form.region" placeholder="请选择活动区域">
-		    <el-option label="区域1" value="shanghai"></el-option>
-		    <el-option label="区域2" value="beijing"></el-option>
-		  </el-select>
-		</el-form-item>
-		<el-form-item class="fn-d-i-b" label="是否租用:" :label-width="formLabelWidth">
-		  <el-select v-model="form.region" placeholder="请选择活动区域">
-		    <el-option label="是" value="shanghai"></el-option>
-		    <el-option label="否" value="beijing"></el-option>
-		  </el-select>
-		</el-form-item>
-		<el-form-item class="fn-d-i-b" label="机房面积(㎡):" :label-width="formLabelWidth">
-		  <el-input v-model="form.name" autocomplete="off" class="fn-m100"></el-input>
-		</el-form-item>
-		<el-form-item class="fn-d-i-b" label="综合接入局:" :label-width="formLabelWidth">
-		  <el-select v-model="form.region" placeholder="请选择活动区域">
-		    <el-option label="是" value="shanghai"></el-option>
-		    <el-option label="否" value="beijing"></el-option>
-		  </el-select>
-		</el-form-item>
-		<el-form-item class="fn-d-i-b" label="重要等级:" :label-width="formLabelWidth">
-		  <el-select v-model="form.region" placeholder="请选择活动区域">
-		    <el-option label="A" value="shanghai"></el-option>
-		    <el-option label="B" value="beijing"></el-option>
-		    <el-option label="C" value="beijing"></el-option>
-		  </el-select>
-		</el-form-item>
-		<el-form-item class="fn-d-i-b" label="是否直供电:" :label-width="formLabelWidth">
-		  <el-select v-model="form.region" placeholder="请选择活动区域">
-		    <el-option label="是" value="shanghai"></el-option>
-		    <el-option label="否" value="beijing"></el-option>
-		  </el-select>
-		</el-form-item>
-		<el-form-item class="fn-d-i-b" label="审核权限:" :label-width="formLabelWidth">
-		  <el-select v-model="form.region" placeholder="请选择活动区域">
-		    <el-option label="省级" value="shanghai"></el-option>
-		    <el-option label="市级" value="beijing"></el-option>
-		    <el-option label="县级" value="beijing"></el-option>
-		  </el-select>
-		</el-form-item>
+	  		<el-form-item class="fn-d-i-b" label="外电开关容量:" :label-width="formLabelWidth">
+	  		  <el-input v-model="form.name" placeholder="请输入" autocomplete="off" class="fn-m-220"></el-input>
+	  		</el-form-item>
+	  		<el-form-item class="fn-d-i-b" label="所属区域:" :label-width="formLabelWidth">
+	  		  <el-select v-model="form.region" placeholder="请选择活动区域" class="fn-m-220">
+	  		    <el-option label="区域1" value="shanghai"></el-option>
+	  		    <el-option label="区域2" value="beijing"></el-option>
+	  		  </el-select>
+	  		</el-form-item>
+	  		<el-form-item class="fn-d-i-b" label="是否租用:" :label-width="formLabelWidth">
+	  		  <el-select v-model="form.region" placeholder="请选择活动区域" class="fn-m-220">
+	  		    <el-option label="是" value="shanghai"></el-option>
+	  		    <el-option label="否" value="beijing"></el-option>
+	  		  </el-select>
+	  		</el-form-item>
+	  		<el-form-item class="fn-d-i-b" label="机房面积(㎡):" :label-width="formLabelWidth">
+	  		  <el-input v-model="form.name" placeholder="请输入" autocomplete="off" class="fn-m-220"></el-input>
+	  		</el-form-item>
+	  		<el-form-item class="fn-d-i-b" label="综合接入局:" :label-width="formLabelWidth">
+	  		  <el-select v-model="form.region" placeholder="请选择活动区域" class="fn-m-220">
+	  		    <el-option label="是" value="shanghai"></el-option>
+	  		    <el-option label="否" value="beijing"></el-option>
+	  		  </el-select>
+	  		</el-form-item>
+	  		<el-form-item class="fn-d-i-b" label="重要等级:" :label-width="formLabelWidth">
+	  		  <el-select v-model="form.region" placeholder="请选择活动区域" class="fn-m-220">
+	  		    <el-option label="A" value="shanghai"></el-option>
+	  		    <el-option label="B" value="beijing"></el-option>
+	  		    <el-option label="C" value="beijing"></el-option>
+	  		  </el-select>
+	  		</el-form-item>
+	  		<el-form-item class="fn-d-i-b" label="是否直供电:" :label-width="formLabelWidth">
+	  		  <el-select v-model="form.region" placeholder="请选择活动区域" class="fn-m-220">
+	  		    <el-option label="是" value="shanghai"></el-option>
+	  		    <el-option label="否" value="beijing"></el-option>
+	  		  </el-select>
+	  		</el-form-item>
+	  		<el-form-item class="fn-d-i-b" label="审核权限:" :label-width="formLabelWidth">
+	  		  <el-select v-model="form.region" placeholder="请选择活动区域" class="fn-m-220">
+	  		    <el-option label="省级" value="shanghai"></el-option>
+	  		    <el-option label="市级" value="beijing"></el-option>
+	  		    <el-option label="县级" value="beijing"></el-option>
+	  		  </el-select>
+	  		</el-form-item>
 	  </el-form>
 	  <div slot="footer" class="dialog-footer">
 	    <el-button @click="addRoom = false">取 消</el-button>
@@ -239,14 +240,14 @@ import importFeed from "./importFeed"; // form表单组件注册
 import paging from "./paging"; // 分页
 import qs from "qs";
 import { listSearchMixin } from "../../mixin"; //请求
-import { api } from "../../api/api"; //请求
+import { api, api3 } from "../../api/api"; //请求
 import moduleBar from "./moduleBar"; //微模块修改添加
 import cabinetBar from "./cabinetBar"; //机架修改添加
 export default {
   name: "maintainList",
   components: { StatusBar, importFeed, paging, moduleBar, cabinetBar },
   mixins: [listSearchMixin],
-  mounted: function() {},
+  mounted () {},
   beforeRouteEnter: function(to, from, next) {
     next(vm => {
       vm.init();
@@ -280,7 +281,7 @@ export default {
 		resource: '',
 		desc: ''
 	  },
-	  formLabelWidth: '120px',
+	  formLabelWidth: '140px',
       foremostDataVal: [
         {
           value: 1,
@@ -326,14 +327,49 @@ export default {
 	  ],
     };
   },
-  watch: {},
+  created () {},
   methods: {
-    init() {
-      // this.getOrganList();
-      this.findResourceList();
-    },
+	init() {
+		var that = this
+		let query = that.$route.query
+		that.sourceType = query.sourceType
+		that.getRoomListByParamPage();
+	},
+	getRoomListByParamPage () {
+	  var that = this
+	  console.log(that.$route.query)
+	  let param = {
+		  url: api3.getRoomListByParamPage,
+		  method: 'POST',
+		  data: qs.stringify({
+			  'page': that.page,
+			  'pageSize': that.pageSize,
+			  'buildName': that.$route.query.name, // 机楼名称
+			  'roomName': that.searchName, // 机房名称
+			  'importantLevel': that.searchName, // 重要等级
+			  'examinePower': that.searchName, // 审核权限
+			  'buildId': that.$route.query.rsId // 机楼rsId
+		  })
+	  }
+	  that.sendReq( param, (res) => {
+		// console.log(res)
+		if (res.respHeader.resultCode == 0) {
+			res.respBody.data.list.forEach((val) =>{
+				console.log(val.createTime)
+				let data = new Date(val.createTime)
+				val.createTime = data.getFullYear() + '/' + (data.getMonth() + 1) + '/' + data.getDate()
+				// let time = new Date(parseInt(val.createTime)).toLocaleString().replace(/:\d{1,2}$/,' ');
+				console.log(val.createTime)
+			})
+		    that.tableData = res.respBody.data.list;
+		    that.tableParams.total = res.respBody.data.totals;
+		} else {
+		  that.$message.error(res.respHeader.message);
+		}
+	  })
+	},
 	handleEdit(index, row) {
-	  row.type = this.sourceType
+	  row.sourceType = this.sourceType
 	  console.log(index, row);
 	  this.pushPage('/frameList', row)
 	},
@@ -345,240 +381,8 @@ export default {
 	  } else {
 		  this.placeholder = '请按机楼名称查询'
 	  }
-	  this.findResourceList();
+	  this.getRoomListByParamPage();
 	},
-    examineVerify() {},
-    changeFun(val) {
-      console.log(val);
-      this.multipleSelection = val;
-    },
-    // buildingUpdate (row) {
-    //     this.$refs.buildingUpdateBar.show(row);
-    // },
-    // machineModuleRoomUpdate(row){
-    //     this.$refs.machineModuleRoomUpdateBar.show(row);
-    // },
-    moduleUpdateBar(row) {
-      this.$refs.moduleBar.show(row);
-    },
-    cabinetUpdateBar(row) {
-      this.$refs.cabinetBar.show(row);
-    },
-    findResourceList() {
-      let _this = this;
-	  console.log(_this.sourceType)
-      var paramData = {};
-      if (_this.sourceName != null && _this.sourceName != "") {
-        paramData["sourceName"] = _this.sourceName;
-      }
-      if (_this.sourceType != null && _this.sourceType != "") {
-        paramData["sourceType"] = _this.sourceType;
-      }
-      paramData["page"] = _this.page;
-      paramData["pageSize"] = _this.pageSize;
-      let param = {
-        url: api.resourcePlaningList,
-        data: paramData
-      };
-      // 模拟数据
-      let res = {};
-	  console.log("_this.sourceType:",_this.sourceType)
-      if (_this.sourceType === 1) {
-        res = {
-          respBody: {
-            total: 2,
-            rows: [
-              {
-                aCPower: "青云机楼",
-                area: 300,
-                code: "001DC",
-                column: "10",
-                dCPower: "一楼",
-                height: 2,
-                longth: 15,
-                moduleId: 1,
-                moduleRoomName: "001",
-                name: "一楼001机楼",
-                planStatus: 2,
-                roomId: 3,
-                district: "天河区",
-                totalMachineCount: 200,
-                totalMachineTime: "2019年1月11日 12:00",
-                width: 20
-              },
-              {
-                aCPower: "青云机楼",
-                area: 400,
-                code: "002DC",
-                column: "1",
-                dCPower: "二楼",
-                height: 5,
-                longth: 20,
-                moduleId: 2,
-                moduleRoomName: "002",
-                name: "二楼002机楼",
-                planStatus: 0,
-                roomId: 1,
-                district: "荔湾区",
-                totalMachineCount: 100,
-                totalMachineTime: "2019年2月",
-                width: 20
-              }
-            ]
-          },
-          respHeader: {
-            resultCode: 0,
-            message: "正确执行"
-          }
-        };
-      }
-
-      if (_this.sourceType === 2) {
-        res = {
-          respBody: {
-            total: 4,
-            rows: [
-              {
-                cabinetId: 1,
-                cabinetStatus: 2,
-                cabinetType: 1,
-                code: "jc-1",
-                column: "B",
-                currentType: 2,
-                height: 1,
-                longth: 2,
-                major: "DDF机架",
-                remainStandCabient: "2",
-                totalStandCabient: "100",
-                moduleId: 9,
-                moduleName: "一楼001机房",
-                buildName: "青云机楼",
-                district: "天河区",
-                area: "306",
-                name: "2号接入间",
-                power: 100,
-                usePower: 40,
-                row: "2",
-                totalUnitCount: 30,
-                unuseUnitCount: 20,
-                width: 2,
-                totalMachineTime: "2019年1月11日 12:00",
-                dataSources: "手动录入"
-              },
-              {
-                cabinetId: 2,
-                cabinetStatus: 2,
-                cabinetType: 1,
-                code: "jc-1",
-                column: "B",
-                currentType: 2,
-                height: 2,
-                longth: 3,
-                major: "ODF机架",
-                remainStandCabient: "34",
-                totalStandCabient: "39",
-                moduleId: 9,
-                moduleName: "二楼002机房",
-                buildName: "跑马场机楼",
-                district: "荔湾区",
-                area: "850",
-                name: "3号接入间",
-                power: 200,
-                usePower: 50,
-                row: "2",
-                totalUnitCount: 42,
-                unuseUnitCount: 22,
-                width: 2,
-                totalMachineTime: "2019年1月11日 12:00",
-                dataSources: "资源同步"
-              },
-              {
-                cabinetId: 3,
-                cabinetStatus: 2,
-                cabinetType: 1,
-                code: "jc-1",
-                column: "B",
-                currentType: 2,
-                height: 1,
-                longth: 2,
-                major: "ODF机架",
-                remainStandCabient: "20",
-                totalStandCabient: "100",
-                moduleId: 9,
-                moduleName: "五楼005机房",
-                buildName: "工业园机楼",
-                district: "荔湾区",
-                area: "560",
-                name: "4号接入间",
-                power: 200,
-                usePower: 30,
-                row: "2",
-                totalUnitCount: 34,
-                unuseUnitCount: 30,
-                width: 4,
-                totalMachineTime: "2019年1月11日 12:00",
-                dataSources: "手动录入"
-              },
-              {
-                cabinetId: 4,
-                cabinetStatus: 2,
-                cabinetType: 1,
-                code: "jc-1",
-                column: "B",
-                currentType: 2,
-                height: 2,
-                longth: 2,
-                major: "ODF机架",
-                remainStandCabient: "20",
-                totalStandCabient: "100",
-                moduleId: 9,
-                moduleName: "三楼003机房",
-                buildName: "跑马场机楼",
-                district: "白云区",
-                area: "450",
-                name: "5号接入间",
-                power: 290,
-                usePower: 80,
-                row: "2",
-                totalUnitCount: 30,
-                unuseUnitCount: 18,
-                width: 3,
-                totalMachineTime: "2019年1月11日 12:00",
-                dataSources: "手动录入"
-              }
-            ]
-          },
-          respHeader: {
-            resultCode: 0,
-            message: "正确执行"
-          }
-        };
-      }
-      if (res.respHeader.resultCode == 0) {
-        _this.tableData = res.respBody.rows;
-        _this.tableParams.total = res.respBody.total;
-      } else {
-        this.$message.error(res.respHeader.message);
-      }
-      // 请求后台接口
-       _this.sendReq(param, (res) => {
-			if(res.respHeader.resultCode == 0){
-				_this.tableData = res.respBody.rows;
-				_this.tableParams.total = res.respBody.total;
-			}else{
-				this.$message.error(res.respHeader.message);
-			}
-		}) 
-    },
-    submitList(formInline) {
-      console.log("submitList");
-      console.log(formInline);
-      let _this = this;
-      _this.countyId = formInline.county_id;
-      _this.sourceType = formInline.sourceType;
-      _this.sourceName = formInline.sourceName;
-      _this.findResourceList();
-    },
     getOrganList() {
       let _this = this;
       let param = {
@@ -607,85 +411,23 @@ export default {
       _this.pushPage("/micromoduleDetal", param);
       // this.$refs.examine.show()
     },
-    moduleFormatter(row, column, cellValue, index) {
-      if (cellValue == 0) {
-        return "规划中";
-      } else if (cellValue == 1) {
-        return "已预占";
-      } else if (cellValue == 2) {
-        return "已规划";
-      } else {
-        return "暂无数据";
-      }
-    },
-    powerFormatter(row, column, cellValue, index) {
-      return cellValue + " Kw";
-    },
-    specFormatter(row, column, cellValue, index) {
-      return cellValue + " m";
-    },
-    currentFormatter(row, column, cellValue, index) {
-      if (cellValue == 1) {
-        return "直流";
-      } else if (cellValue == 2) {
-        return "交流";
-      } else {
-        return "暂无数据";
-      }
-    },
-    cabinetStatusFormatter(row, column, cellValue, index) {
-      if (cellValue == 0) {
-        return "规划中";
-      } else if (cellValue == 1) {
-        return "已预占";
-      } else if (cellValue == 2) {
-        return "已规划";
-      } else {
-        return "暂无数据";
-      }
-    },
+   
     pushPage(url, param) {
       this.$router.push({ path: url, query: param });
     },
     handleSizeChange(val) {
       this.pageSize = val;
       this.page = 1;
-      this.findResourceList();
+      this.getRoomListByParamPage();
     },
     handleCurrentChange(val) {
       this.page = val;
-      this.findResourceList();
+      this.getRoomListByParamPage();
     },
-    // updateBuilding(val){
-    //     let _this = this;
-    //     let param = {
-    //         url: api.buildingUpdate,
-    //         data: val
-    //     }
-    //     _this.sendReq(param, (res) => {
-    //         if(res.respHeader.resultCode == 0){
-    //             this.$message({type: 'success',message: '修改成功'});
-    //             _this.findResourceList();
-    //         }else{
-    //             this.$message.error(res.respHeader.message);
-    //         }
-    //     })
-    // },
-    // updateModuleRoom(val){
-    //     let _this = this;
-    //     let param = {
-    //         url: api.moduleRoomUpdate,
-    //         data: val
-    //     }
-    //     _this.sendReq(param, (res) => {
-    //         if(res.respHeader.resultCode == 0){
-    //             this.$message({type: 'success',message: '修改成功'});
-    //             _this.findResourceList();
-    //         }else{
-    //             this.$message.error(res.respHeader.message);
-    //         }
-    //     })
-    // },
+    changeFun(val) {
+      console.log(val);
+      this.multipleSelection = val;
+    },
     moduleUpdate(val) {
       let _this = this;
       let param = {
@@ -695,7 +437,7 @@ export default {
       _this.sendReq(param, res => {
         if (res.respHeader.resultCode == 0) {
           this.$message({ type: "success", message: "修改成功" });
-          _this.findResourceList();
+          _this.getRoomListByParamPage();
         } else {
           this.$message.error(res.respHeader.message);
         }
@@ -710,26 +452,13 @@ export default {
       _this.sendReq(param, res => {
         if (res.respHeader.resultCode == 0) {
           this.$message({ type: "success", message: "修改成功" });
-          _this.findResourceList();
+          _this.getRoomListByParamPage();
         } else {
           this.$message.error(res.respHeader.message);
         }
       });
     },
-    addModule() {
-      console.log("addModule");
-      this.moduleHandleType = 1;
-      this.moduleUpdateBar(null);
-    },
-    addCabinet() {
-      console.log("addCabinet");
-      this.cabinetHandleType = 1;
-      this.cabinetUpdateBar(null);
-    },
-    loadingFn(e) {
-      console.log("loading", e);
-      this.loading = e;
-    },
+    
     editSource() {
       console.log("editSource");
       //修改资源
@@ -765,8 +494,7 @@ export default {
           cancelButtonText: "取消",
           type: "warning"
         }
-      )
-        .then(() => {
+      ).then(() => {
           if (_this.sourceType == 1) {
             let moduleIds = _this.getModuleSelectIdStr();
             _this.deleteModules(moduleIds);
@@ -809,7 +537,7 @@ export default {
         } else {
           this.$message.error(res.respHeader.message);
         }
-        _this.findResourceList();
+        _this.getRoomListByParamPage();
       });
     },
     deleteCabinets(ids) {
@@ -828,7 +556,7 @@ export default {
         } else {
           this.$message.error(res.respHeader.message);
         }
-        _this.findResourceList();
+        _this.getRoomListByParamPage();
       });
     }
   },
@@ -836,7 +564,7 @@ export default {
     applicationStatus(val) {
       console.log("multipleSelection", val);
     }
-  }
+  },
 };
 </script>
 

@@ -84,7 +84,7 @@
       <div class="show1" v-show="!moduleStatistics[4]">
         <div id="powerCharts" class="powerCharts"></div>
       </div>
-      <h5 class="ui-city-title ui-height48 none-hover">
+      <h5 class="ui-city-title ui-height48" :class="{'none-hover': modelType != 2}" @click="showBuilding">
         <span class="ui-linebg"></span>{{ boxTitle }}
       </h5>
       <el-tree
@@ -94,6 +94,7 @@
         node-key="buildId"
         :default-expanded-keys="expandedKeys"
         :default-checked-keys="checkedKeys"
+        v-if="modelType === 2"
       ></el-tree>
     </div>
     <div class="yhui-real-timeimg"></div>
@@ -140,13 +141,14 @@ import "three-fbxloader-offical";
 import { OrbitControls } from "../../utils/OrbitControls";
 import popup from "../../components/popup/popup";
 // import buildModel2d from "./build-model-2d";
-import { api2 } from "../../api/api"; //api配置请求的路径
+import { api2, url } from "../../api/api"; //api配置请求的路径
+import { Message } from 'element-ui';
 export default {
   name: "olmap",
   // props: ["coordinate"],
   mixins: [listSearchMixin],
   components: {
-    popup
+    popup,
     // buildModel2d
   },
   data() {
@@ -217,7 +219,7 @@ export default {
       panelShow: true,
       lookAround: false,
       cameraX: 0,
-      cameraY: -30000,
+      cameraY: 30000,
       cameraZ: 20000,
       floorName: "工业园机楼",
       cabinetType: [
@@ -365,9 +367,12 @@ export default {
     console.log("this.$route.params---", this.$route.params);
     this.floorName = this.$route.params.name;
     this.modelType = this.$route.params.modelType;
-    this.buildId = this.$route.params.buildId;
-    this.getRoomByIdData();
+    this.buildId = this.$route.params.modelId;
     this.getJieRuJianStatistics();
+    if (this.modelType === 2) {
+      this.cameraZ = -40000;
+      this.cameraY = 40000;
+    }
   },
   mounted() {
     const self = this;
@@ -375,6 +380,12 @@ export default {
       this.myChart = echarts.init(document.getElementById("powerCharts"));
       this.newMap();
       self.createHtml();
+      if (this.modelType === 1) {
+        this.loaderAur();
+      } else {
+        this.getFloorTreeData();
+        this.getBuildData();
+      }
     });
     //  this.$parent.restaurants = this.$parent.loadAll();
   },
@@ -392,10 +403,13 @@ export default {
         }
       });
     },
+    // 获取机房设备分布
     getRoomByIdData() {
       const self = this;
       let formData = new FormData();
-      formData.append("roomId", "123");
+      formData.append("roomId", this.buildId);
+      // formData.append("roomId", "ADSMLHYUR01");
+      // formData.append("roomId", "cs201912260023");
       // formData.append("roomId", "123");
       let param = {
         url: api2.getRoomByIdData, //获取request_url.js文件的请求路径
@@ -433,18 +447,44 @@ export default {
             let arr = [JSON.parse(item.split(" ")[0]) * 10, JSON.parse(item.split(" ")[1]) * 10];
             self.froomData.push(arr);
           });
+          this.setCabinet(); // 设置机房可视化
+        } else {
+          Message({
+            showClose: true,
+            message: res.respHeader.message,
+            type: 'error',
+            duration: 2000
+          })
+        }
+      });
+    },
+    // 获取机楼楼层列表
+    getFloorTreeData() {
+      const self = this;
+      let param = {
+        // url: api2.getFloorTreeData + `buildId=${this.buildId}` //获取request_url.js文件的请求路径
+        url: api2.getFloorTreeData + `?buildId=${this.buildId}` //获取request_url.js文件的请求路径
+      };
+      self.sendReq(param, res => {
+        console.log("菜单数据", res);
+        if (res.respHeader.resultCode === 0) {
+          self.floorTreeData = res.respBody.floorTreeData;
         }
       });
     },
     handleNodeClick(data) {
-      console.log(data);
+      console.log("handleNodeClick", data);
       // 查看楼层
       this.buildId = data.buildId;
       this.floorName = "工业园机楼 - " + data.label;
       this.isCollapse = "模块间视图";
       this.removeObjAll();
-      this.setCabinet();
-      // }
+
+      if (data.modelType === 1) {
+        this.getRoomByIdData();
+      } else if (data.modelType === 3) {
+        this.scene.add(this.FloorFour);
+      }
     },
     createHtml() {
       const self = this;
@@ -490,15 +530,16 @@ export default {
       // window.requestAnimationFrame(this.render);
       this.render();
       this.raycaster = new THREE.Raycaster();
-      if (this.modelType === 1) {
-        this.loaderAur();
-      } else {
-        this.getBuildData();
-      }
+
     },
     getBuildData() {
-      this.FBXloader.load("./Assets/fbx/building.FBX", this.loaderObj);
-      this.FBXloader.load("./Assets/fbx/floorFour.FBX", self.loaderFloor4);
+      this.FBXloader.load( url + "building.FBX", this.loaderObj);
+      this.FBXloader.load( url + "floorFour.FBX", this.loaderFloor4);
+    },
+    // 加载楼层
+    loaderFloor4(obj) {
+      this.FloorFour = obj;
+      // obj.rotateX(-Math.PI / 2);
     },
     removeObjAll() {
       const self = this;
@@ -516,21 +557,21 @@ export default {
       self.scene.remove(this.roomModel);
       self.scene.remove(this.spriteGroup);
       self.scene.remove(this.capacityGroup);
+      this.removeEventListenerFn();
     },
     loaderAur() {
+      // console.log("url", url);
       const self = this;
-      // this.FBXloader.load("./Assets/fbx/biaozhun.FBX", self.loaderCabinet1);
-      this.FBXloader.load("http://192.168.1.73:8033/AccessRoom/data/getModelData?fileName=BZJJ.FBX", self.loaderCabinet1);
-      // this.FBXloader.load("./Assets/fbx/2.FBX", self.loaderCabinet2);
-      // this.FBXloader.load("./Assets/fbx/3.FBX", self.loaderCabinet3);
-      this.FBXloader.load("./Assets/fbx/DDF.FBX", self.loaderDDF);
-      this.FBXloader.load("./Assets/fbx/kongtiao.FBX", self.loaderKongtiao);
-      this.FBXloader.load("./Assets/fbx/lietou.FBX", self.loaderLieTou);
-      this.FBXloader.load("./Assets/fbx/ODF.FBX", self.loaderODF);
-      this.FBXloader.load("./Assets/fbx/peixian.FBX", self.loaderPeixian);
-      this.FBXloader.load("./Assets/fbx/men.FBX", self.loaderMen);
+      this.FBXloader.load(url + "biaozhun.FBX", self.loaderCabinet1);
+      this.FBXloader.load(url + "DDF.FBX", self.loaderDDF);
+      this.FBXloader.load(url + "kongtiao.FBX", self.loaderKongtiao);
+      // this.FBXloader.lod("http://hztxfw.gdyuhui.net:18880/AccessRoomWeb/Assets/fbx/lietou.FBX", self.loaderLieTou);
+      this.FBXloader.load(url + "lietou.FBX", self.loaderLieTou);
+      this.FBXloader.load(url + "ODF.FBX", self.loaderODF);
+      this.FBXloader.load(url + "peixian.FBX", self.loaderPeixian);
+      this.FBXloader.load(url + "men.FBX", self.loaderMen);
       // this.FBXloader.load(
-      //   "./Assets/fbx/floorFourChilder.FBX",
+      //    url + "floorFourChilder.FBX",
       //   self.floorFourChilder
       // );
     },
@@ -645,15 +686,6 @@ export default {
       // }
       window.requestAnimationFrame(this.render);
     },
-    // floorFourChilder(obj) {
-    //   console.log("floorFourChilder", obj);
-    //   // obj.scale.set(10, 10, 10)
-    //   this.roomModel = obj;
-    //   this.roomModel.position.y = -4000;
-    //   this.roomModel.position.z = -10000;
-    //   // this.roomModel.children[6].geometry.position(820, 0, 0);
-    //   // this.roomModel.children[6].position(-820, 0, 0);
-    // },
     loaderObj(obj) {
       // console.log(obj);
       this.loading = false;
@@ -661,7 +693,7 @@ export default {
       obj.name = "整栋楼房";
       this.scene.add(obj);
       this.modernBuilding = obj;
-      obj.rotateX(Math.PI / 2);
+      // obj.rotateX(Math.PI / 2);
       obj.traverse(function(child) {
         if (child.isMesh) {
           child.castShadow = true;
@@ -672,10 +704,9 @@ export default {
     },
     // 4
     loaderDDF(obj) {
-      const that = this;
       this.DDF = obj;
       if (this.modelType === 1) {
-        that.setCabinet();
+        this.getRoomByIdData();
       }
     },
     // 5
@@ -701,14 +732,6 @@ export default {
     loaderCabinet1(obj) {
       this.cabinet1 = obj;
     },
-    // 2
-    // loaderCabinet2(obj) {
-    //   this.cabinet2 = obj;
-    // },
-    // 3
-    // loaderCabinet3(obj) {
-    //   this.cabinet3 = obj;
-    // },
     loaderJIGUI(obj) {
       // obj.children[0].material[0].color.set("#1e222b"); // 设置材质颜色
       this.JIGUI = obj;
@@ -736,11 +759,13 @@ export default {
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       // this.CSS3Renderer.setSize(window.innerWidth, window.innerHeight);
     },
-    // 右键查看机架详情
-    // showProps() {
-    //   this.propsFlag = true;
-    //   this.showMenu = false;
-    // },
+    showBuilding() {
+      // if (!this.lookAround) {
+      this.removeObjAll();
+      this.scene.add(this.modernBuilding);
+      this.selectValue = ["全部"];
+      // }
+    },
     addMeth(item) {
 
       let geometry = null;
@@ -763,32 +788,32 @@ export default {
         ); //创建一个立方体几何对象Geometry
       }
       let mesh = null;
-      if (item.type_index === 1) {
+      if (item.type_index === "BZJJ") {
         geometry = this.cabinet1.children[0].geometry;
         material = this.cabinet1.children[0].material;
-      } else if (item.type_index === 2) {
+      } else if (item.type_index === "LTG") {
         geometry = this.lietou.children[0].geometry;
         material = this.lietou.children[0].material;
 
-      } else if (item.type_index === 5) {
+      } else if (item.type_index === "PXJJ") {
         geometry = this.peixian.children[0].geometry;
         material = this.peixian.children[0].material;
-      } else if (item.type_index === 4) {
+      } else if (item.type_index === "ODF") {
         geometry = this.ODF.children[0].geometry;
         material = this.ODF.children[0].material;
-      } else if (item.type_index === 7) {
+      } else if (item.type_index === "MEN") {
         geometry = this.Men.children[0].geometry;
         material = this.Men.children[0].material;
         // geometry.scale(1, 1, 1.2);
-      } else if (item.type_index === 8) {
+      } else if (item.type_index === "KONGTIAO") {
         geometry = this.kongtiao.children[0].geometry;
         material = this.kongtiao.children[0].material;
-      } else if (item.type_index === 10) {
+      } else if (item.type_index === "DDF") {
         geometry = this.DDF.children[0].geometry;
         material = this.DDF.children[0].material;
       }
       mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
-      if (item.type_index === 1) { // 标准机架
+      if (item.type_index === "BZJJ") { // 标准机架
         if (item.IsParallelX === "N") {
           mesh.scale.set(item.size[1] / 600, item.size[0] / 600, 1);
         } else {
@@ -796,37 +821,37 @@ export default {
         }
 
       }
-      if (item.type_index === 2) { // 列头柜
+      if (item.type_index === "LTG") { // 列头柜
         if (item.IsParallelX === "N") {
           mesh.scale.set(item.size[1] / 600, item.size[0] / 600, 1);
         } else {
           mesh.scale.set(item.size[0] / 600, item.size[1] / 600, 1);
         }
       }
-      if (item.type_index === 4) { // ODF柜
+      if (item.type_index === "ODF") { // ODF柜
         if (item.IsParallelX === "N") {
           mesh.scale.set(item.size[1] / 600, item.size[0] / 800, 1);
         } else {
           mesh.scale.set(item.size[0] / 600, item.size[1] / 800, 1);
         }
-        console.log(item.size)
-        console.log(mesh.scale)
+        // console.log(item.size)
+        // console.log(mesh.scale)
       }
-      if (item.type_index === 5) { // 配线柜
+      if (item.type_index === "PXJJ") { // 配线柜
         if (item.IsParallelX === "N") {
           mesh.scale.set(item.size[1] / 600, item.size[0] / 600, 1);
         } else {
           mesh.scale.set(item.size[0] / 600, item.size[1] / 600, 1);
         }
       }
-      if (item.type_index === 8) { // 空调
+      if (item.type_index === "KONGTIAO") { // 空调
         if (item.IsParallelX === "N") {
           mesh.scale.set(item.size[1] / 500, item.size[0] / 300, 1);
         } else {
           mesh.scale.set(item.size[0] / 500, item.size[1] / 300, 1);
         }
       }
-      if (item.type_index === 10) { // 空调
+      if (item.type_index === "DDF") { // ddf
         if (item.IsParallelX === "N") {
           mesh.scale.set(item.size[1] / 300, item.size[0] / 240, 1);
         } else {
@@ -838,7 +863,7 @@ export default {
       // }
       if (item.IsParallelX === "N") { // 不平行x
 
-        if (item.type_index === 7) {
+        if (item.type_index === "MEN") {
           mesh.rotateX(Math.PI / 2);
           mesh.rotateY(Math.PI / 2);
         // mesh.translate(-600, 0, 0);
@@ -848,12 +873,12 @@ export default {
 
         }
       } else {
-        if (item.type_index === 7) {
+        if (item.type_index === "MEN") {
           mesh.rotateX(Math.PI / 2);
         }
         mesh.position.set(item.position[0] + item.size[0] / 2, item.position[1] + item.size[1] / 2, positionY);
       }
-      if (item.type_index === 8) {
+      if (item.type_index === "KONGTIAO") {
         mesh.rotateZ(Math.PI / 2);
       }
       mesh.TYPE = item.name;
@@ -862,12 +887,12 @@ export default {
       if (item.parentId) {
         mesh.parentId = item.parentId;
         // 创建精灵图标
-        this.newCSS3DSprite3(
-          "子",
-          item.position[1] - item.size[0] / 2,
-          item.position[0] + item.size[1] / 2,
-          positionY + 1600
-        );
+        // this.newCSS3DSprite3(
+        //   "子",
+        //   item.position[1] - item.size[0] / 2,
+        //   item.position[0] + item.size[1] / 2,
+        //   positionY + 1600
+        // );
       }
       if (item.setId) {
         mesh.setId = item.setId;
@@ -883,6 +908,9 @@ export default {
       this.spriteGroup = new THREE.Group();
       this.spriteGroup.name = "图标集合";
 
+      this.listGroup.rotateX(-Math.PI / 2); //------------旋转
+      this.spriteGroup.rotateX(-Math.PI / 2); //------------旋转
+      this.capacityGroup.rotateX(-Math.PI / 2); //------------旋转
       this.spriteArr = new THREE.Group();
 
       // console.log("this.scene ---------- ", this.scene);
@@ -922,12 +950,12 @@ export default {
 
       this.controls.addEventListener("change", this.tag);
       // 整流器
-      var geometryZL = new THREE.BoxGeometry(1000, 600, 400); //创建一个立方体几何对象Geometry
-      var materialZL = new THREE.MeshLambertMaterial({
-        color: "#666"
-      }); //材质对象Material
-      this.meshZL = new THREE.Mesh(geometryZL, materialZL); //网格模型对象Mesh
-      this.meshZL.position.y = 14000;
+      // var geometryZL = new THREE.BoxGeometry(1000, 600, 400); //创建一个立方体几何对象Geometry
+      // var materialZL = new THREE.MeshLambertMaterial({
+      //   color: "#666"
+      // }); //材质对象Material
+      // this.meshZL = new THREE.Mesh(geometryZL, materialZL); //网格模型对象Mesh
+      // this.meshZL.position.y = 14000;
       this.cabinetplaced.forEach((item, index) => {
         let mesh = self.addMeth(item, index);
         self.listGroup.add(mesh);
@@ -935,14 +963,15 @@ export default {
           self.addBox(item);
         }
       });
-      let methNow2 = _NowRoom(this.froomData);
-      methNow2.position.z = -1400;
+      this.methNow2 = _NowRoom(this.froomData);
+      this.methNow2.rotateX(-Math.PI / 2); //------------旋转
+      this.methNow2.position.y = -400;
       this.loading = false;
 
       this.scene.add(this.listGroup); // 设备列表
-      this.scene.add(this.meshZL); // 整流器
+      // this.scene.add(this.meshZL); // 整流器
       this.scene.add(this.spriteGroup); // 标签
-      this.scene.add(methNow2); // 机房
+      this.scene.add(this.methNow2); // 机房
       //创建一个屏幕和场景转换工具
       // self.projector = new THREE.Projector();
       self.mouse = new THREE.Vector2();
@@ -1117,47 +1146,47 @@ export default {
         if (this.showMenu2) {
           return;
         }
-        if (intersects[0].object.dataInfo.type_index !== 7) {
+        if (intersects[0].object.dataInfo.type_index !== "MEN") {
           const geometry = intersects[0].object.geometry;
           const material = intersects[0].object.material;
           const mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
           // const mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
-          if (intersects[0].object.dataInfo.type_index === 1) {
+          if (intersects[0].object.dataInfo.type_index === "BZJJ") {
             if (intersects[0].object.dataInfo.IsParallelX === "N") {
               mesh.scale.set(intersects[0].object.dataInfo.size[1] / 600, intersects[0].object.dataInfo.size[0] / 600, 1);
             } else {
               mesh.scale.set(intersects[0].object.dataInfo.size[0] / 600, intersects[0].object.dataInfo.size[1] / 600, 1);
             }
           }
-          if (intersects[0].object.dataInfo.type_index === 2) {
+          if (intersects[0].object.dataInfo.type_index === "LTG") {
             if (intersects[0].object.dataInfo.IsParallelX === "N") {
               mesh.scale.set(intersects[0].object.dataInfo.size[1] / 600, intersects[0].object.dataInfo.size[0] / 600, 1);
             } else {
               mesh.scale.set(intersects[0].object.dataInfo.size[0] / 600, intersects[0].object.dataInfo.size[1] / 600, 1);
             }
           }
-          if (intersects[0].object.dataInfo.type_index === 4) {
+          if (intersects[0].object.dataInfo.type_index === "ODF") {
             if (intersects[0].object.dataInfo.IsParallelX === "N") {
               mesh.scale.set(intersects[0].object.dataInfo.size[1] / 600, intersects[0].object.dataInfo.size[0] / 800, 1);
             } else {
               mesh.scale.set(intersects[0].object.dataInfo.size[0] / 600, intersects[0].object.dataInfo.size[1] / 800, 1);
             }
           }
-          if (intersects[0].object.dataInfo.type_index === 5) {
+          if (intersects[0].object.dataInfo.type_index === "PXJJ") {
             if (intersects[0].object.dataInfo.IsParallelX === "N") {
               mesh.scale.set(intersects[0].object.dataInfo.size[1] / 600, intersects[0].object.dataInfo.size[0] / 600, 1);
             } else {
               mesh.scale.set(intersects[0].object.dataInfo.size[0] / 600, intersects[0].object.dataInfo.size[1] / 600, 1);
             }
           }
-          if (intersects[0].object.dataInfo.type_index === 8) {
+          if (intersects[0].object.dataInfo.type_index === "KONGTIAO") {
             if (intersects[0].object.dataInfo.IsParallelX === "N") {
               mesh.scale.set(intersects[0].object.dataInfo.size[1] / 500, intersects[0].object.dataInfo.size[0] / 300, 1);
             } else {
               mesh.scale.set(intersects[0].object.dataInfo.size[0] / 500, intersects[0].object.dataInfo.size[1] / 300, 1);
             }
           }
-          if (intersects[0].object.dataInfo.type_index === 10) {
+          if (intersects[0].object.dataInfo.type_index === "DDF") {
             if (intersects[0].object.dataInfo.IsParallelX === "N") {
               mesh.scale.set(intersects[0].object.dataInfo.size[1] / 300, intersects[0].object.dataInfo.size[0] / 240, 1);
             } else {
@@ -1175,6 +1204,7 @@ export default {
           if (intersects[0].object.dataInfo.type === "空调") {
             mesh.rotateZ(Math.PI / 2);
           }
+          mesh.rotateX(-Math.PI / 2); //------------旋转
           this.border = new THREE.BoxHelper(mesh, "#5b78e7"); //设置边框，这个边框不会旋转
           this.border.name = "高亮显示柜";
           this.scene.add(this.border); //网格模型添加到场景中
@@ -1214,9 +1244,6 @@ export default {
         if (this.sprite) {
           this.scene.remove(this.sprite);
         }
-        if (this.spriteArr) {
-          this.scene.remove(this.spriteArr);
-        }
         if (!this.freezeShowMenu2) {
           this.showMenu2 = false;
         }
@@ -1246,13 +1273,6 @@ export default {
       // ctx.strokeStyle = "#0078AA";
       ctx.stroke();
 
-      this.spriteMaterial = new THREE.SpriteMaterial({
-        map: new THREE.CanvasTexture(canvas) //设置精灵纹理贴图
-      });
-      let sprite = new THREE.Sprite(this.spriteMaterial);
-      this.spriteArr.add(sprite);
-      sprite.scale.set(400, 400, 1); // 只需要设置x、y两个分量就可以
-      sprite.position.set(x, y, z);
     },
     onDocumentDblclick(event) {
       //阻止本来的默认事件，比如浏览器的默认右键事件是弹出浏览器的选项
@@ -1411,7 +1431,7 @@ export default {
     selectValue(val) {
       console.log("selectValue", val);
       if (val.length >= 0) {
-        if (!this.listGroup.traverse) {
+        if (!this.listGroup) {
           return;
         }
         if (val.indexOf("全部") > -1) {

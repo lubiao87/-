@@ -519,7 +519,8 @@ export default {
     },
     loaderAur() {
       const self = this;
-      this.FBXloader.load("./Assets/fbx/biaozhun.FBX", self.loaderCabinet1);
+      // this.FBXloader.load("./Assets/fbx/biaozhun.FBX", self.loaderCabinet1);
+      this.FBXloader.load("http://192.168.1.73:8033/AccessRoom/data/getModelData?fileName=BZJJ.FBX", self.loaderCabinet1);
       // this.FBXloader.load("./Assets/fbx/2.FBX", self.loaderCabinet2);
       // this.FBXloader.load("./Assets/fbx/3.FBX", self.loaderCabinet3);
       this.FBXloader.load("./Assets/fbx/DDF.FBX", self.loaderDDF);

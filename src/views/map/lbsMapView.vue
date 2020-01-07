@@ -62,7 +62,7 @@
 
       <!-- 接入间列表 -->
       <div style="margin-top: 20px; ">
-        <h5 class="ui-city-title ui-height48">
+        <h5 class="ui-city-title ui-height48 none-hover">
           <!-- <span class="ui-linebg"></span>接入间列表 -->
           <el-radio-group v-model="tabPosition" style="margin-left: 10px;">
             <el-radio-button label="机楼">机楼</el-radio-button>
@@ -599,26 +599,28 @@ export default {
       that.object3Dlayer2 = new AMap.Object3DLayer({ zIndex: 2, opacity: 1 });
       that.map.add(that.object3Dlayer2);
       this.areas.forEach((item, i, arr) => {
-        var text = new AMap.Text({
-          text: `<div class="infoWindowBox" ref="infoWindowBox">
-                  <div class="info-lable">${item.label}</div>
-                  <div class="btn">机楼 ${item.buidingNumber}</div>
-                </div>`,
-          anchor: "center", // 设置文本标记锚点
-          draggable: false,
-          cursor: "pointer",
-          angle: 10,
-          position: [
-            JSON.parse(item.coordinate[0]),
-            JSON.parse(item.coordinate[1])
-          ],
-          zooms: [10.5, 12],
-          zIndex: 3
-        });
-        text.setMap(that.map);
-        text.setExtData(item);
-        text.on("click", that.clickInfoWindow);
-        text.on("mousemove", that.mousemoveInfoWindow);
+        if (item.label !== "广州市") {
+            var text = new AMap.Text({
+            text: `<div class="infoWindowBox" ref="infoWindowBox">
+                    <div class="info-lable">${item.label}</div>
+                    <div class="btn">机楼 ${item.buidingNumber}</div>
+                  </div>`,
+            anchor: "center", // 设置文本标记锚点
+            draggable: false,
+            cursor: "pointer",
+            angle: 0,
+            position: [
+              JSON.parse(item.coordinate[0]),
+              JSON.parse(item.coordinate[1])
+            ],
+            zooms: [10.5, 12],
+            zIndex: 3
+          });
+          text.setMap(that.map);
+          text.setExtData(item);
+          text.on("click", that.clickInfoWindow);
+          text.on("mousemove", that.mousemoveInfoWindow);
+        }
       });
     },
     clickInfoWindow(e) {
@@ -1009,13 +1011,17 @@ export default {
 };
 </script>
 <style lang="scss">
+.amap-overlay-text-container {
+  border: 0 none transparent;
+}
 .infoWindowBox {
   width: 110px;
   background-color: #fff;
   padding: 10px;
   background: rgba(255, 255, 255, 1);
   border: 1px solid rgba(229, 229, 229, 1);
-  box-shadow: 0px 0px 7px 3px rgba(204, 204, 204, 1);
+  box-shadow: 0px 0px 20px 4px #cccccc;
+  -webkit-box-shadow: 0px 0px 7px 3px #cccccc;
   border-radius: 4px;
   position: relative;
   .info-lable {
@@ -1096,6 +1102,10 @@ export default {
 }
 </style>
 <style scoped lang="scss">
+.none-hover.ui-height48:hover {
+  background-color: inherit;
+  cursor: inherit;
+}
 .my-autocomplete {
   li {
     line-height: normal;

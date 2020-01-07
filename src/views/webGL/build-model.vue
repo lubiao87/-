@@ -35,6 +35,7 @@
       class="capacity-btn2"
       v-model="isCollapse"
       style="margin-bottom: 20px;"
+      v-show="showCollapse"
     >
       <el-radio-button size="small" label="模块间视图"
         >模块间视图</el-radio-button
@@ -97,9 +98,9 @@
       ></el-tree>
     </div>
     <div class="yhui-real-timeimg"></div>
-    <el-button class="model-select1" type="primary">
+    <!-- <el-button class="model-select1" type="primary">
       <i class="el-icon-folder-add"></i> 增加模型
-    </el-button>
+    </el-button> -->
     <el-select
       v-model="selectValue"
       multiple
@@ -221,6 +222,7 @@ export default {
       cameraY: 30000,
       cameraZ: 20000,
       floorName: "工业园机楼",
+      showCollapse: false,
       cabinetType: [
         {
           name: "全部",
@@ -274,16 +276,6 @@ export default {
         z: 0
       },
       cabinetplaced: [],
-      floorData2: [
-        {
-          name: "机房门",
-          center: [15000, 10000, 4000]
-        },
-        {
-          name: "机房门1",
-          center: [1000, -1000, 4000]
-        }
-      ],
       froomData: [ // 四边形
         [0, 0],
         [0, 18000],
@@ -362,15 +354,18 @@ export default {
     }
   },
   created() {
-    const self = this;
+    // const self = this;
     console.log("this.$route.params---", this.$route.params);
-    this.floorName = this.$route.params.name;
+    this.floorName = this.$route.params.modelName;
     this.modelType = this.$route.params.modelType;
     this.buildId = this.$route.params.modelId;
+    this.boxTitle = this.$route.params.modelName;
     this.getJieRuJianStatistics();
     if (this.modelType === 2) {
       this.cameraZ = -40000;
       this.cameraY = 40000;
+    } else if (this.modelType === 1) {
+      this.showCollapse = true;
     }
   },
   mounted() {
@@ -475,13 +470,15 @@ export default {
       // 查看楼层
       this.buildId = data.buildId;
       this.floorName = "工业园机楼 - " + data.label;
-      this.isCollapse = "模块间视图";
       this.removeObjAll();
 
       if (data.modelType === 1) {
+        this.isCollapse = "模块间视图";
         this.getRoomByIdData();
+        this.showCollapse = true;
       } else if (data.modelType === 3) {
         this.scene.add(this.FloorFour);
+        this.showCollapse = false;
       }
     },
     createHtml() {
@@ -537,7 +534,6 @@ export default {
     // 加载楼层
     loaderFloor4(obj) {
       this.FloorFour = obj;
-      // obj.rotateX(-Math.PI / 2);
     },
     removeObjAll() {
       const self = this;
@@ -559,7 +555,6 @@ export default {
       this.removeEventListenerFn();
     },
     loaderAur() {
-      // console.log("url", url);
       const self = this;
       this.FBXloader.load("./Assets/model/biaozhun.FBX", self.loaderCabinet1);
       this.FBXloader.load("./Assets/model/DDF.FBX", self.loaderDDF);
@@ -568,10 +563,13 @@ export default {
       this.FBXloader.load("./Assets/model/ODF.FBX", self.loaderODF);
       this.FBXloader.load("./Assets/model/peixian.FBX", self.loaderPeixian);
       this.FBXloader.load("./Assets/model/men.FBX", self.loaderMen);
-      // this.FBXloader.load(
-      //    url + "floorFourChilder.FBX",
-      //   self.floorFourChilder
-      // );
+      this.FBXloader.load("./Assets/model/UPS.FBX", self.loaderUPS);
+      this.FBXloader.load("./Assets/model/ZLPDP.FBX", self.loaderPDP);
+      this.FBXloader.load("./Assets/model/zhengliuqi.FBX", self.loaderzhengliuqi);
+      this.FBXloader.load("./Assets/model/DCZ.FBX", self.loaderDCZ);
+      if (this.buildId === "ADSMLHYUR01") {
+        this.FBXloader.load("./Assets/model/ADSMLHYUR01.FBX", self.loaderADSMLHYUR01);
+      }
     },
     propsFlagFn(e) {
       console.log("propsFlag-------", e);
@@ -586,10 +584,6 @@ export default {
           that.$set(arr[index], "select", true);
         }
       });
-      this.boxTitle = this.moduleStatistics[index].name;
-      if (this.moduleStatistics[index].name === "机房总数") {
-        this.boxTitle = "机房列表";
-      }
       switch (index) {
         case 0:
           this.barData = [
@@ -668,6 +662,24 @@ export default {
         }
       });
       this.loaderAur();
+    },
+    loaderUPS(obj) {
+      this.UPS = obj;
+    },
+    // 整流器
+    loaderzhengliuqi(obj) {
+      this.ZLQ = obj;
+    },
+    loaderADSMLHYUR01(obj) {
+      this.ADSMLHYUR01 = obj;
+    },
+    // 配电瓶
+    loaderPDP(obj) {
+      this.ZLPDP = obj;
+    },
+    // 电池组
+    loaderDCZ(obj) {
+      this.DCZ = obj;
     },
     // 4
     loaderDDF(obj) {
@@ -778,6 +790,18 @@ export default {
       } else if (item.type_index === "DDF") {
         geometry = this.DDF.children[0].geometry;
         material = this.DDF.children[0].material;
+      } else if (item.type_index === "UPS") {
+        geometry = this.UPS.children[0].geometry;
+        material = this.UPS.children[0].material;
+      } else if (item.type_index === "ZLPDP") {
+        geometry = this.ZLPDP.children[0].geometry;
+        material = this.ZLPDP.children[0].material;
+      } else if (item.type_index === "ZLQ") {
+        geometry = this.ZLQ.children[0].geometry;
+        material = this.ZLQ.children[0].material;
+      } else if (item.type_index === "DCZ") {
+        geometry = this.DCZ.children[0].geometry;
+        material = this.DCZ.children[0].material;
       }
       mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
       if (item.type_index === "BZJJ") { // 标准机架
@@ -825,11 +849,38 @@ export default {
           mesh.scale.set(item.size[0] / 300, item.size[1] / 240, 1);
         }
       }
+      if (item.type_index === "UPS") { // UPS
+        if (item.IsParallelX === "N") {
+          mesh.scale.set(item.size[1] / 700, item.size[0] / 820, 1);
+        } else {
+          mesh.scale.set(item.size[0] / 700, item.size[1] / 820, 1);
+        }
+      }
+      if (item.type_index === "ZLPDP") { // 配电瓶
+        if (item.IsParallelX === "N") {
+          mesh.scale.set(item.size[1] / 600, item.size[0] / 600, 1);
+        } else {
+          mesh.scale.set(item.size[0] / 600, item.size[1] / 600, 1);
+        }
+      }
+      if (item.type_index === "ZLQ") { // 整流器
+        if (item.IsParallelX === "N") {
+          mesh.scale.set(item.size[1] / 800, item.size[0] / 600, 1);
+        } else {
+          mesh.scale.set(item.size[0] / 800, item.size[1] / 600, 1);
+        }
+      }
+      if (item.type_index === "DCZ") { // 整流器
+        if (item.IsParallelX === "N") {
+          mesh.scale.set(item.size[1] / 370, item.size[0] / 120, 1);
+        } else {
+          mesh.scale.set(item.size[0] / 370, item.size[1] / 120, 1);
+        }
+      }
       // mesh.rotateX(-Math.PI / 2);
       let positionY = item.size[1] / 2;
       // }
       if (item.IsParallelX === "N") { // 不平行x
-
         if (item.type_index === "MEN") {
           mesh.rotateX(Math.PI / 2);
           mesh.rotateY(Math.PI / 2);
@@ -872,57 +923,12 @@ export default {
       this.listGroup.name = "设备集合";
       this.capacityGroup = new THREE.Group();
       this.capacityGroup.name = "容量集合";
-      // this.spriteGroup = new THREE.Group();
-      // this.spriteGroup.name = "图标集合";
 
       this.listGroup.rotateX(-Math.PI / 2); //------------旋转
-      // this.spriteGroup.rotateX(-Math.PI / 2); //------------旋转
       this.capacityGroup.rotateX(-Math.PI / 2); //------------旋转
       this.spriteArr = new THREE.Group();
 
-      // console.log("this.scene ---------- ", this.scene);
-      // this.floorData2.forEach((item, index) => {
-      //   let width = 4000,
-      //     height = 1200,
-      //     r = 200;
-      //   var spriteMaterial = new THREE.SpriteMaterial({
-      //     map: new THREE.CanvasTexture(
-      //       _getTextCanvas(item.name, width, height, r)
-      //     ) //设置精灵纹理贴图
-      //   });
-      //   var sprite = new THREE.Sprite(spriteMaterial);
-      //   sprite.scale.set(width, height, 1); // 只需要设置x、y两个分量就可以
-      //   sprite.position.set(item.center[0], item.center[1], item.center[2]);
-      //   self.spriteGroup.add(sprite);
-      //   let width2 = 400,
-      //     height2 = 3200;
-      //   // 线条
-      //   //注意注意矩形几何体宽高比例和canvas宽高比例一致，以免压缩或拉伸
-      //   var plane = new THREE.PlaneGeometry(width2, height2);
-      //   var planeMaterial = new THREE.MeshBasicMaterial({
-      //     map: new THREE.CanvasTexture(_drawArrow(width2, height2)), //设置精灵纹理贴图
-      //     side: THREE.DoubleSide, // 双面显示
-      //     transparent: true // 开启透明效果，否则颜色贴图map的透明不起作用
-      //   });
-      //   var planeMesh = new THREE.Mesh(plane, planeMaterial);
-      //   // planeMesh.scale.set(width2, height2, 1); // 只需要设置x、y两个分量就可以
-      //   planeMesh.position.set(
-      //     item.center[0] - 500,
-      //     item.center[1],
-      //     item.center[2] - height2 / 2 - 400
-      //   );
-      //   planeMesh.rotateX(Math.PI / 2);
-      //   self.spriteGroup.add(planeMesh);
-      // });
-
       this.controls.addEventListener("change", this.tag);
-      // 整流器
-      // var geometryZL = new THREE.BoxGeometry(1000, 600, 400); //创建一个立方体几何对象Geometry
-      // var materialZL = new THREE.MeshLambertMaterial({
-      //   color: "#666"
-      // }); //材质对象Material
-      // this.meshZL = new THREE.Mesh(geometryZL, materialZL); //网格模型对象Mesh
-      // this.meshZL.position.y = 14000;
       this.cabinetplaced.forEach((item, index) => {
         let mesh = self.addMeth(item, index);
         self.listGroup.add(mesh);
@@ -930,17 +936,19 @@ export default {
           self.addBox(item);
         }
       });
-      this.methNow2 = _NowRoom(this.froomData);
-      this.methNow2.rotateX(-Math.PI / 2); //------------旋转
-      this.methNow2.position.y = -400;
+      this.methNow2 = null;
+      if (this.buildId === "ADSMLHYUR01") {
+        this.methNow2 = this.ADSMLHYUR01;
+      } else {
+        this.methNow2 = _NowRoom(this.froomData);
+        this.methNow2.position.y = -1200;
+        this.methNow2.rotateX(-Math.PI / 2); //------------旋转
+      }
       this.loading = false;
 
       this.scene.add(this.listGroup); // 设备列表
-      // this.scene.add(this.meshZL); // 整流器
-      // this.scene.add(this.spriteGroup); // 标签
       this.scene.add(this.methNow2); // 机房
       //创建一个屏幕和场景转换工具
-      // self.projector = new THREE.Projector();
       self.mouse = new THREE.Vector2();
       this.raycaster = new THREE.Raycaster();
       //加入鼠标拖动对象的一系列监听事件
@@ -1147,6 +1155,9 @@ export default {
             }
           }
           if (intersects[0].object.dataInfo.type_index === "KONGTIAO") {
+            mesh.rotateZ(Math.PI / 2);
+            mesh.rotateX(Math.PI / 2);
+
             if (intersects[0].object.dataInfo.IsParallelX === "N") {
               mesh.scale.set(intersects[0].object.dataInfo.size[1] / 500, intersects[0].object.dataInfo.size[0] / 300, 1);
             } else {
@@ -1158,6 +1169,34 @@ export default {
               mesh.scale.set(intersects[0].object.dataInfo.size[1] / 300, intersects[0].object.dataInfo.size[0] / 240, 1);
             } else {
               mesh.scale.set(intersects[0].object.dataInfo.size[0] / 300, intersects[0].object.dataInfo.size[1] / 240, 1);
+            }
+          }
+          if (intersects[0].object.dataInfo.type_index === "UPS") {
+            if (intersects[0].object.dataInfo.IsParallelX === "N") {
+              mesh.scale.set(intersects[0].object.dataInfo.size[1] / 700, intersects[0].object.dataInfo.size[0] / 820, 1);
+            } else {
+              mesh.scale.set(intersects[0].object.dataInfo.size[0] / 700, intersects[0].object.dataInfo.size[1] / 820, 1);
+            }
+          }
+          if (intersects[0].object.dataInfo.type_index === "ZLPDP") {
+            if (intersects[0].object.dataInfo.IsParallelX === "N") {
+              mesh.scale.set(intersects[0].object.dataInfo.size[1] / 600, intersects[0].object.dataInfo.size[0] / 600, 1);
+            } else {
+              mesh.scale.set(intersects[0].object.dataInfo.size[0] / 600, intersects[0].object.dataInfo.size[1] / 600, 1);
+            }
+          }
+          if (intersects[0].object.dataInfo.type_index === "ZLQ") {
+            if (intersects[0].object.dataInfo.IsParallelX === "N") {
+              mesh.scale.set(intersects[0].object.dataInfo.size[1] / 800, intersects[0].object.dataInfo.size[0] / 600, 1);
+            } else {
+              mesh.scale.set(intersects[0].object.dataInfo.size[0] / 800, intersects[0].object.dataInfo.size[1] / 600, 1);
+            }
+          }
+          if (intersects[0].object.dataInfo.type_index === "DCZ") {
+            if (intersects[0].object.dataInfo.IsParallelX === "N") {
+              mesh.scale.set(intersects[0].object.dataInfo.size[1] / 370, intersects[0].object.dataInfo.size[0] / 120, 1);
+            } else {
+              mesh.scale.set(intersects[0].object.dataInfo.size[0] / 370, intersects[0].object.dataInfo.size[1] / 120, 1);
             }
           }
           this.scene.updateMatrixWorld(true);
@@ -1192,14 +1231,6 @@ export default {
               this.showMenu2 = false;
             }
           }
-
-          // 朔源
-          // if (intersects[0].object.setId === 22) {
-          //   this.scene.add(this.spriteArr);
-          // } else {
-          //   this.scene.remove(this.spriteArr);
-          // }
-          // console.log(this.scene);
         }
       } else {
         // if (this.objCSS3D) {

@@ -13,7 +13,6 @@
         <li
           v-for="(item, index) in dataMeth"
           :key="index"
-          @click="zlLiFn(item)"
         >
           <span class="raius"></span>
           <span class="dowon"></span>
@@ -131,8 +130,8 @@ import * as THREE from "three";
 // import "three-obj-mtl-loader";
 import {
   _debounce,
-  _getTextCanvas,
-  _drawArrow,
+  // _getTextCanvas,
+  // _drawArrow,
   _NowRoom
 } from "@/utils/public.js";
 import "@/utils/threebsp.js";
@@ -141,7 +140,7 @@ import "three-fbxloader-offical";
 import { OrbitControls } from "../../utils/OrbitControls";
 import popup from "../../components/popup/popup";
 // import buildModel2d from "./build-model-2d";
-import { api2, url } from "../../api/api"; //api配置请求的路径
+import { api2 } from "../../api/api"; //api配置请求的路径
 import { Message } from 'element-ui';
 export default {
   name: "olmap",
@@ -462,7 +461,6 @@ export default {
     getFloorTreeData() {
       const self = this;
       let param = {
-        // url: api2.getFloorTreeData + `buildId=${this.buildId}` //获取request_url.js文件的请求路径
         url: api2.getFloorTreeData + `?buildId=${this.buildId}` //获取request_url.js文件的请求路径
       };
       self.sendReq(param, res => {
@@ -533,8 +531,8 @@ export default {
 
     },
     getBuildData() {
-      this.FBXloader.load( url + "building.FBX", this.loaderObj);
-      this.FBXloader.load( url + "floorFour.FBX", this.loaderFloor4);
+      this.FBXloader.load("./Assets/model/building.FBX", this.loaderObj);
+      this.FBXloader.load("./Assets/model/floorFour.FBX", this.loaderFloor4);
     },
     // 加载楼层
     loaderFloor4(obj) {
@@ -555,21 +553,21 @@ export default {
       self.scene.remove(this.FloorFour);
       self.scene.remove(this.meshZL);
       self.scene.remove(this.roomModel);
-      self.scene.remove(this.spriteGroup);
+      // self.scene.remove(this.spriteGroup);
       self.scene.remove(this.capacityGroup);
+      self.scene.remove(this.methNow2);
       this.removeEventListenerFn();
     },
     loaderAur() {
       // console.log("url", url);
       const self = this;
-      this.FBXloader.load(url + "biaozhun.FBX", self.loaderCabinet1);
-      this.FBXloader.load(url + "DDF.FBX", self.loaderDDF);
-      this.FBXloader.load(url + "kongtiao.FBX", self.loaderKongtiao);
-      // this.FBXloader.lod("http://hztxfw.gdyuhui.net:18880/AccessRoomWeb/Assets/fbx/lietou.FBX", self.loaderLieTou);
-      this.FBXloader.load(url + "lietou.FBX", self.loaderLieTou);
-      this.FBXloader.load(url + "ODF.FBX", self.loaderODF);
-      this.FBXloader.load(url + "peixian.FBX", self.loaderPeixian);
-      this.FBXloader.load(url + "men.FBX", self.loaderMen);
+      this.FBXloader.load("./Assets/model/biaozhun.FBX", self.loaderCabinet1);
+      this.FBXloader.load("./Assets/model/DDF.FBX", self.loaderDDF);
+      this.FBXloader.load("./Assets/model/kongtiao.FBX", self.loaderKongtiao);
+      this.FBXloader.load("./Assets/model/lietou.FBX", self.loaderLieTou);
+      this.FBXloader.load("./Assets/model/ODF.FBX", self.loaderODF);
+      this.FBXloader.load("./Assets/model/peixian.FBX", self.loaderPeixian);
+      this.FBXloader.load("./Assets/model/men.FBX", self.loaderMen);
       // this.FBXloader.load(
       //    url + "floorFourChilder.FBX",
       //   self.floorFourChilder
@@ -578,37 +576,6 @@ export default {
     propsFlagFn(e) {
       console.log("propsFlag-------", e);
       this.propsFlag = e;
-    },
-    // 整流器
-    zlLiFn(item) {
-      const that = this;
-      if (item === "整流器01") {
-        // console.log("你想看整流器？");
-        // console.log("this.meshZL.position", this.meshZL);
-        // this.camera.lookAt(this.meshZL.position);
-        this.scene.position.set(
-          -this.meshZL.position.x,
-          -this.meshZL.position.y,
-          -this.meshZL.position.z
-        );
-
-        this.meshZL.material.transparent = true;
-        this.meshZL.material.opacity = 0.1;
-        window.startTime = 0;
-        window.ns = 0;
-        let times = setInterval(function() {
-          window.startTime += 0.05;
-          window.ns += 0.02;
-          if (window.ns >= 1) {
-            window.ns = 0.1;
-          }
-          that.meshZL.material.opacity = window.ns;
-          if (window.startTime >= 10) {
-            window.clearInterval(times);
-            that.meshZL.material.opacity = 1;
-          }
-        });
-      }
     },
     // 选择统计
     setSelectBox(index) {
@@ -905,48 +872,48 @@ export default {
       this.listGroup.name = "设备集合";
       this.capacityGroup = new THREE.Group();
       this.capacityGroup.name = "容量集合";
-      this.spriteGroup = new THREE.Group();
-      this.spriteGroup.name = "图标集合";
+      // this.spriteGroup = new THREE.Group();
+      // this.spriteGroup.name = "图标集合";
 
       this.listGroup.rotateX(-Math.PI / 2); //------------旋转
-      this.spriteGroup.rotateX(-Math.PI / 2); //------------旋转
+      // this.spriteGroup.rotateX(-Math.PI / 2); //------------旋转
       this.capacityGroup.rotateX(-Math.PI / 2); //------------旋转
       this.spriteArr = new THREE.Group();
 
       // console.log("this.scene ---------- ", this.scene);
-      this.floorData2.forEach((item, index) => {
-        let width = 4000,
-          height = 1200,
-          r = 200;
-        var spriteMaterial = new THREE.SpriteMaterial({
-          map: new THREE.CanvasTexture(
-            _getTextCanvas(item.name, width, height, r)
-          ) //设置精灵纹理贴图
-        });
-        var sprite = new THREE.Sprite(spriteMaterial);
-        sprite.scale.set(width, height, 1); // 只需要设置x、y两个分量就可以
-        sprite.position.set(item.center[0], item.center[1], item.center[2]);
-        self.spriteGroup.add(sprite);
-        let width2 = 400,
-          height2 = 3200;
-        // 线条
-        //注意注意矩形几何体宽高比例和canvas宽高比例一致，以免压缩或拉伸
-        var plane = new THREE.PlaneGeometry(width2, height2);
-        var planeMaterial = new THREE.MeshBasicMaterial({
-          map: new THREE.CanvasTexture(_drawArrow(width2, height2)), //设置精灵纹理贴图
-          side: THREE.DoubleSide, // 双面显示
-          transparent: true // 开启透明效果，否则颜色贴图map的透明不起作用
-        });
-        var planeMesh = new THREE.Mesh(plane, planeMaterial);
-        // planeMesh.scale.set(width2, height2, 1); // 只需要设置x、y两个分量就可以
-        planeMesh.position.set(
-          item.center[0] - 500,
-          item.center[1],
-          item.center[2] - height2 / 2 - 400
-        );
-        planeMesh.rotateX(Math.PI / 2);
-        self.spriteGroup.add(planeMesh);
-      });
+      // this.floorData2.forEach((item, index) => {
+      //   let width = 4000,
+      //     height = 1200,
+      //     r = 200;
+      //   var spriteMaterial = new THREE.SpriteMaterial({
+      //     map: new THREE.CanvasTexture(
+      //       _getTextCanvas(item.name, width, height, r)
+      //     ) //设置精灵纹理贴图
+      //   });
+      //   var sprite = new THREE.Sprite(spriteMaterial);
+      //   sprite.scale.set(width, height, 1); // 只需要设置x、y两个分量就可以
+      //   sprite.position.set(item.center[0], item.center[1], item.center[2]);
+      //   self.spriteGroup.add(sprite);
+      //   let width2 = 400,
+      //     height2 = 3200;
+      //   // 线条
+      //   //注意注意矩形几何体宽高比例和canvas宽高比例一致，以免压缩或拉伸
+      //   var plane = new THREE.PlaneGeometry(width2, height2);
+      //   var planeMaterial = new THREE.MeshBasicMaterial({
+      //     map: new THREE.CanvasTexture(_drawArrow(width2, height2)), //设置精灵纹理贴图
+      //     side: THREE.DoubleSide, // 双面显示
+      //     transparent: true // 开启透明效果，否则颜色贴图map的透明不起作用
+      //   });
+      //   var planeMesh = new THREE.Mesh(plane, planeMaterial);
+      //   // planeMesh.scale.set(width2, height2, 1); // 只需要设置x、y两个分量就可以
+      //   planeMesh.position.set(
+      //     item.center[0] - 500,
+      //     item.center[1],
+      //     item.center[2] - height2 / 2 - 400
+      //   );
+      //   planeMesh.rotateX(Math.PI / 2);
+      //   self.spriteGroup.add(planeMesh);
+      // });
 
       this.controls.addEventListener("change", this.tag);
       // 整流器
@@ -970,7 +937,7 @@ export default {
 
       this.scene.add(this.listGroup); // 设备列表
       // this.scene.add(this.meshZL); // 整流器
-      this.scene.add(this.spriteGroup); // 标签
+      // this.scene.add(this.spriteGroup); // 标签
       this.scene.add(this.methNow2); // 机房
       //创建一个屏幕和场景转换工具
       // self.projector = new THREE.Projector();
@@ -1250,29 +1217,6 @@ export default {
         this.showMenu3 = false;
         this.showMenu = false;
       }
-    },
-    // 创建朔源精灵图标3
-    newCSS3DSprite3(name, x, y, z) {
-      let canvas = document.createElement("canvas");
-      canvas.width = 400;
-      canvas.height = 400;
-      let ctx = canvas.getContext("2d");
-      let arrText = name;
-      ctx.beginPath();
-      ctx.fillStyle = "rgba(91, 120, 231, 0.95)";
-      // ctx.fillRect(0, 0, width, height);
-      ctx.arc(200, 200, 200, 0, 2 * Math.PI);
-      // this.drawRoundRect(ctx, 0, 0, width, height, 200);
-      ctx.closePath(); //关闭路径
-      ctx.fill(); //开始填充
-      ctx.font = 160 + 'px " bold';
-      ctx.fillStyle = "#fff";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(arrText, 200, 200);
-      // ctx.strokeStyle = "#0078AA";
-      ctx.stroke();
-
     },
     onDocumentDblclick(event) {
       //阻止本来的默认事件，比如浏览器的默认右键事件是弹出浏览器的选项

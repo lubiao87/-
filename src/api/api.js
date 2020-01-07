@@ -6,9 +6,6 @@ import reqUrl3 from "./api-p/maintain_url";
 // 获取当前环境变量 true => 生产环境 false => 开发环境
 const BASEURL =
   process.env.NODE_ENV === "production" ? "/AccessRoom" : "/AccessRoom";
-const modelUrl =
-  process.env.NODE_ENV === "production" ? "./Assets/model/" : "./Assets/fbx/";
-
 export const api = {
   ...reqUrl(BASEURL)
 };
@@ -18,6 +15,6 @@ export const api2 = {
 export const api3 = {
   ...reqUrl3(BASEURL)
 };
-export const url = modelUrl;
+// export const url = modelUrl;
 
-export default [api, api2, api3, url];
+export default [api, api2, api3];

@@ -216,7 +216,7 @@ export default {
 	this.getDataList();
   },
   mounted () {
-	  this.searchNameList = this.loadAll();
+     // this.searchNameList = this.loadAll();
   },
   watch: {
     applicationStatus(val) {
@@ -250,6 +250,7 @@ export default {
 	  let param = {
 		  url: url,
 		  method: 'POST',
+		  contentType : 'application/x-www-form-urlencoded',
 		  data: qs.stringify({
 			  'page': that.page,
 			  'pageSize': that.pageSize,
@@ -272,49 +273,43 @@ export default {
 		that.countyId = val
 		that.getDataList()
 	},
-	querySearch(queryString, cb) {
-		var searchNameList = this.tableData;
+	querySearch (queryString, cb) {
 		console.log(queryString)
-		console.log(searchNameList)
-		// var results = queryString ? searchNameList.filter(this.createFilter(queryString)) : searchNameList;
-		var results = queryString ? searchNameList.filter(this.createFilter(queryString)) : searchNameList;
-		console.log(results)
-		// 调用 callback 返回建议列表的数据
-		cb(results);
+		var that = this
+		let url = ''
+		let results = []
+		if (that.sourceType === 2) {
+		  url = api3.getAccessRoomListByPage
+		} else {
+		  url = api3.getBuildListByParamPage
+		}
+		let param = {
+		  url: url,
+		  method: 'POST',
+		  contentType : 'application/x-www-form-urlencoded',
+		  data: qs.stringify({
+			  'page': 1,
+			  'pageSize': 100,
+			  'name': queryString,
+			  'countyId': ''
+		  })
+		}
+		that.sendReq( param, (res) => {
+			// console.log(res)
+			if (res.respHeader.resultCode == 0) {
+			  that.searchNameList = res.respBody.data.list;
+			  that.searchNameList.forEach((val) => {
+				  val.value = val.name
+			  })
+			  // console.log(that.searchNameList)
+			  results = that.searchNameList
+			  cb(results)
+			} else {
+			  that.$message.error(res.respHeader.message);
+			}
+		})
+		
     },
-	createFilter(queryString) {
-		return (restaurant) => {
-		  return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
-		};
-	},
-	loadAll() {
-		return [
-		  { "value": "三全鲜食（北新泾店）", "address": "长宁区新渔路144号" },
-		  { "value": "三全鲜食（北新泾店1）", "address": "长宁区新渔路144号" },
-		  { "value": "三全鲜食（北新泾店2）", "address": "长宁区新渔路144号" },
-		  { "value": "三全鲜食（北新泾店3）", "address": "长宁区新渔路144号" },
-		  { "value": "三全鲜食（北新泾店4）", "address": "长宁区新渔路144号" },
-		  { "value": "三全鲜食（北新泾店5）", "address": "长宁区新渔路144号" },
-		  { "value": "三全鲜食（北新泾店6）", "address": "长宁区新渔路144号" },
-		  { "value": "三全鲜食（北新泾店7）", "address": "长宁区新渔路144号" },
-		  { "value": "三全鲜食（北新泾店8）", "address": "长宁区新渔路144号" },
-		  { "value": "三全鲜食（北新泾店9）", "address": "长宁区新渔路144号" },
-		  { "value": "三全鲜食（北新泾店23）", "address": "长宁区新渔路144号" },
-		  { "value": "三全鲜食（北新泾店34）", "address": "长宁区新渔路144号" },
-		  { "value": "三全鲜食（北新泾店53）", "address": "长宁区新渔路144号" },
-		  { "value": "三全鲜食（北新泾店63）", "address": "长宁区新渔路144号" },
-		  { "value": "三全鲜食（北新泾店243）", "address": "长宁区新渔路144号" },
-		  { "value": "三全鲜食（北新泾店123）", "address": "长宁区新渔路144号" },
-		  { "value": "三全鲜食（北新泾店234）", "address": "长宁区新渔路144号" },
-		  { "value": "三全鲜食（北新4213泾店）", "address": "长宁区新渔路144号" },
-		  { "value": "三全鲜食（北新泾1234店）", "address": "长宁区新渔路144号" },
-		  { "value": "三全鲜食（1北新4泾店）", "address": "长宁区新渔路144号" },
-		  { "value": "三全鲜食（北新14123泾店）", "address": "长宁区新渔路144号" },
-		  { "value": "Hot honey 首尔炸鸡（仙霞路）", "address": "上海市长宁区淞虹路661号" },
-		  { "value": "新旺角茶餐厅", "address": "上海市普陀区真北路988号创邑金沙谷6号楼113" },
-		  { "value": "泷千家(天山西路店)", "address": "天山西路438号" },
-		];
-	},
     handleSelect(item) {
 	  console.log('开始搜索');
 	  console.log(item);
@@ -331,14 +326,16 @@ export default {
 	},
 	sourceTypeChange (e) {
 	  console.log(e)
-	  console.log('我点击了')
-	  if(this.sourceType === 2){
-		  this.placeholder = '请按接入间名称查询'
+	  var that = this
+	  that.searchName = ''
+	  that.district = ''
+	  if(that.sourceType === 2){
+		  that.placeholder = '请按接入间名称查询'
 	  } else {
-		  this.placeholder = '请按机楼名称查询'
+		  that.placeholder = '请按机楼名称查询'
 	  }
 	  // this.findResourceList();
-	  this.getDataList()
+	  that.getDataList()
 	},
     examineVerify() {},
     changeFun(val) {

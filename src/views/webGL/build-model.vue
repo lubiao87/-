@@ -931,7 +931,11 @@ export default {
       this.controls.addEventListener("change", this.tag);
       this.cabinetplaced.forEach((item, index) => {
         let mesh = self.addMeth(item, index);
+
         self.listGroup.add(mesh);
+        if (self.buildId === "ADSMLHYUR01" && item.type_index === "MEN") {
+          self.listGroup.remove(mesh);
+        }
         if (item.capacity) {
           self.addBox(item);
         }

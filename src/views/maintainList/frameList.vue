@@ -15,32 +15,46 @@
         <div class="parinci">
           <!-- form表单组件插入 -->
 		  <div class="fn-fs16 fn-lh24">
-			  <el-radio v-model="radio" label="1">新增机架</el-radio>
-			  <el-radio v-model="radio" label="2">新增其他物体</el-radio>
+			  <el-radio-group v-model="radio" @change="radioChange">
+			      <el-radio label="1">新增机架</el-radio>
+			      <el-radio label="2">新增其他物体</el-radio>
+			  </el-radio-group>
+			  
 		  </div>
 		  <!-- <div class="sub-title">输入后匹配输入建议</div> -->
 		  <el-autocomplete style="width: 20%; "
 			class="fn-d-i-b"
-			v-model="state2"
+			v-model="searchName"
 			:fetch-suggestions="querySearch"
-			placeholder="请按机房名称、所属机楼查询"
+			:placeholder=placeholder
 			:trigger-on-focus="false"
 			@select="handleSelect"
 		  ></el-autocomplete>
-		  <el-select  v-model="sourceType" placeholder="请选择" @change='sourceTypeChange'>
+		  
+		  <el-select v-if="radio === '1'" v-model="frameSource" placeholder="请选择机架来源" @change='frameSourceListChange'>
 		   <el-option 
-			v-for="item in foremostDataVal"
+			v-for="item in frameSourceList"
 			:key="item.value"
 			:label="item.label"
 			:value="item.value">
 		   </el-option>
 		  </el-select>
-		  <el-select class="fn-mr025" v-model="district" placeholder="所属区域" @change='districtChange'>
+		  
+		  <el-select v-if="radio === '1'" class="fn-mr025" v-model="frameType" placeholder="请选择机架类型" @change='frameTypeListChange'>
 		   <el-option 
-				v-for="item in districtSelectList"
-				:key="item.value"
-				:label="item.label"
-				:value="item.value">
+				v-for="item in frameTypeList"
+				:key="item.name"
+				:label="item.name"
+				:value="item.name">
+		   </el-option>
+		  </el-select>
+		  
+		  <el-select v-if="radio === '2'" class="fn-mr025" v-model="substanceType" placeholder="请选择物体类型" @change='substanceTypeListChange'>
+		   <el-option 
+		  			v-for="item in substanceTypeList"
+		  			:key="item.name"
+		  			:label="item.name"
+		  			:value="item.name">
 		   </el-option>
 		  </el-select>
 		  <div class="fn-mt14 fn-d-i-b">
@@ -55,7 +69,7 @@
             <el-table 
               :data="tableData"
               class="fn-w100"
-			  height= '600'
+			  height= '550'
               @selection-change="changeFun"
             >
               <el-table-column type="selection" width="50"></el-table-column>
@@ -145,21 +159,21 @@
               ></el-table-column>
 			  <el-table-column
 			    v-if=" radio === '2'"
-			    prop="area"
+			    prop="length"
 			    label="物体长度(cm)"
 				align="center"
 			    :key="13"
 			  ></el-table-column>
               <el-table-column
                 v-if=" radio === '2'"
-                prop="area"
+                prop="width"
                 label="物体宽度(cm)"
 				align="center"
                 :key="14"
               ></el-table-column>
 			  <el-table-column
 			    v-if=" radio === '2'"
-			    prop="area"
+			    prop="height"
 			    label="物体高度(cm)"
 				align="center"
 			    :key="15"
@@ -407,8 +421,15 @@ export default {
       barNames: "可维护资源列表", // 指示栏名称
       nabarCation: imagesSrc.nabarCation, // 图片
       applicationStatus: "请选择资源类型",
-	  placeholder: '请按机楼名称查询',
+	  placeholder: '请按机架名称查询',
       district: "所属区域",
+	  searchName: '',
+	  searchNameList: [],
+      frameSource: "",
+      frameType: "",
+      substanceType: "",
+	  frameTypeList: [],
+	  substanceTypeList: [],
       currentStatus: 2, // 根据当前判断时间选择器或者输入框那个展示
       sourceType: 1, //资源类型（1：微机楼，2：机柜）
       cabinetHandleType: 1, //机柜弹出框操作类型（1：添加，2修改）
@@ -439,11 +460,16 @@ export default {
           label: "接入间"
         }
       ], // 资源类型
-      buildSelectList: [
-        { label: "", value: "" },
-        { label: "青云机楼", value: 1 },
-        { label: "工业园机楼", value: 2 },
-        { label: "跑马场机楼", value: 3 }
+	  buildSelectList: [
+	    { label: "", value: "" },
+	    { label: "青云机楼", value: 1 },
+	    { label: "工业园机楼", value: 2 },
+	    { label: "跑马场机楼", value: 3 }
+	  ],
+      frameSourceList: [
+        { label: "机架来源", value: "" },
+        { label: "手动录入", value: '0' },
+        { label: "资源生成", value: '1' },
       ],
       buildTip: "请选择所属机楼",
       districtSelectList: [
@@ -475,43 +501,100 @@ export default {
     };
   },
   created() {
-	 this.getTableList(); 
+	 var that = this
+	 that.radio = '1'
+	 that.getFrameTypeList();
+	 that.getSubstanceTypeList();
+	 that.getTableList(); 
   },
-  watch: {},
   methods: {
     init() {
 		var that = this
 		let query = that.$route.query
 		that.sourceType = query.sourceType
 		// this.getOrganList();
-		this.getTableList();
+		
+		that.getFrameTypeList();
+		that.getSubstanceTypeList();
+		that.getTableList(); 
     },
+	radioChange (val) {
+		var that = this
+		that.radio = val
+		that.searchName = ''
+		if (that.radio === '2') {
+			that.placeholder = '请按物体名称查询'
+			that.frameSource = ''
+			// that.frameType = ''
+		} else {
+			that.placeholder = '请按机架名称查询'
+			that.substanceType = ''
+		}
+		that.getTableList(); 
+	},
+	getFrameTypeList () {
+		var that = this
+		console.log(that.$route.query)
+		let param = {
+			url: api3.getFrameName,
+			method: 'GET',
+		}
+		that.sendReq( param, (res) => {
+			console.log(res)
+			if (res.respHeader.resultCode == 0) {
+			  that.frameTypeList = res.respBody.frameNameList
+			} else {
+			  that.$message.error(res.respHeader.message);
+			}
+		})
+	},
+	getSubstanceTypeList () {
+		var that = this
+		console.log(that.$route.query)
+		let param = {
+			url: api3.getOtherName,
+			method: 'GET',
+		}
+		that.sendReq( param, (res) => {
+			console.log(res)
+			if (res.respHeader.resultCode == 0) {
+			  that.substanceTypeList = res.respBody.OtherNameList
+			} else {
+			  that.$message.error(res.respHeader.message);
+			}
+		})
+	},
 	getTableList () {
 	  var that = this
 	  console.log(that.$route.query)
-	  // let data = qs.stringify({
-			//   'page': that.page,
-			//   'pageSize': that.pageSize,
-			//   'buildName': that.$route.query.name, // 机楼名称
-			//   'roomName': that.searchName, // 机房名称
-			//   'importantLevel': that.searchName, // 重要等级
-			//   'examinePower': that.searchName, // 审核权限
-			//   'buildId': that.$route.query.rsId // 机楼rsId
-		 //  })
-	  let param = {
-		  // url: api3.getFrameListByParamPage +'?page=' + that.page + '&pageSize =' + that.pageSize + '&buildName =' + that.buildName + '&roomName =' + that.roomName + '&buildId =' + that.$route.query.rsId,
-		  url: api3.getFrameListByParamPage,
-		  method: 'POST',
-		  contentType : 'application/x-www-form-urlencoded',
-		  data: qs.stringify({
-			  'page': that.page,
-			  'pageSize': that.pageSize,
-			  'buildName': that.$route.query.name, // 机楼名称
-			  'roomName': that.searchName, // 机房名称
-			  'importantLevel': that.searchName, // 重要等级
-			  'examinePower': that.searchName, // 审核权限
-			  'buildId': that.$route.query.rsId // 机楼rsId
-		  })
+	  let param = {};
+	  if ( that.radio === '2') {
+		  param = {
+			  url: api3.getOtherListByParamPage,
+			  method: 'POST',
+			  contentType : 'application/x-www-form-urlencoded',
+			  data: qs.stringify({
+				  'page': that.page,
+				  'pageSize': that.pageSize,
+				  'name': that.searchName, // 机房名称
+				  'type': that.substanceType, // 物体类型
+				  'roomId': that.$route.query.rsId // 机房rsId
+			  })
+		  }
+	  } else {
+		  param = {
+			  url: api3.getFrameListByParamPage,
+			  method: 'POST',
+			  contentType : 'application/x-www-form-urlencoded',
+			  data: qs.stringify({
+				  'page': that.page,
+				  'pageSize': that.pageSize,
+				  'frameName': that.searchName, // 机架名称（支持模糊匹配）
+				  'roomId': that.$route.query.rsId, // 机房/接入间rsId
+				  'frameSource': that.frameSource, // 机架来源（0：手动录入，1：资源生成）
+				  'frameType': that.frameType, // 机架类型
+			  })
+		  }
 	  }
 	  that.sendReq( param, (res) => {
 		console.log(res)
@@ -521,11 +604,14 @@ export default {
 				let data = new Date(val.createTime)
 				val.createTime = data.getFullYear() + '/' + (data.getMonth() + 1) + '/' + data.getDate()
 				// let time = new Date(parseInt(val.createTime)).toLocaleString().replace(/:\d{1,2}$/,' ');
-				if (val.frameSource == 0) {
-					val.frameSource = '手动录入'
-				} else {
-					val.frameSource = '资源生成'
+				if (that.radio === '1') {
+					if (val.frameSource == 0) {
+						val.frameSource = '手动录入'
+					} else {
+						val.frameSource = '资源生成'
+					}
 				}
+				
 			})
 		  that.tableData = res.respBody.data.list;
 		  that.tableParams.total = res.respBody.data.totals;
@@ -534,20 +620,72 @@ export default {
 		}
 	  })
 	},
+	querySearch (queryString, cb) {
+	  var that = this
+	  console.log(that.$route.query)
+	  let param = {};
+	  if ( that.radio === '2') {
+		  param = {
+			  url: api3.getOtherListByParamPage,
+			  method: 'POST',
+			  contentType : 'application/x-www-form-urlencoded',
+			  data: qs.stringify({
+				  'page': 1,
+				  'pageSize': 50,
+				  'name': queryString, // 机房名称
+				  'type': '', // 物体类型
+				  'roomId': that.$route.query.rsId // 机房rsId
+			  })
+		  }
+	    } else {
+		  param = {
+			  url: api3.getFrameListByParamPage,
+			  method: 'POST',
+			  contentType : 'application/x-www-form-urlencoded',
+			  data: qs.stringify({
+				  'page': 1,
+				  'pageSize': 100,
+				  'frameName': that.searchName, // 机架名称（支持模糊匹配）
+				  'roomId': that.$route.query.rsId, // 机房/接入间rsId
+				  'frameSource': '', // 机架来源（0：手动录入，1：资源生成）
+				  'frameType': '', // 机架类型
+			  })
+		    }
+	    }
+	    that.sendReq( param, (res) => {
+	  		console.log(res)
+	  		if (res.respHeader.resultCode == 0) {
+	  			res.respBody.data.list.forEach((val) =>{
+	  				val.value = val.name
+	  			})
+	  		  that.searchNameList = res.respBody.data.list
+			  cb(that.searchNameList)
+	  		} else {
+	  		  that.$message.error(res.respHeader.message);
+	  		}
+	    })
+	},
+	handleSelect(item) {
+	  console.log('开始搜索');
+	  console.log(item);
+	  this.getTableList()
+	},
 	handleEdit(index, row) {
 	  console.log(index, row);
 	  row.sourceType = this.sourceType
 	  this.pushPage('/lookEquipment', row)
 	},
-	sourceTypeChange (e) {
-	  console.log(e)
-	  console.log('我点击了')
-	  if(this.sourceType === 2){
-		  this.placeholder = '请按接入间名称查询'
-	  } else {
-		  this.placeholder = '请按机楼名称查询'
-	  }
-	  this.getFrameListByParamPage();
+	frameSourceListChange (e) {
+	  this.frameSource = e
+	  this.getTableList();
+	},
+	frameTypeListChange (e) {
+	  this.frameType = e
+	  this.getTableList();
+	},
+	substanceTypeListChange (e) {
+	  this.substanceType = e
+	  this.getTableList();
 	},
     examineVerify() {},
     changeFun(val) {
@@ -566,212 +704,7 @@ export default {
     cabinetUpdateBar(row) {
       this.$refs.cabinetBar.show(row);
     },
-    findResourceList() {
-      let _this = this;
-	  console.log(_this.sourceType)
-      var paramData = {};
-      if (_this.sourceName != null && _this.sourceName != "") {
-        paramData["sourceName"] = _this.sourceName;
-      }
-      if (_this.sourceType != null && _this.sourceType != "") {
-        paramData["sourceType"] = _this.sourceType;
-      }
-      paramData["page"] = _this.page;
-      paramData["pageSize"] = _this.pageSize;
-      let param = {
-        url: api.resourcePlaningList,
-        data: paramData
-      };
-      // 模拟数据
-      let res = {};
-	  console.log("_this.sourceType:",_this.sourceType)
-      if (_this.sourceType === 1) {
-        res = {
-          respBody: {
-            total: 2,
-            rows: [
-              {
-                aCPower: "青云机楼",
-                area: 300,
-                code: "001DC",
-                column: "10",
-                dCPower: "一楼",
-                height: 2,
-                longth: 15,
-                moduleId: 1,
-                moduleRoomName: "001",
-                name: "一楼001机楼",
-                planStatus: 2,
-                roomId: 3,
-                district: "天河区",
-                totalMachineCount: 200,
-                totalMachineTime: "2019年1月11日 12:00",
-                width: 20
-              },
-              {
-                aCPower: "青云机楼",
-                area: 400,
-                code: "002DC",
-                column: "1",
-                dCPower: "二楼",
-                height: 5,
-                longth: 20,
-                moduleId: 2,
-                moduleRoomName: "002",
-                name: "二楼002机楼",
-                planStatus: 0,
-                roomId: 1,
-                district: "荔湾区",
-                totalMachineCount: 100,
-                totalMachineTime: "2019年2月",
-                width: 20
-              }
-            ]
-          },
-          respHeader: {
-            resultCode: 0,
-            message: "正确执行"
-          }
-        };
-      }
-
-      if (_this.sourceType === 2) {
-        res = {
-          respBody: {
-            total: 4,
-            rows: [
-              {
-                cabinetId: 1,
-                cabinetStatus: 2,
-                cabinetType: 1,
-                code: "jc-1",
-                column: "B",
-                currentType: 2,
-                height: 1,
-                longth: 2,
-                major: "DDF机架",
-                remainStandCabient: "2",
-                totalStandCabient: "100",
-                moduleId: 9,
-                moduleName: "一楼001机房",
-                buildName: "青云机楼",
-                district: "天河区",
-                area: "306",
-                name: "2号接入间",
-                power: 100,
-                usePower: 40,
-                row: "2",
-                totalUnitCount: 30,
-                unuseUnitCount: 20,
-                width: 2,
-                totalMachineTime: "2019年1月11日 12:00",
-                dataSources: "手动录入"
-              },
-              {
-                cabinetId: 2,
-                cabinetStatus: 2,
-                cabinetType: 1,
-                code: "jc-1",
-                column: "B",
-                currentType: 2,
-                height: 2,
-                longth: 3,
-                major: "ODF机架",
-                remainStandCabient: "34",
-                totalStandCabient: "39",
-                moduleId: 9,
-                moduleName: "二楼002机房",
-                buildName: "跑马场机楼",
-                district: "荔湾区",
-                area: "850",
-                name: "3号接入间",
-                power: 200,
-                usePower: 50,
-                row: "2",
-                totalUnitCount: 42,
-                unuseUnitCount: 22,
-                width: 2,
-                totalMachineTime: "2019年1月11日 12:00",
-                dataSources: "资源同步"
-              },
-              {
-                cabinetId: 3,
-                cabinetStatus: 2,
-                cabinetType: 1,
-                code: "jc-1",
-                column: "B",
-                currentType: 2,
-                height: 1,
-                longth: 2,
-                major: "ODF机架",
-                remainStandCabient: "20",
-                totalStandCabient: "100",
-                moduleId: 9,
-                moduleName: "五楼005机房",
-                buildName: "工业园机楼",
-                district: "荔湾区",
-                area: "560",
-                name: "4号接入间",
-                power: 200,
-                usePower: 30,
-                row: "2",
-                totalUnitCount: 34,
-                unuseUnitCount: 30,
-                width: 4,
-                totalMachineTime: "2019年1月11日 12:00",
-                dataSources: "手动录入"
-              },
-              {
-                cabinetId: 4,
-                cabinetStatus: 2,
-                cabinetType: 1,
-                code: "jc-1",
-                column: "B",
-                currentType: 2,
-                height: 2,
-                longth: 2,
-                major: "ODF机架",
-                remainStandCabient: "20",
-                totalStandCabient: "100",
-                moduleId: 9,
-                moduleName: "三楼003机房",
-                buildName: "跑马场机楼",
-                district: "白云区",
-                area: "450",
-                name: "5号接入间",
-                power: 290,
-                usePower: 80,
-                row: "2",
-                totalUnitCount: 30,
-                unuseUnitCount: 18,
-                width: 3,
-                totalMachineTime: "2019年1月11日 12:00",
-                dataSources: "手动录入"
-              }
-            ]
-          },
-          respHeader: {
-            resultCode: 0,
-            message: "正确执行"
-          }
-        };
-      }
-      if (res.respHeader.resultCode == 0) {
-        _this.tableData = res.respBody.rows;
-        _this.tableParams.total = res.respBody.total;
-      } else {
-        this.$message.error(res.respHeader.message);
-      }
-      // 请求后台接口
-       _this.sendReq(param, (res) => {
-			if(res.respHeader.resultCode == 0){
-				_this.tableData = res.respBody.rows;
-				_this.tableParams.total = res.respBody.total;
-			}else{
-				this.$message.error(res.respHeader.message);
-			}
-		}) 
-    },
+    
     submitList(formInline) {
       console.log("submitList");
       console.log(formInline);

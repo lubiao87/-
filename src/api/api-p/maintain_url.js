@@ -21,6 +21,7 @@ export default BSEURL => {
     batchDeleteFrame: BSEURL + "/frame/batchDeleteFrame", // 批量删除机架
     getEquipmentListByParamPage: BSEURL + "/frame/getEquipmentListByParamPage", // 按条件分页查询设备列表
     batchImportframe: BSEURL + "/frame/batchImportframe", // 批量导入机架数据
+    getFrameName: BSEURL + "/frame/getFrameName", // 机架类型名称集合
 	// 其他物体模块
     insertOtherSelective: BSEURL + "/other/insertOtherSelective", // 新增其他物体
     getOtherListByParamPage: BSEURL + "/other/getOtherListByParamPage", // 按条件分页查询其他物体列表
@@ -28,6 +29,7 @@ export default BSEURL => {
     updateOtherSelective: BSEURL + "/other/updateOtherSelective", // 修改其他物体信息
     batchDeleteOther: BSEURL + "/other/batchDeleteOther", // 批量删除其他物体
     batchImportOther: BSEURL + "/other/batchImportOther", // 批量导入其他物体
+    getOtherName: BSEURL + "/other/getOtherName", //获取其他物体名称集合
 	// 列头柜模块
     insertColumnCabinetSelective: BSEURL + "/columnCabinet/insertColumnCabinetSelective", // 新增列头柜
     getColumnCabinetListByParamPage: BSEURL + "/columnCabinet/getColumnCabinetListByParamPage", // 按条件分页查询列头柜列表

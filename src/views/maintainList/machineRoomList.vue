@@ -17,23 +17,23 @@
 		  <!-- <div class="sub-title">输入后匹配输入建议</div> -->
 		  <el-autocomplete style="width: 20%; "
 			class="fn-d-i-b"
-			v-model="state2"
+			v-model="searchName"
 			:fetch-suggestions="querySearch"
 			placeholder="请按机房名称、所属机楼查询"
 			:trigger-on-focus="false"
 			@select="handleSelect"
 		  ></el-autocomplete>
-		  <el-select  v-model="sourceType" placeholder="请选择" @change='sourceTypeChange'>
+		  <el-select  v-model="importantLevel" placeholder="重要等级" @change='importantLevelListChange'>
 		   <el-option 
-			v-for="item in foremostDataVal"
+			v-for="item in importantLevelList"
 			:key="item.value"
 			:label="item.label"
 			:value="item.value">
 		   </el-option>
 		  </el-select>
-		  <el-select class="fn-mr030" v-model="district" placeholder="所属区域" @change='districtChange'>
+		  <el-select class="fn-mr030" v-model="examinePower" placeholder="审核权限" @change='examinePowerListChange'>
 		   <el-option 
-				v-for="item in districtSelectList"
+				v-for="item in examinePowerList"
 				:key="item.value"
 				:label="item.label"
 				:value="item.value">
@@ -262,6 +262,10 @@ export default {
       applicationStatus: "请选择资源类型",
 	  placeholder: '请按机楼名称查询',
       district: "所属区域",
+      searchName: "",
+	  searchNameList: [],
+      importantLevel: "",
+	  examinePower: "",
       currentStatus: 2, // 根据当前判断时间选择器或者输入框那个展示
       sourceType: 1, //资源类型（1：微机楼，2：机柜）
       cabinetHandleType: 1, //机柜弹出框操作类型（1：添加，2修改）
@@ -282,16 +286,13 @@ export default {
 		desc: ''
 	  },
 	  formLabelWidth: '140px',
-      foremostDataVal: [
-        {
-          value: 1,
-          label: "机楼"
-        },
-        {
-          value: 2,
-          label: "接入间"
-        }
-      ], // 资源类型
+	  // 重要等级列表
+      importantLevelList: [
+		{value: "", label: "重要等级"},
+        {value: 'A', label: "A"},
+        {value: 'B', label: "B"},
+        {value: 'C', label: "C"},
+      ], 
       buildSelectList: [
         { label: "", value: "" },
         { label: "青云机楼", value: 1 },
@@ -299,11 +300,12 @@ export default {
         { label: "跑马场机楼", value: 3 }
       ],
       buildTip: "请选择所属机楼",
-      districtSelectList: [
-        { label: "所属区域", value: "" },
-        { label: "天河区", value: 1 },
-        { label: "荔湾区", value: 2 },
-        { label: "白云区", value: 3 }
+	  // 审核权限列表
+      examinePowerList: [
+        { label: "审核权限", value: "" },
+        { label: "区级", value: '区级' },
+        { label: "省级", value: '省级' },
+        { label: "市级", value: '市级' },
       ],
       districtTip: "请选择所属区域",
       statusSelectList: [
@@ -319,7 +321,6 @@ export default {
         currentPage4: 1
       },
       tableData: [],
-	  
 	  tableHead:[
 		  {sourceType: 1, prop: 'name', label: '所属机房',  key: '1'},
 		  {sourceType: 1, prop: 'moduleRoomName', label: '所在房间号', key: '2' },
@@ -341,13 +342,14 @@ export default {
 	  let param = {
 		  url: api3.getRoomListByParamPage,
 		  method: 'POST',
+		  contentType : 'application/x-www-form-urlencoded',
 		  data: qs.stringify({
 			  'page': that.page,
 			  'pageSize': that.pageSize,
 			  'buildName': that.$route.query.name, // 机楼名称
 			  'roomName': that.searchName, // 机房名称
-			  'importantLevel': that.searchName, // 重要等级
-			  'examinePower': that.searchName, // 审核权限
+			  'importantLevel': that.importantLevel, // 重要等级
+			  'examinePower': that.examinePower, // 审核权限
 			  'buildId': that.$route.query.rsId // 机楼rsId
 		  })
 	  }
@@ -368,14 +370,57 @@ export default {
 		}
 	  })
 	},
+	querySearch (queryString, cb) {
+	  var that = this
+	  let param = {
+		  url: api3.getRoomListByParamPage,
+		  method: 'POST',
+		  contentType : 'application/x-www-form-urlencoded',
+		  data: qs.stringify({
+			  'page': 1,
+			  'pageSize': 100,
+			  'buildName': that.$route.query.name, // 机楼名称
+			  'roomName': that.searchName, // 机房名称
+			  'importantLevel': '', // 重要等级
+			  'examinePower': '', // 审核权限
+			  'buildId': that.$route.query.rsId // 机楼rsId
+		  })
+	  }
+	  that.sendReq( param, (res) => {
+	  		// console.log(res)
+	  		if (res.respHeader.resultCode == 0) {
+	  			that.searchNameList = res.respBody.data.list;
+	  			that.searchNameList.forEach((val) => {
+				  val.value = val.name
+	  			})
+	  			let results = that.searchNameList
+	  			cb(results)
+	  		} else {
+	  		  that.$message.error(res.respHeader.message);
+	  		}
+	  })
+	},
+	handleSelect(item) {
+	  console.log('开始搜索');
+	  console.log(item);
+	  this.getRoomListByParamPage()
+	},
 	handleEdit(index, row) {
 	  row.sourceType = this.sourceType
 	  console.log(index, row);
 	  this.pushPage('/frameList', row)
 	},
-	sourceTypeChange (e) {
-	  console.log(e)
-	  console.log('我点击了')
+	importantLevelListChange (e) {
+	  this.importantLevel = e
+	  if(this.sourceType === 2){
+		  this.placeholder = '请按接入间名称查询'
+	  } else {
+		  this.placeholder = '请按机楼名称查询'
+	  }
+	  this.getRoomListByParamPage();
+	},
+	examinePowerListChange (e) {
+	  this.examinePower = e
 	  if(this.sourceType === 2){
 		  this.placeholder = '请按接入间名称查询'
 	  } else {
@@ -432,6 +477,7 @@ export default {
       let _this = this;
       let param = {
         url: api.moduleUpdate,
+		
         data: val
       };
       _this.sendReq(param, res => {

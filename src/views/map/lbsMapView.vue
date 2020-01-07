@@ -614,7 +614,7 @@ export default {
               JSON.parse(item.coordinate[1])
             ],
             zooms: [10.5, 12],
-            zIndex: 3
+            zIndex: 9999
           });
           text.setMap(that.map);
           text.setExtData(item);

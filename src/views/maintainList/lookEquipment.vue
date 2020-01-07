@@ -17,15 +17,15 @@
 		  <!-- <div class="sub-title">输入后匹配输入建议</div> -->
 		  <el-autocomplete style="width: 20%; "
 			class=" fn-d-i-b"
-			v-model="state2"
+			v-model="searchName"
 			:fetch-suggestions="querySearch"
 			placeholder="请按设备名称、设备专业查询"
 			:trigger-on-focus="false"
 			@select="handleSelect"
 		  ></el-autocomplete>
-		  <el-select v-model="sourceType" placeholder="设备状态" @change='sourceTypeChange'>
+		  <el-select v-model="equipmentStatus" placeholder="设备状态" @change='equipmentStatusListChange'>
 		   <el-option 
-			v-for="item in foremostDataVal"
+			v-for="item in equipmentStatusList"
 			:key="item.value"
 			:label="item.label"
 			:value="item.value">
@@ -41,7 +41,7 @@
             >
               <el-table-column type="selection" width="50"></el-table-column>
 			  <el-table-column
-			    prop="name"
+			    prop="createTime"
 			    label="上架时间"
 			  	align="center"
 			    :key="1"
@@ -53,25 +53,25 @@
 			    :key="2"
 			  ></el-table-column>
 			  <el-table-column
-			    prop="name"
+			    prop="major"
 			    label="设备专业"
 			  	align="center"
 			    :key="3"
 			  ></el-table-column>
 			  <el-table-column
-			    prop="name"
+			    prop="realPower"
 			    label="设备额定功率"
 			  	align="center"
 			    :key="4"
 			  ></el-table-column>
               <el-table-column
-                prop="area"
+                prop="unitCount"
                 label="设备实时功率"
 				align="center"
                 :key="5"
               ></el-table-column>
               <el-table-column
-                prop="district"
+                prop="readyStatus"
                 label="设备状态"
 				align="center"
                 :key="6"
@@ -112,7 +112,7 @@ import importFeed from "./importFeed"; // form表单组件注册
 import paging from "./paging"; // 分页
 import qs from "qs";
 import { listSearchMixin } from "../../mixin"; //请求
-import { api } from "../../api/api"; //请求
+import { api, api3 } from "../../api/api"; //请求
 import moduleBar from "./moduleBar"; //微模块修改添加
 import cabinetBar from "./cabinetBar"; //机架修改添加
 export default {
@@ -133,6 +133,8 @@ export default {
       applicationStatus: "请选择资源类型",
 	  placeholder: '请按机楼名称查询',
       district: "所属区域",
+	  searchName: '',
+	  searchNameList: [],
       currentStatus: 2, // 根据当前判断时间选择器或者输入框那个展示
       sourceType: 1, //资源类型（1：微机楼，2：机柜）
       cabinetHandleType: 1, //机柜弹出框操作类型（1：添加，2修改）
@@ -157,6 +159,11 @@ export default {
         { label: "青云机楼", value: 1 },
         { label: "工业园机楼", value: 2 },
         { label: "跑马场机楼", value: 3 }
+      ],
+	  equipmentStatusList: [
+        { label: "设备状态", value: "" },
+        { label: "未交付", value: 1 },
+        { label: "已交付", value: 2 },
       ],
       buildTip: "请选择所属机楼",
       districtSelectList: [
@@ -191,8 +198,77 @@ export default {
   methods: {
     init() {
       // this.getOrganList();
-      this.findResourceList();
+      // this.findResourceList();
+      this.getEquipmentListByParamPage();
     },
+	getEquipmentListByParamPage () {
+		var that = this
+		console.log(that.$route.query)
+		let param = {
+		  url: api3.getEquipmentListByParamPage,
+		  method: 'POST',
+		  contentType : 'application/x-www-form-urlencoded',
+		  data: qs.stringify({
+			  'page': that.page,
+			  'pageSize': that.pageSize,
+			  'frameId': that.$route.query.rsId, // 机架ID
+			  'name': that.searchName, // 设备名称或专业
+			  'status': that.equipmentStatus, // 设备状态(1：未交付，2：已交付)
+		  })
+		}
+		that.sendReq( param, (res) => {
+			// console.log(res)
+			if (res.respHeader.resultCode == 0) {
+				res.respBody.data.list.forEach((val) =>{
+					let data = new Date(val.createTime)
+					val.createTime = data.getFullYear() + '/' + (data.getMonth() + 1) + '/' + data.getDate()
+					// let time = new Date(parseInt(val.createTime)).toLocaleString().replace(/:\d{1,2}$/,' ');
+					if (val.readyStatus === 2) {
+						val.readyStatus = '已交付'
+					} else {
+						val.readyStatus = '未交付'
+					}
+				})
+				that.tableData = res.respBody.data.list;
+				that.tableParams.total = res.respBody.data.totals;
+			} else {
+			  that.$message.error(res.respHeader.message);
+			}
+		})
+	},
+	querySearch (queryString, cb) {
+	  var that = this
+	  let param = {
+	    url: api3.getEquipmentListByParamPage,
+	    method: 'POST',
+	    contentType : 'application/x-www-form-urlencoded',
+	    data: qs.stringify({
+	  	  'page': 1,
+	  	  'pageSize': 100,
+	  	  'frameId': that.$route.query.rsId, // 机架ID
+	  	  'name': queryString, // 设备名称或专业
+	  	  'status': '', // 设备状态(1：未交付，2：已交付)
+	    })
+	  }
+	  that.sendReq( param, (res) => {
+		// console.log(res)
+		if (res.respHeader.resultCode == 0) {
+			that.searchNameList = res.respBody.data.list;
+			that.searchNameList.forEach((val) => {
+			  val.value = val.name
+			})
+			let results = that.searchNameList
+			cb(results)
+		} else {
+		  that.$message.error(res.respHeader.message);
+		}
+	  })
+	},
+	handleSelect(item) {
+	  console.log('开始搜索');
+	  console.log(item);
+	  this.getEquipmentListByParamPage()
+	},
 	handleEdit(index, row) {
 	  console.log(index, row);
 	  row.type = this.sourceType
@@ -203,15 +279,12 @@ export default {
 	  }
 	  
 	},
-	sourceTypeChange (e) {
+	equipmentStatusListChange (e) {
 	  console.log(e)
 	  console.log('我点击了')
-	  if(this.sourceType === 2){
-		  this.placeholder = '请按接入间名称查询'
-	  } else {
-		  this.placeholder = '请按机楼名称查询'
-	  }
-	  this.findResourceList();
+	  var that = this
+	  that.equipmentStatus = e
+	  this.getEquipmentListByParamPage();
 	},
     examineVerify() {},
     changeFun(val) {
@@ -443,7 +516,7 @@ export default {
       _this.countyId = formInline.county_id;
       _this.sourceType = formInline.sourceType;
       _this.sourceName = formInline.sourceName;
-      _this.findResourceList();
+      _this.getEquipmentListByParamPage();
     },
     getOrganList() {
       let _this = this;
@@ -516,11 +589,11 @@ export default {
     handleSizeChange(val) {
       this.pageSize = val;
       this.page = 1;
-      this.findResourceList();
+      this.getEquipmentListByParamPage();
     },
     handleCurrentChange(val) {
       this.page = val;
-      this.findResourceList();
+      this.getEquipmentListByParamPage();
     },
     // updateBuilding(val){
     //     let _this = this;
@@ -561,7 +634,7 @@ export default {
       _this.sendReq(param, res => {
         if (res.respHeader.resultCode == 0) {
           this.$message({ type: "success", message: "修改成功" });
-          _this.findResourceList();
+          _this.getEquipmentListByParamPage();
         } else {
           this.$message.error(res.respHeader.message);
         }
@@ -576,7 +649,7 @@ export default {
       _this.sendReq(param, res => {
         if (res.respHeader.resultCode == 0) {
           this.$message({ type: "success", message: "修改成功" });
-          _this.findResourceList();
+          _this.getEquipmentListByParamPage();
         } else {
           this.$message.error(res.respHeader.message);
         }
@@ -675,7 +748,7 @@ export default {
         } else {
           this.$message.error(res.respHeader.message);
         }
-        _this.findResourceList();
+        _this.getEquipmentListByParamPage();
       });
     },
     deleteCabinets(ids) {
@@ -694,7 +767,7 @@ export default {
         } else {
           this.$message.error(res.respHeader.message);
         }
-        _this.findResourceList();
+        _this.getEquipmentListByParamPage();
       });
     }
   },

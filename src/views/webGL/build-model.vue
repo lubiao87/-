@@ -388,7 +388,7 @@ export default {
     getJieRuJianStatistics() {
       const self = this;
       let param = {
-        url: api2.getJieRuJianStatistics + `?id=123&queryType=${this.modelType}` //获取request_url.js文件的请求路径
+        url: api2.getJieRuJianStatistics + `?id=${this.buildId}&queryType=${this.modelType}` //获取request_url.js文件的请求路径
       };
       self.sendReq(param, res => {
         // console.log("--------", res);
@@ -584,40 +584,42 @@ export default {
           that.$set(arr[index], "select", true);
         }
       });
-      switch (index) {
-        case 0:
-          this.barData = [
-            { value: 70, name: "未用" },
-            { value: 30, name: "已用" }
-          ];
-          this.newMap();
-          break;
-        case 1:
-          this.barData = [
-            { value: 400, name: "未用" },
-            { value: 560, name: "已用" },
-            { value: 40, name: "预占" }
-          ];
-          this.newMap();
-          break;
-        case 2:
-          this.barData = [
-            { value: 5, name: "电池" },
-            { value: 2, name: "空调" }
-          ];
-          this.newMap();
-          break;
-        case 3:
-          this.barData = [
-            { value: 6, name: "传输机架" },
-            { value: 2, name: "数据机架" }
-          ];
-          this.newMap();
-          break;
+      this.barData = this.moduleStatistics[index].barData;
+      this.newMap();
+      // switch (index) {
+      //   case 0:
+      //     this.barData = [
+      //       { value: 70, name: "未用" },
+      //       { value: 30, name: "已用" }
+      //     ];
+      //     this.newMap();
+      //     break;
+      //   case 1:
+      //     this.barData = [
+      //       { value: 400, name: "未用" },
+      //       { value: 560, name: "已用" },
+      //       { value: 40, name: "预占" }
+      //     ];
+      //     this.newMap();
+      //     break;
+      //   case 2:
+      //     this.barData = [
+      //       { value: 5, name: "电池" },
+      //       { value: 2, name: "空调" }
+      //     ];
+      //     this.newMap();
+      //     break;
+      //   case 3:
+      //     this.barData = [
+      //       { value: 6, name: "传输机架" },
+      //       { value: 2, name: "数据机架" }
+      //     ];
+      //     this.newMap();
+      //     break;
 
-        default:
-          break;
-      }
+      //   default:
+      //     break;
+      // }
     },
     render() {
       // if (this.scene) {

@@ -223,20 +223,22 @@ export default {
       cunrrentData: [
         {
           type: "电流",
-          currentOne: "256.52 A",
-          cunrrentTwo: "676.21 A"
+          currentOne: "256.52 A", // 直流1
+          cunrrentTwo: "676.21 A" // 直流2
         }
       ],
       showUnitData: false,
       UnitData: [
         {
-          type: "BH棠盛园宾馆2YTU-1(D)",
-          major: "ATMDDNFR设备",
-          currentOne: "256.52",
-          cunrrentTwo: "676.21",
+          type: "BH棠盛园宾馆2YTU-1(D)", // 设备名称
+          major: "ATMDDNFR设备", // 设备专业
+          currentOne: "256.52", // 设备额定功率
+          cunrrentTwo: "676.21", // 设备实时功率
           shishigonglv: "",
           status: 1, // 1 未交付/预占 2 已交付
-          userName: "张三"
+          userName: "张三", // 用户名称
+          applicationTime: "2018-03-23 14:21:44", // 申请时间
+          shelfTime: "2019-03-23 14:21:44" // 上架时间
         },
         {
           type: "BZ华景新城福门阁YTU-1(D)",

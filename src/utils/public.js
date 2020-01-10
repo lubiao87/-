@@ -145,7 +145,7 @@ export function _NowRoom(arr) {
         shape, //二维轮廓
         //拉伸参数
         {
-          amount: 3000, //拉伸长度
+          amount: 4000, //拉伸长度
           curveSegments: 40, //圆周方向细分数
           bevelEnabled: false //无倒角
         }

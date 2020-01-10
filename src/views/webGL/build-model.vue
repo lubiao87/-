@@ -119,7 +119,7 @@
       >
       </el-option>
     </el-select>
-    <popup :propsFlag="propsFlag" />
+    <popup :propsFlag="propsFlag" :dataInfo="dataInfo" />
   </div>
   <!-- 右边收缩栏结束 -->
 </template>
@@ -345,7 +345,8 @@ export default {
           ]
         }
       ],
-      modelType: 1
+      modelType: 1,
+      dataInfo: null // 选择的机架信息
     };
   },
   computed: {
@@ -748,7 +749,6 @@ export default {
       // }
     },
     addMeth(item) {
-
       let geometry = null;
       let material = new THREE.MeshLambertMaterial({
         color: "#9fc1dd",
@@ -812,7 +812,6 @@ export default {
         } else {
           mesh.scale.set(item.size[0] / 600, item.size[1] / 600, 1);
         }
-
       }
       if (item.type_index === "LTG") { // 列头柜
         if (item.IsParallelX === "N") {
@@ -880,7 +879,7 @@ export default {
         }
       }
       // mesh.rotateX(-Math.PI / 2);
-      let positionY = item.size[1] / 2;
+      let positionY = item.size[2] / 2;
       // }
       if (item.IsParallelX === "N") { // 不平行x
         if (item.type_index === "MEN") {
@@ -919,6 +918,7 @@ export default {
       }
       return mesh;
     },
+    //设置接入间模型位置
     setCabinet() {
       const self = this;
       this.listGroup = new THREE.Group();
@@ -945,9 +945,10 @@ export default {
       this.methNow2 = null;
       if (this.buildId === "ADSMLHYUR01") {
         this.methNow2 = this.ADSMLHYUR01;
+        this.methNow2.position.y = 800;
       } else {
         this.methNow2 = _NowRoom(this.froomData);
-        this.methNow2.position.y = -1200;
+        this.methNow2.position.y = -200;
         this.methNow2.rotateX(-Math.PI / 2); //------------旋转
       }
       this.loading = false;
@@ -1096,15 +1097,18 @@ export default {
         this.$refs.menu2.style.left = x + "px";
         this.$refs.menu2.style.top = y - 200 + "px";
 
-        this.selectedObject.getWorldPosition(worldVector);
-        var standardVector2 = worldVector.project(this.camera);
-        var a2 = window.innerWidth / 2;
-        var b2 = window.innerHeight / 2;
-        var x2 = Math.round(standardVector2.x * a2 + a2); //标准设备坐标转屏幕坐标
-        var y2 = Math.round(-standardVector2.y * b2 + b2); //标准设备坐标转屏幕坐标
 
-        this.$refs.menu.style.left = x2 + "px";
-        this.$refs.menu.style.top = y2 + "px";
+        // var standardVector2 = worldVector.project(this.camera);
+        // var a2 = window.innerWidth / 2;
+        // var b2 = window.innerHeight / 2;
+        // var x2 = Math.round(standardVector.x * a + a); //标准设备坐标转屏幕坐标
+        // var y2 = Math.round(-standardVector.y * b + b); //标准设备坐标转屏幕坐标
+
+        this.$refs.menu.style.left = x + "px";
+        this.$refs.menu.style.top = y + "px";
+        this.$refs.menu3.style.left = x + "px";
+        this.$refs.menu3.style.top = y + "px";
+        this.selectedObject.getWorldPosition(worldVector);
         //这里的130px主要是为了标签和模型有一定偏移，当然也可以不设置，两者叠加在一起
       }
     },
@@ -1266,13 +1270,8 @@ export default {
         self.listGroup.children
       );
       if (intersects.length > 0) {
-        // console.log(intersects);
-        // window.open(
-        //   "http://www.yijushch.com/jmrv/www_wmk/#/device-module-details"
-        // );
-        // this.scene.updateMatrixWorld(true);
-        // const worldPosition = new THREE.Vector3();
-        // intersects[0].object.getWorldPosition(worldPosition);
+        // console.log(intersects[0].object);
+        this.dataInfo = intersects[0].object.dataInfo;
         this.propsFlag = true;
       }
     },

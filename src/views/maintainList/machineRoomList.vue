@@ -40,9 +40,9 @@
 		   </el-option>
 		  </el-select>
 		  <div class="fn-mt14 fn-d-i-b">
-			  <el-button type='primary' @click=" addRoom = true ">新增机房</el-button>
-			  <el-button type='primary'>修改</el-button>
-			  <el-button type='primary'>删除</el-button>
+			  <el-button type='primary' @click="showAddRoom">新增机房</el-button>
+			  <el-button type='primary' @click="updateRoomSelective">修改</el-button>
+			  <el-button type='primary' @click="deleteLists">删除</el-button>
 		  </div>
           <!-- 申请信息table数据 -->
           <div class="parinciRepreTable" >
@@ -96,7 +96,7 @@
                 :key="7"
               ></el-table-column>
               <el-table-column
-                prop="district"
+                prop="frameTotalCount"
                 label="可放机架数"
 				align="center"
                 :key="8"
@@ -146,87 +146,109 @@
       @cabinetUpdate="cabinetUpdate"
     >
     </cabinetBar>
-	
-	<el-dialog title="新增" :visible.sync="addRoom" custom-class="dialogClass" width="50%">
-	  <el-form :model="form" >
-	    <el-form-item class="fn-d-i-b" label="机房名称:" :label-width="formLabelWidth">
-	      <el-input v-model="form.name" placeholder="请输入" autocomplete="off" class="fn-m-220"></el-input>
+	<el-dialog :title="addOrUpdateTitle" :visible.sync="addRoom" custom-class="dialogClass" width="50%">
+	  <el-form :model="form" ref="form" label-width="100px" class="demo-ruleForm">
+	    <el-form-item class="fn-d-i-b"
+		prop="name"
+		:rules="[ { required: true, message: '机房名称不能为空'},]"
+		 label="机房名称:" :label-width="formLabelWidth">
+	      <el-input v-model="form.name" placeholder="请输入机房名称" autocomplete="off" class="fn-m-220"></el-input>
 	    </el-form-item>
-	  		<el-form-item class="fn-d-i-b" label="可放机架数:" :label-width="formLabelWidth">
-	  		  <el-input v-model="form.name" placeholder="请输入" autocomplete="off" class="fn-m-220"></el-input>
+	  		<el-form-item class="fn-d-i-b"
+			 prop="frameTotalCount"
+			 :rules="[ { required: true, message: '可放机架数不能为空'},{ type: 'number', message: '可放机架数必须为数字值'}]"
+			 label="可放机架数:" :label-width="formLabelWidth">
+	  		  <el-input v-model.number="form.frameTotalCount" placeholder="请输入可放机架数" autocomplete="off" class="fn-m-220"></el-input>
 	  		</el-form-item>
-	  		<el-form-item class="fn-d-i-b" label="编码:" :label-width="formLabelWidth">
-	  		  <el-input v-model="form.name" placeholder="请输入" autocomplete="off" class="fn-m-220"></el-input>
+	  		<el-form-item class="fn-d-i-b"
+			 prop="frameTotalCount"
+			 :rules="[ { required: true, message: '编码不能为空'},]"
+			 label="编码:" :label-width="formLabelWidth">
+	  		  <el-input v-model="form.code" placeholder="请输入编码" autocomplete="off" class="fn-m-220"></el-input>
 	  		</el-form-item>
-	  		<el-form-item class="fn-d-i-b" label="机房长度(cm):" :label-width="formLabelWidth">
-	  		  <el-input v-model="form.name" placeholder="请输入" autocomplete="off" class="fn-m-220"></el-input>
+			<el-form-item class="fn-d-i-b"
+			 prop="rsId"
+			 :rules="[ { required: true, message: '资源系统ID不能为空'},]"
+			 label="资源系统ID:" :label-width="formLabelWidth">
+			  <el-input v-model="form.rsId" readonly="addOrUpdateTitle === '修改机房'?ture:false" placeholder="请输入资源系统ID" autocomplete="off" class="fn-m-220"></el-input>
+			</el-form-item>
+	  		<el-form-item class="fn-d-i-b"
+			prop="length" :rules="[{ required: true, message: '机房长度不能为空'},{ type: 'number', message: '机房长度必须为数字值'}]"
+			 label="机房长度(cm):" :label-width="formLabelWidth">
+	  		  <el-input v-model.number="form.length" placeholder="请输入机房长度" autocomplete="off" class="fn-m-220"></el-input>
 	  		</el-form-item>
 	  		<el-form-item class="fn-d-i-b" label="房间号:" :label-width="formLabelWidth">
-	  		  <el-input v-model="form.name" placeholder="请输入" autocomplete="off" class="fn-m-220"></el-input>
+	  		  <el-input v-model="form.roomNo" placeholder="请输入房间号" autocomplete="off" class="fn-m-220"></el-input>
 	  		</el-form-item>
-	  		<el-form-item class="fn-d-i-b" label="机房宽度(cm):" :label-width="formLabelWidth">
-	  		  <el-input v-model="form.name" placeholder="请输入" autocomplete="off" class="fn-m-220"></el-input>
+	  		<el-form-item class="fn-d-i-b" label="机房宽度(cm):"
+			 prop="width" :rules="[{ required: true, message: '机房宽度不能为空'},{ type: 'number', message: '机房宽度必须为数字值'}]"
+			 :label-width="formLabelWidth">
+	  		  <el-input v-model.number="form.width" placeholder="请输入机房宽度" autocomplete="off" class="fn-m-220"></el-input>
 	  		</el-form-item>
-	  		<el-form-item class="fn-d-i-b" label="所在楼层:" :label-width="formLabelWidth">
-	  		  <el-input v-model="form.name" placeholder="请输入" autocomplete="off" class="fn-m-220"></el-input>
+			<el-form-item class="fn-d-i-b" label="所在楼层:" :label-width="formLabelWidth">
+			  <el-select v-model="form.floorId"  placeholder="请选择所在楼层" class="fn-m-220">
+			    <el-option v-for="item in floorList" :key="item.value" :label="item.name" :value="item.floorId"></el-option>
+			  </el-select>
+			</el-form-item>
+	  		<el-form-item class="fn-d-i-b" label="机房高度(cm):"
+			 prop="height" :rules="[{ required: true, message: '机房高度不能为空'},{ type: 'number', message: '机房高度必须为数字值'}]"
+			 :label-width="formLabelWidth">
+	  		  <el-input v-model.number="form.height" placeholder="请输入机房高度" autocomplete="off" class="fn-m-220"></el-input>
 	  		</el-form-item>
-	  		<el-form-item class="fn-d-i-b" label="机房高度(cm):" :label-width="formLabelWidth">
-	  		  <el-input v-model="form.name" placeholder="请输入" autocomplete="off" class="fn-m-220"></el-input>
-	  		</el-form-item>
-	    <el-form-item class="fn-d-i-b" label="所属机楼:" :label-width="formLabelWidth">
-	      <el-select v-model="form.region" placeholder="请选择活动区域" class="fn-m-220">
-	        <el-option label="机楼一" value="shanghai"></el-option>
-	        <el-option label="机楼二" value="beijing"></el-option>
-	      </el-select>
-	    </el-form-item>
-	  		<el-form-item class="fn-d-i-b" label="外电开关容量:" :label-width="formLabelWidth">
-	  		  <el-input v-model="form.name" placeholder="请输入" autocomplete="off" class="fn-m-220"></el-input>
+			<el-form-item class="fn-d-i-b" label="所属机楼:" :label-width="formLabelWidth">
+			  <el-input v-model="buildName" readonly="true" autocomplete="off" class="fn-m-220"></el-input>
+			</el-form-item>
+	  		<el-form-item class="fn-d-i-b" label="外电开关容量:" 
+			prop="switchCapacity" :rules="[{ required: true, message: '外电开关容量不能为空'},{ type: 'number', message: '外电开关容量必须为数字值'}]"
+			:label-width="formLabelWidth">
+	  		  <el-input v-model.number="form.switchCapacity" placeholder="请输入外电开关容量" autocomplete="off" class="fn-m-220"></el-input>
 	  		</el-form-item>
 	  		<el-form-item class="fn-d-i-b" label="所属区域:" :label-width="formLabelWidth">
-	  		  <el-select v-model="form.region" placeholder="请选择活动区域" class="fn-m-220">
-	  		    <el-option label="区域1" value="shanghai"></el-option>
-	  		    <el-option label="区域2" value="beijing"></el-option>
-	  		  </el-select>
+	  		  <el-input v-model="countyName" readonly="true" autocomplete="off" class="fn-m-220"></el-input>
 	  		</el-form-item>
 	  		<el-form-item class="fn-d-i-b" label="是否租用:" :label-width="formLabelWidth">
-	  		  <el-select v-model="form.region" placeholder="请选择活动区域" class="fn-m-220">
-	  		    <el-option label="是" value="shanghai"></el-option>
-	  		    <el-option label="否" value="beijing"></el-option>
+	  		  <el-select v-model="form.isRent" placeholder="请选择是否租用" class="fn-m-220">
+	  		    <el-option label="是" value="Y"></el-option>
+	  		    <el-option label="否" value="N"></el-option>
 	  		  </el-select>
 	  		</el-form-item>
-	  		<el-form-item class="fn-d-i-b" label="机房面积(㎡):" :label-width="formLabelWidth">
-	  		  <el-input v-model="form.name" placeholder="请输入" autocomplete="off" class="fn-m-220"></el-input>
+	  		<el-form-item class="fn-d-i-b" label="机房面积(㎡):"
+			 prop="measureArea" :rules="[{ required: true, message: '机房面积不能为空'},{ type: 'number', message: '机房面积必须为数字值'}]"
+			 :label-width="formLabelWidth">
+	  		  <el-input v-model.number="form.measureArea" placeholder="请输入机房面积" autocomplete="off" class="fn-m-220"></el-input>
 	  		</el-form-item>
-	  		<el-form-item class="fn-d-i-b" label="综合接入局:" :label-width="formLabelWidth">
-	  		  <el-select v-model="form.region" placeholder="请选择活动区域" class="fn-m-220">
-	  		    <el-option label="是" value="shanghai"></el-option>
-	  		    <el-option label="否" value="beijing"></el-option>
+	  		<el-form-item class="fn-d-i-b" label="机房类型:" :label-width="formLabelWidth">
+	  		  <el-select v-model="form.accessType" placeholder="请选择机房类型" class="fn-m-220">
+	  		    <el-option label="综合接入局" value='0'></el-option>
+	  		    <el-option label="接入间" value='1'></el-option>
+	  		    <el-option label="智慧机房" value='2'></el-option>
 	  		  </el-select>
 	  		</el-form-item>
 	  		<el-form-item class="fn-d-i-b" label="重要等级:" :label-width="formLabelWidth">
-	  		  <el-select v-model="form.region" placeholder="请选择活动区域" class="fn-m-220">
-	  		    <el-option label="A" value="shanghai"></el-option>
-	  		    <el-option label="B" value="beijing"></el-option>
-	  		    <el-option label="C" value="beijing"></el-option>
+	  		  <el-select v-model="form.importantLevel" placeholder="请选择重要等级" class="fn-m-220">
+	  		    <el-option label="A" value="A"></el-option>
+	  		    <el-option label="B" value="B"></el-option>
+	  		    <el-option label="C" value="C"></el-option>
 	  		  </el-select>
 	  		</el-form-item>
 	  		<el-form-item class="fn-d-i-b" label="是否直供电:" :label-width="formLabelWidth">
-	  		  <el-select v-model="form.region" placeholder="请选择活动区域" class="fn-m-220">
-	  		    <el-option label="是" value="shanghai"></el-option>
-	  		    <el-option label="否" value="beijing"></el-option>
+	  		  <el-select v-model="form.isPowerSupply" placeholder="请选择是否直供电" class="fn-m-220">
+	  		    <el-option label="是" value="Y"></el-option>
+	  		    <el-option label="否" value="N"></el-option>
 	  		  </el-select>
 	  		</el-form-item>
 	  		<el-form-item class="fn-d-i-b" label="审核权限:" :label-width="formLabelWidth">
-	  		  <el-select v-model="form.region" placeholder="请选择活动区域" class="fn-m-220">
-	  		    <el-option label="省级" value="shanghai"></el-option>
-	  		    <el-option label="市级" value="beijing"></el-option>
-	  		    <el-option label="县级" value="beijing"></el-option>
+	  		  <el-select v-model="form.examinePower" placeholder="请选择审核权限" class="fn-m-220">
+	  		    <el-option label="省级" value="省级"></el-option>
+	  		    <el-option label="市级" value="市级"></el-option>
+	  		    <el-option label="县级" value="县级"></el-option>
 	  		  </el-select>
 	  		</el-form-item>
 	  </el-form>
 	  <div slot="footer" class="dialog-footer">
 	    <el-button @click="addRoom = false">取 消</el-button>
-	    <el-button type="primary" @click="addRoom = false">确 定</el-button>
+	    <el-button  type="primary" v-if="addOrUpdateTitle === '新增机房'" @click="addList('form')">新 增</el-button>
+	    <el-button type="primary" v-if="addOrUpdateTitle === '修改机房'" @click="updataList('form')">修 改</el-button>
 	  </div>
 	</el-dialog>
 	
@@ -257,6 +279,14 @@ export default {
     return {
       loading: false,
       addRoom: false,
+	  buildId:'',
+	  countyId: '', // 区域id
+	  floorId: '',
+	  floorList: [], // 所属机楼所有楼层列表
+	  countyName: '', //所属区域名称
+	  buildName: '',
+	  byRoomIdForDetailsList: {}, //根据roomId查询对应详情列表
+	  addOrUpdateTitle: '新增机房',
       barNames: "可维护资源列表", // 指示栏名称
       nabarCation: imagesSrc.nabarCation, // 图片
       applicationStatus: "请选择资源类型",
@@ -276,14 +306,25 @@ export default {
       pageSize: 10,
       multipleSelection: [], //选择行
 	  form: {
-		name: '',
-		region: '',
-		date1: '',
-		date2: '',
-		delivery: false,
-		type: [],
-		resource: '',
-		desc: ''
+		"rsId": "",
+		"code": "",
+		"name": "",
+		"roomNo": "",
+		"buildId": '',
+		"floorId": "",
+		"length": '',
+		"width": '',
+		"height": '',
+		"countyId": "",
+		"countyName": "",
+		"measureArea": '',
+		"importantLevel": "A",
+		"examinePower": "市级",
+		"switchCapacity": '',
+		"isRent": "Y",
+		"accessType": '2',  // 机房类型(0：综合接入局，1：接入间，2：智慧机房)
+		"isPowerSupply": "Y",
+		"frameTotalCount": '' // 可放机架总数
 	  },
 	  formLabelWidth: '140px',
 	  // 重要等级列表
@@ -334,7 +375,168 @@ export default {
 		var that = this
 		let query = that.$route.query
 		that.sourceType = query.sourceType
+		that.countyName = query.countyName
+		that.countyId = query.countyId
+		that.buildName = query.name
+		that.buildId = query.rsId
 		that.getRoomListByParamPage();
+		that.floorLists();
+		that.form = {
+			"code": "",
+			"name": "",
+			"roomNo": "",
+			"buildId": that.buildId,
+			"floorId": "",
+			"length": '',
+			"width": '',
+			"height": '',
+			"countyId": that.countyId,
+			"countyName": that.countyName,
+			"measureArea": '',
+			"importantLevel": "",
+			"examinePower": "",
+			"switchCapacity": '',
+			"isRent": "Y",
+			"accessType": '',  // 机房类型(0：综合接入局，1：接入间，2：智慧机房)
+			"isPowerSupply": "Y",
+			"frameTotalCount": '' // 可放机架总数
+	    }
+	},
+	floorLists () {
+		var that = this
+		let param = {
+		  url: api3.getFloorListByBuildId+'?buildId=' + that.$route.query.rsId,
+		  method: 'GET',
+		}
+		that.sendReq( param, (res) => {
+			// console.log(res)
+			that.floorList = res.respBody.floorList
+		})
+	},
+	// 修改
+	updateRoomSelective() {
+	  var that = this
+	  // console.log("修改所选行");
+	  console.log(that.multipleSelection);
+	  //修改资源
+	  if (that.multipleSelection.length < 1) {
+	    that.$message.error("请勾选需要修改的资源");
+	    return;
+	  } else if (that.multipleSelection.length > 1) {
+	    that.$message.error("一次只能修改一条资源");
+	    return;
+	  }
+	  that.byRoomIdForDetails(that.multipleSelection[0].rsId);
+	},
+	// 修改数据
+	updateRoomData () {
+		var that = this
+		that.addOrUpdateTitle = '修改机房'
+		that.addRoom = true
+		that.form = that.byRoomIdForDetailsList
+	},
+	// 根据roomId查询对应列表详情
+	byRoomIdForDetails (id) {
+		var that = this
+		let param = {
+		  url: api3.getRoomDetailById+'?roomId=' + id,
+		  method: 'GET',
+		}
+		that.sendReq( param, (res) => {
+			// console.log(res)
+			if (res.respHeader.resultCode == 0) {
+				that.byRoomIdForDetailsList = res.respBody.tbRoom
+				that.updateRoomData()
+			} else {
+			  that.$message.error(res.respHeader.message);
+			}
+			
+		})
+	},
+	// 更新列表
+	updataList (formName) {
+		var that = this
+		this.$refs[formName].validate((valid) => {
+		  if (valid) {
+			// alert('submit!');
+			let param = {
+			  url: api3.updateRoomSelective,
+			  method: 'POST',
+			  // contentType : 'application/x-www-form-urlencoded',
+			  data: that.form
+			}
+			that.sendReq( param, (res) => {
+				// console.log(res)
+				if (res.respHeader.resultCode == 0) {
+					that.$message({ type: "success", message: "修改成功" });
+					that.addRoom = false
+					that.getRoomListByParamPage()
+				} else {
+				  that.$message.error(res.respHeader.message);
+				}
+			})
+		  } else {
+		    that.$message.error('必填项不可为空');
+			// console.log('error submit!!');
+			return false;
+		  }
+		});
+	},
+	// 显示新增机房列表
+	showAddRoom () {
+		var that = this
+		that.form = {
+			"code": "",
+			"name": "",
+			"roomNo": "",
+			"buildId": that.$route.query.buildId,
+			"floorId": "",
+			"length": '',
+			"width": '',
+			"height": '',
+			"countyId": that.$route.query.countyId,
+			"countyName": that.$route.query.countyName,
+			"measureArea": '',
+			"importantLevel": "",
+			"examinePower": "",
+			"switchCapacity": '',
+			"isRent": "Y",
+			"accessType": '',  // 机房类型(0：综合接入局，1：接入间，2：智慧机房)
+			"isPowerSupply": "Y",
+			"frameTotalCount": '' // 可放机架总数
+		}
+		that.addRoom = true
+		that.addOrUpdateTitle = '新增机房'
+	},
+	// 新增列表
+	addList (formName) {
+		var that = this
+		// console.log(that.form)
+		this.$refs[formName].validate((valid) => {
+		  if (valid) {
+			// alert('submit!');
+			let param = {
+			  url: api3.insertRoomSelective,
+			  method: 'POST',
+			  // contentType : 'application/x-www-form-urlencoded',
+			  data: that.form
+			}
+			that.sendReq( param, (res) => {
+				// console.log(res)
+				if (res.respHeader.resultCode == 0) {
+					that.$message({ type: "success", message: "新增成功" });
+					that.addRoom = false
+					that.getRoomListByParamPage()
+				} else {
+				  that.$message.error(res.respHeader.message);
+				}
+			})
+		  } else {
+			that.$message.error('必填项不可为空');
+			// console.log('error submit!!');
+			return false;
+		  }
+		});
 	},
 	getRoomListByParamPage () {
 	  var that = this
@@ -357,11 +559,11 @@ export default {
 		// console.log(res)
 		if (res.respHeader.resultCode == 0) {
 			res.respBody.data.list.forEach((val) =>{
-				console.log(val.createTime)
+				// console.log(val.createTime)
 				let data = new Date(val.createTime)
 				val.createTime = data.getFullYear() + '/' + (data.getMonth() + 1) + '/' + data.getDate()
 				// let time = new Date(parseInt(val.createTime)).toLocaleString().replace(/:\d{1,2}$/,' ');
-				console.log(val.createTime)
+				// console.log(val.createTime)
 			})
 		    that.tableData = res.respBody.data.list;
 		    that.tableParams.total = res.respBody.data.totals;
@@ -401,31 +603,31 @@ export default {
 	  })
 	},
 	handleSelect(item) {
-	  console.log('开始搜索');
-	  console.log(item);
+	  // console.log('开始搜索');
+	  // console.log(item);
 	  this.getRoomListByParamPage()
 	},
 	handleEdit(index, row) {
 	  row.sourceType = this.sourceType
-	  console.log(index, row);
+	  // console.log(index, row);
 	  this.pushPage('/frameList', row)
 	},
 	importantLevelListChange (e) {
 	  this.importantLevel = e
-	  if(this.sourceType === 2){
-		  this.placeholder = '请按接入间名称查询'
-	  } else {
-		  this.placeholder = '请按机楼名称查询'
-	  }
+	  // if(this.sourceType === 2){
+		 //  this.placeholder = '请按接入间名称查询'
+	  // } else {
+		 //  this.placeholder = '请按机楼名称查询'
+	  // }
 	  this.getRoomListByParamPage();
 	},
 	examinePowerListChange (e) {
 	  this.examinePower = e
-	  if(this.sourceType === 2){
-		  this.placeholder = '请按接入间名称查询'
-	  } else {
-		  this.placeholder = '请按机楼名称查询'
-	  }
+	  // if(this.sourceType === 2){
+		 //  this.placeholder = '请按接入间名称查询'
+	  // } else {
+		 //  this.placeholder = '请按机楼名称查询'
+	  // }
 	  this.getRoomListByParamPage();
 	},
     getOrganList() {
@@ -456,84 +658,36 @@ export default {
       _this.pushPage("/micromoduleDetal", param);
       // this.$refs.examine.show()
     },
-   
+	// 页面跳转封装
     pushPage(url, param) {
       this.$router.push({ path: url, query: param });
     },
+	// 改变请求数据返回量
     handleSizeChange(val) {
       this.pageSize = val;
       this.page = 1;
       this.getRoomListByParamPage();
     },
+	// 改变当前页请求
     handleCurrentChange(val) {
       this.page = val;
       this.getRoomListByParamPage();
     },
+	// 选择列表监听
     changeFun(val) {
-      console.log(val);
+      // console.log(val);
       this.multipleSelection = val;
     },
-    moduleUpdate(val) {
-      let _this = this;
-      let param = {
-        url: api.moduleUpdate,
-		
-        data: val
-      };
-      _this.sendReq(param, res => {
-        if (res.respHeader.resultCode == 0) {
-          this.$message({ type: "success", message: "修改成功" });
-          _this.getRoomListByParamPage();
-        } else {
-          this.$message.error(res.respHeader.message);
-        }
-      });
-    },
-    cabinetUpdate(val) {
-      let _this = this;
-      let param = {
-        url: api.cabinetUpdate,
-        data: val
-      };
-      _this.sendReq(param, res => {
-        if (res.respHeader.resultCode == 0) {
-          this.$message({ type: "success", message: "修改成功" });
-          _this.getRoomListByParamPage();
-        } else {
-          this.$message.error(res.respHeader.message);
-        }
-      });
-    },
-    
-    editSource() {
-      console.log("editSource");
-      //修改资源
-      if (this.multipleSelection.length < 1) {
-        this.$message.error("请勾选需要修改的资源");
-        return;
-      } else if (this.multipleSelection.length > 1) {
-        this.$message.error("一次只能修改一条资源");
-        return;
-      }
-      if (this.sourceType == 1) {
-        this.moduleHandleType = 2;
-        this.moduleUpdateBar(this.multipleSelection[0]);
-      } else {
-        this.cabinetHandleType = 2;
-        this.cabinetUpdateBar(this.multipleSelection[0]);
-      }
-    },
-    deleteSource() {
-      console.log("editSource");
-      let _this = this;
-      if (_this.multipleSelection.length < 1) {
-        _this.$message.error("请勾选需要修改的资源");
+	// 批量删除
+    deleteLists() {
+      // console.log("批量删除");
+      let that = this;
+      if (that.multipleSelection.length < 1) {
+        that.$message.error("请勾选需要删除的机房列表");
         return;
       }
       this.$confirm(
-        this.sourceType == 1
-          ? "确定删除所选机房及所属机架和设备？"
-          : "确定删除所选机架及所属设备？",
+        "确定删除所选机房列表？",
         "提示",
         {
           confirmButtonText: "确定",
@@ -541,58 +695,27 @@ export default {
           type: "warning"
         }
       ).then(() => {
-          if (_this.sourceType == 1) {
-            let moduleIds = _this.getModuleSelectIdStr();
-            _this.deleteModules(moduleIds);
-          } else {
-            let cabinetIds = _this.getCabinetSelectIdStr();
-            _this.deleteCabinets(cabinetIds);
-          }
+            let roomIds = that.getRoomSelectIdStr();
+            that.deleteRoomLists(roomIds);
         })
         .catch(() => {});
     },
-    getModuleSelectIdStr() {
-      //获取选择模块的id拼接字符串 1,2,3,
-      let ids = "";
-      this.multipleSelection.forEach(function(val, i) {
-        ids += val["moduleId"] + ",";
-      });
-      return ids;
-    },
-    getCabinetSelectIdStr() {
+    getRoomSelectIdStr() {
       //获取选择机架的id拼接字符串 1,2,3,
       let ids = "";
-      this.multipleSelection.forEach(function(val, i) {
-        ids += val["cabinetId"] + ",";
+      this.multipleSelection.forEach((val) => {
+        ids += val["rsId"] + ",";
       });
       return ids;
     },
-    deleteModules(ids) {
-      //删除勾选微模块
+    // 请求接口进行删除数据
+    deleteRoomLists(ids) {
+      //删除勾选到的机房
       let _this = this;
       let paramData = {};
-      paramData["moduleIds"] = ids;
+      paramData["roomIdList"] = ids;
       let param = {
-        url: api.moduleDelete,
-        data: qs.stringify(paramData),
-        contentType: "application/x-www-form-urlencoded"
-      };
-      _this.sendReq(param, res => {
-        if (res.respHeader.resultCode == 0) {
-          this.$message({ type: "success", message: "删除成功" });
-        } else {
-          this.$message.error(res.respHeader.message);
-        }
-        _this.getRoomListByParamPage();
-      });
-    },
-    deleteCabinets(ids) {
-      //删除勾选机柜
-      let _this = this;
-      let paramData = {};
-      paramData["cabinetIds"] = ids;
-      let param = {
-        url: api.cabinetDelete,
+        url: api3.batchDeleteRoom,
         data: qs.stringify(paramData),
         contentType: "application/x-www-form-urlencoded"
       };

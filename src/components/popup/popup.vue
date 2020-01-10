@@ -190,8 +190,12 @@
 
 <script>
 import echarts from "echarts"; // 引入echarts
+import { api2 } from "../../api/api"; //api配置请求的路径
+import { listSearchMixin } from "../../mixin"; //混淆请求
+import { Message } from "element-ui";
 export default {
   name: "machineCabinet",
+  mixins: [listSearchMixin],
   data() {
     return {
       UweiData: [
@@ -270,7 +274,7 @@ export default {
       ]
     };
   },
-  props: ["propsFlag"],
+  props: ["propsFlag", "dataInfo"],
   computed: {
     alarm1() {
       let n = 0;
@@ -297,13 +301,10 @@ export default {
       return this.propsFlag;
     }
   },
-  mounted() {
-    let $this = this;
-    this.$nextTick(() => {
-      this.myChart = echarts.init(document.getElementById("rateChart"));
-      this.newMap();
-    });
-  },
+  // mounted() {
+  //   // let $this = this;
+
+  // },
   methods: {
     setOption() {
       let $this = this;
@@ -373,36 +374,67 @@ export default {
       let option = this.setOption();
       this.myChart.setOption(option);
     },
+    // 表格统计
     getUnitData(item) {
       console.log("item", item);
+      let _this = this;
       this.showUnitData = true;
-      // let params = "";
-      // if (item.name === "已交付数量") {
-      //   params = 2;
-      // } else if (item.name === "预占数量") {
-      //   params = 1;
-      // } else {
-      //   params = "";
-      // }
-      // this.showUnitData = true;
-      // let param = {
-      //   url: api2.getUnit + this.IDS + "?readyStatus=" + params, //获取request_url.js文件的请求路径
-      //   method: "get"
-      // };
-      // let _this = this;
-      // this.sendReq(param, res => {
-      //   console.log("getUnit:", res);
-      //   this.UnitData = res.respBody.unitList;
-      //   // if (res.respBody.unitList.length > 0) {
-      //   //   res.respBody.unitList.forEach((item, idnex) => {
-      //   //     this.UnitData.push(item);
+      let param = {
+        url: api2.getEquipmentListData + `?frameId=${this.frameId}`
+      };
 
-      //   //   })
-      //   // }
-      // });
+      this.sendReq(param, res => {
+        console.log("getUnit:", res);
+        if (res.respHeader.resultCode === 0) {
+          _this.UnitData = res.respBody.UnitData;
+        } else {
+          Message({
+            showClose: true,
+            message: res.respHeader.message,
+            type: 'error',
+            duration: 2000
+          })
+        }
+      });
+    },
+    // 获取机架详情
+    getFrameInfoData(id) {
+      const self = this;
+      let param = {
+        url: api2.getFrameInfoData + `?frameId=${id}` //获取request_url.js文件的请求路径
+      };
+      self.sendReq(param, res => {
+
+        if (res.respHeader.resultCode === 0) {
+          self.UweiData = res.respBody.UweiData.map((item, i) => {
+            return Object.assign(self.UweiData[i], item);
+          });
+          self.cunrrentData = res.respBody.cunrrentData;
+          self.chartData = res.respBody.chartData;
+          self.$nextTick(() => {
+            self.myChart = echarts.init(document.getElementById("rateChart"));
+            self.newMap();
+          });
+          console.log("--------self.UweiData", self.UweiData);
+        } else {
+          Message({
+            showClose: true,
+            message: res.respHeader.message,
+            type: 'error',
+            duration: 2000
+          })
+        }
+      });
     },
     setShowPane() {
       this.$parent.propsFlag = false;
+    }
+  },
+  watch: {
+    dataInfo(val) {
+      // console.log(" watch aaaaaaaaaaaaaaaa",val);
+      this.frameId = val.frameId;
+      this.getFrameInfoData(val.frameId);
     }
   }
 };
@@ -417,7 +449,7 @@ export default {
   left: 0;
   top: 0;
   background-color: rgb(28, 50, 76);
-  z-index: 9999;
+  z-index: 11;
   color: #fff;
   .lb-iframe {
     position: absolute;

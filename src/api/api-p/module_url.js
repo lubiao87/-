@@ -9,6 +9,7 @@ export default BSEURL => {
     getFloorTreeData: BSEURL + "/data/getFloorTreeData", // 楼层列表
     getFrameInfoData: BSEURL + "/data/getFrameInfoData", // 机架详情
     getEquipmentListData: BSEURL + "/data/getEquipmentListData", // 机架详情
+    getFrameTypeList: BSEURL + "/data/getFrameTypeList", // 获取所有模型
     getAreaNumberData: BSEURL + "/data/getAreaNumberData" // 获取区域数量
   };
 };

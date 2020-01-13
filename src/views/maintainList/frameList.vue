@@ -16,14 +16,17 @@
           <!-- form表单组件插入 -->
 		  <div class="fn-fs16 fn-lh24">
 			  <el-radio-group v-model="radio" @change="radioChange">
+				<el-radio-button label="1">新增机架</el-radio-button>
+				<el-radio-button label="2">新增其他物体</el-radio-button>
+			  </el-radio-group>
+			  <!-- <el-radio-group v-model="radio" @change="radioChange">
 			      <el-radio label="1">新增机架</el-radio>
 			      <el-radio label="2">新增其他物体</el-radio>
-			  </el-radio-group>
-			  
+			  </el-radio-group> -->
 		  </div>
 		  <!-- <div class="sub-title">输入后匹配输入建议</div> -->
 		  <el-autocomplete style="width: 20%; "
-			class="fn-d-i-b"
+			class="fn-d-i-b margin_t10"
 			v-model="searchName"
 			:fetch-suggestions="querySearch"
 			:placeholder=placeholder
@@ -59,8 +62,8 @@
 		  </el-select>
 		  <div class="fn-mt14 fn-d-i-b">
 			  <el-button>导入</el-button>
-			  <el-button v-if="radio === '1'" @click="showAddList">新增机架</el-button>
-			  <el-button v-if="radio === '2'" @click="showAddList">新增其他物体</el-button>
+			  <el-button v-if="radio === '1'" @click="showAddList">新增</el-button>
+			  <el-button v-if="radio === '2'" @click="showAddList">新增</el-button>
 			  <el-button @click="showUpdateList">修改</el-button>
 			  <el-button @click='deleteRow'>删除</el-button>
 		  </div>
@@ -211,8 +214,8 @@
       @cabinetUpdate="cabinetUpdate"
     >
     </cabinetBar>
-	<el-dialog :title="addOrUpdateTitle" :visible.sync="showList" custom-class="dialogClass" width="50%">
-	  <el-form v-if="radio === '1'" :model="form" ref="form" class="demo-ruleForm">
+	<el-dialog :title="addOrUpdateTitle" :visible.sync="showList" custom-class="dialogClass" width="54%">
+	  <el-form v-if="radio === '1'" :model="form" ref="form" label-width="100px" class="demo-ruleForm">
 	    <el-form-item class="fn-d-i-b" 
 		prop="name" 
 		:rules="[ { required: true, message: '机架名称不能为空'}]"
@@ -226,16 +229,22 @@
 		  <el-input v-model="form.code" placeholder="请输入编码" autocomplete="off" class="fn-m-220"></el-input>
 		</el-form-item>
 		<el-form-item class="fn-d-i-b" label="所属区域:" :label-width="formLabelWidth">
-		  <el-input v-model="countyName" readonly="ture" autocomplete="off" class="fn-m-220"></el-input>
+		  <el-input v-model="countyName" disabled autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		<el-form-item class="fn-d-i-b"
+		 prop="rsId"
+		 :rules="[ { required: true, message: '资源系统ID不能为空'},]"
+		 label="资源系统ID:" :label-width="formLabelWidth">
+		  <el-input v-model="form.rsId" :readonly="rsIdReadonly" placeholder="请输入资源系统ID" autocomplete="off" class="fn-m-220"></el-input>
 		</el-form-item>
 		<el-form-item v-if="sourceType === 2" class="fn-d-i-b" label="所属接入间:" :label-width="formLabelWidth">
-		  <el-input v-model="buildName" readonly="ture" autocomplete="off" class="fn-m-220"></el-input>
+		  <el-input v-model="buildName" disabled autocomplete="off" class="fn-m-220"></el-input>
 		</el-form-item>
 		<el-form-item v-if="sourceType === 1" class="fn-d-i-b" label="所属机楼:" :label-width="formLabelWidth">
-		  <el-input v-model="buildName" readonly="ture" autocomplete="off" class="fn-m-220"></el-input>
+		  <el-input v-model="buildName" disabled autocomplete="off" class="fn-m-220"></el-input>
 		</el-form-item>
 		<el-form-item v-if="sourceType === 1" class="fn-d-i-b" label="所属机房:" :label-width="formLabelWidth">
-		  <el-input v-model="roomName" readonly="ture" autocomplete="off" class="fn-m-220"></el-input>
+		  <el-input v-model="roomName" disabled  autocomplete="off" class="fn-m-220"></el-input>
 		</el-form-item>
 		<el-form-item class="fn-d-i-b" label="机架类型:" :label-width="formLabelWidth">
 		  <el-select v-model="form.type" placeholder="请选择机架类型" class="fn-m-220">
@@ -300,17 +309,15 @@
 		</el-form-item>
 		<el-form-item class="fn-d-i-b" label="列号:"
 		  prop="colNo"
-		  :rules="[ { required: true, message: '列号不能为空'},
-				    { type: 'number', message: '列号必须为数字值'}]"
+		  :rules="[ { required: true, message: '列号不能为空'}]"
 		 :label-width="formLabelWidth">
-		  <el-input v-model.number="form.colNo" placeholder="请输入列号" autocomplete="off" class="fn-m-220"></el-input>
+		  <el-input v-model="form.colNo" placeholder="请输入列号" autocomplete="off" class="fn-m-220"></el-input>
 		</el-form-item>
 		<el-form-item class="fn-d-i-b" label="位号:"
 		  prop="rowNo"
-		  :rules="[ { required: true, message: '位号不能为空'},
-			        { type: 'number', message: '位号必须为数字值'}]"
+		  :rules="[ { required: true, message: '位号不能为空'}]"
 		 :label-width="formLabelWidth">
-		  <el-input v-model.number="form.rowNo" placeholder="请输入位号" autocomplete="off" class="fn-m-220"></el-input>
+		  <el-input v-model="form.rowNo" placeholder="请输入位号" autocomplete="off" class="fn-m-220"></el-input>
 		</el-form-item>
 	    
 		<el-form-item class="fn-d-i-b" label="退网设备数:"
@@ -351,7 +358,7 @@
 		  </el-select>
 		</el-form-item>
 	  </el-form>
-	  <el-form :model="form" v-if="radio === '2'">
+	  <el-form :model="form" ref="form" v-if="radio === '2'" label-width="100px" class="demo-ruleForm">
 	    <el-form-item class="fn-d-i-b" label="物体名称:"
 		 prop="name" 
 	  	 :rules="[ { required: true, message: '物体名称不能为空'}]"
@@ -364,17 +371,23 @@
 		 :label-width="formLabelWidth">
 		  <el-input v-model="form.code" placeholder="请输入编码" autocomplete="off" class="fn-m-220"></el-input>
 		</el-form-item>
-		<el-form-item v-if="sourceType === 2" class="fn-d-i-b" label="所属接入间:" :label-width="formLabelWidth">
-		  <el-input v-model="buildName" readonly="ture" autocomplete="off" class="fn-m-220"></el-input>
+		<el-form-item class="fn-d-i-b"
+		 prop="cjId"
+		 :rules="[ { required: true, message: '资源系统ID不能为空'},]"
+		 label="资源系统ID:" :label-width="formLabelWidth">
+		  <el-input v-model="form.rjId" :disabled="cjIdReadonly" placeholder="请输入资源系统ID" autocomplete="off" class="fn-m-220"></el-input>
 		</el-form-item>
-		<el-form-item v-if="sourceType === 1" class="fn-d-i-b" label="所属机楼:" :label-width="formLabelWidth">
-		  <el-input v-model="buildName" readonly="ture" autocomplete="off" class="fn-m-220"></el-input>
+		<el-form-item v-if="sourceType == 2" class="fn-d-i-b" label="所属接入间:" :label-width="formLabelWidth">
+		  <el-input v-model="buildName" disabled  autocomplete="off" class="fn-m-220"></el-input>
 		</el-form-item>
-		<el-form-item v-if="sourceType === 1" class="fn-d-i-b" label="所属机房:" :label-width="formLabelWidth">
-		  <el-input v-model="roomName" readonly="ture" autocomplete="off" class="fn-m-220"></el-input>
+		<el-form-item v-if="sourceType == 1" class="fn-d-i-b" label="所属机楼:" :label-width="formLabelWidth">
+		  <el-input v-model="buildName" disabled  autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		<el-form-item v-if="sourceType == 1" class="fn-d-i-b" label="所属机房:" :label-width="formLabelWidth">
+		  <el-input v-model="roomName" disabled  autocomplete="off" class="fn-m-220"></el-input>
 		</el-form-item>
 		<el-form-item class="fn-d-i-b" label="物体类型:" :label-width="formLabelWidth">
-		  <el-select v-model="form.type" placeholder="请选择物体类型" class="fn-m-220">
+		  <el-select v-model="form.type" placeholder="请选择物体类型" :disabled="otherTypeDisabled" class="fn-m-220" @change="otherTypeChange">
 			<el-option label="列头柜" value="列头柜"></el-option>
 			<el-option label="门" value="门"></el-option>
 			<el-option label="柱子" value="柱子"></el-option>
@@ -386,16 +399,16 @@
 			<el-option label="其他" value="其他"></el-option>
 		  </el-select>
 		</el-form-item>
-		<el-form-item v-if="form.type ==='列头柜'" class="fn-d-i-b" label="输出屏:" :label-width="formLabelWidth">
+		<el-form-item v-if="otherType == '列头柜' && form.type == '列头柜'" class="fn-d-i-b" label="输出屏:" :label-width="formLabelWidth">
 		  <el-input v-model="form.outputScreen" placeholder="请输入输出屏" autocomplete="off" class="fn-m-220"></el-input>
 		</el-form-item>
-		<el-form-item v-if="form.type ==='列头柜'" class="fn-d-i-b" label="整流器:" :label-width="formLabelWidth">
+		<el-form-item v-if="otherType == '列头柜' && form.type == '列头柜'" class="fn-d-i-b" label="整流器:" :label-width="formLabelWidth">
 		  <el-input v-model="form.rectifier" placeholder="请输入整流器" autocomplete="off" class="fn-m-220"></el-input>
 		</el-form-item>
-		<el-form-item v-if="form.type ==='列头柜'" class="fn-d-i-b" label="低压系统开关:" :label-width="formLabelWidth">
+		<el-form-item v-if="otherType == '列头柜' && form.type == '列头柜'" class="fn-d-i-b" label="低压系统开关:" :label-width="formLabelWidth">
 		  <el-input v-model="form.lowSystemSwitch" placeholder="请输入低压系统开关" autocomplete="off" class="fn-m-220"></el-input>
 		</el-form-item>
-		<el-form-item v-if="form.type ==='列头柜'" class="fn-d-i-b" label="上联设备编号:" :label-width="formLabelWidth">
+		<el-form-item v-if="otherType == '列头柜' && form.type == '列头柜'" class="fn-d-i-b" label="上联设备编号:" :label-width="formLabelWidth">
 		  <el-input v-model="form.upEquipCode" placeholder="请输入上联设备编号" autocomplete="off" class="fn-m-220"></el-input>
 		</el-form-item>
 		<el-form-item class="fn-d-i-b" label="物体长度(cm):"
@@ -419,43 +432,41 @@
 		 :label-width="formLabelWidth">
 		  <el-input v-model.number="form.height" placeholder="请输入物体高度" autocomplete="off" class="fn-m-220"></el-input>
 		</el-form-item>
-		<el-form-item v-if="form.type !='列头柜'" class="fn-d-i-b" label="额定功率(KW):"
+		<el-form-item v-if="otherType != '列头柜' && form.type != '列头柜'" class="fn-d-i-b" label="额定功率(KW):"
 		 prop="power"
 		 :rules="[ { required: true, message: '额定功率不能为空'},
 				   { type: 'number', message: '额定功率必须为数字值'}]"
 		 :label-width="formLabelWidth">
 		  <el-input v-model.number="form.power" placeholder="请输入额定功率" autocomplete="off" class="fn-m-220"></el-input>
 		</el-form-item>
-		<el-form-item v-if="form.type ==='列头柜'" class="fn-d-i-b" label="变压器:" :label-width="formLabelWidth">
+		<el-form-item v-if="otherType == '列头柜' && form.type == '列头柜'" class="fn-d-i-b" label="变压器:" :label-width="formLabelWidth">
 		  <el-input v-model="form.transformer" placeholder="请输入变压器" autocomplete="off" class="fn-m-220"></el-input>
 		</el-form-item>
-		<el-form-item v-if="form.type ==='列头柜'" class="fn-d-i-b" label="变电站:" :label-width="formLabelWidth">
+		<el-form-item v-if="otherType == '列头柜' && form.type == '列头柜'" class="fn-d-i-b" label="变电站:" :label-width="formLabelWidth">
 		  <el-input v-model="form.convertStation" placeholder="请输入变电站" autocomplete="off" class="fn-m-220"></el-input>
 		</el-form-item>
-		<el-form-item v-if="form.type ==='列头柜'" class="fn-d-i-b" label="整流器数:" :label-width="formLabelWidth">
+		<el-form-item v-if="otherType == '列头柜' && form.type == '列头柜'" class="fn-d-i-b" label="整流器数:" :label-width="formLabelWidth">
 		  <el-input v-model="form.rectifierNumber" placeholder="请输入整流器数" autocomplete="off" class="fn-m-220"></el-input>
 		</el-form-item>
-		<el-form-item v-if="form.type ==='列头柜'" class="fn-d-i-b" label="列号:"
+		<el-form-item v-if="otherType == '列头柜' && form.type == '列头柜'" class="fn-d-i-b" label="列号:"
 		 prop="colNum"
-		 :rules="[ { required: true, message: '列号不能为空'},
-				   { type: 'number', message: '列号必须为数字值'}]"
+		 :rules="[ { required: true, message: '列号不能为空'}]"
 		 :label-width="formLabelWidth">
-		  <el-input v-model.number="form.colNum" placeholder="请输入列号" autocomplete="off" class="fn-m-220"></el-input>
+		  <el-input v-model="form.colNum" placeholder="请输入列号" autocomplete="off" class="fn-m-220"></el-input>
 		</el-form-item>
-		<el-form-item v-if="form.type ==='列头柜'" class="fn-d-i-b" label="位号:"
+		<el-form-item v-if="otherType == '列头柜' && form.type == '列头柜'" class="fn-d-i-b" label="位号:"
 		 prop="posNum"
-		 :rules="[ { required: true, message: '位号不能为空'},
-				   { type: 'number', message: '位号必须为数字值'}]"
+		 :rules="[ { required: true, message: '位号不能为空'}]"
 		 :label-width="formLabelWidth">
-		  <el-input v-model.number="form.posNum" placeholder="请输入位号" autocomplete="off" class="fn-m-220"></el-input>
+		  <el-input v-model="form.posNum" placeholder="请输入位号" autocomplete="off" class="fn-m-220"></el-input>
 		</el-form-item>
 	  </el-form>
 	  <div slot="footer" class="dialog-footer">
 	    <el-button @click="showList = false">取 消</el-button>
-	    <el-button  type="primary" v-if="addOrUpdateTitle === '新增机架'" @click="addList('form')">新 增</el-button>
-	    <el-button  type="primary" v-if="addOrUpdateTitle === '新增其他物体'" @click="addList('form')">新 增</el-button>
-	    <el-button type="primary" v-if="addOrUpdateTitle === '修改机架'" @click="updataList('form')">修 改</el-button>
-	    <el-button type="primary" v-if="addOrUpdateTitle === '修改其他物体'" @click="updataList('form')">修 改</el-button>
+	    <el-button  type="primary" v-if="addOrUpdateTitle === '新增机架'" @click="addFrameList('form')">新 增</el-button>
+	    <el-button  type="primary" v-if="addOrUpdateTitle === '新增其他物体'" @click="addOtherList('form')">新 增</el-button>
+	    <el-button type="primary" v-if="addOrUpdateTitle === '修改机架'" @click="updateFrameList('form')">修 改</el-button>
+	    <el-button type="primary" v-if="addOrUpdateTitle === '修改其他物体'" @click="updateOtherList('form')">修 改</el-button>
 	  </div>
 	</el-dialog>
   </div>
@@ -486,9 +497,15 @@ export default {
       loading: false,
       showList: false,
 	  addOrUpdateTitle: '新增机架',
+	  otherType: '其他',
 	  radio: '1',
+	  rsIdReadonly: false,
+	  cjIdReadonly: false,
+	  otherTypeDisabled: false,
 	  countyName: '',
 	  countyId: '',
+	  roomId: '',
+	  roomName: '', // 所属机房名称
 	  buildName: '',
 	  buildId: '',
 	  frameNameLists: [
@@ -510,7 +527,6 @@ export default {
       frameType: "",
       substanceType: "",
 	  frameTypeList: [],
-	  
 	  substanceTypeList: [],
       currentStatus: 2, // 根据当前判断时间选择器或者输入框那个展示
       sourceType: 1, //资源类型（1：微机楼，2：机柜）
@@ -522,32 +538,7 @@ export default {
       pageSize: 10,
       multipleSelection: [], //选择行
 	  formLabelWidth: '140px',
-	  form: {
-		  "buildId": "441020000000001196936652",  // 必填
-		  "code": "测试机架13abcdef",
-		  "colNo": "A列",
-		  "countyId": "441000000000000102250793",
-		  "countyName": "天河区",
-		  "creator": "admin",
-		  "exitDevTotal": 5,
-		  "exitDevU": 12,
-		  "frameSource": "0",
-		  "height": 423.5, // 必填
-		  "length": 1235.5,      // 必填
-		  "name": "测试机架13abcdef",        // 必填
-		  "ratePower": 325,  // 必填
-		  "rateVoltage": 360,  // 必填
-		  "roomId": "1",            // 必填
-		  "rowNo": "10",
-		  "rsId": "1",
-		  "standardCabinetTotal": "56",       // 必填
-		  "totalU": 52, // 必填
-		  "type": "DDF机架",
-		  "upperNo": "列头柜A", // 必填
-		  "usePower": 321,  // 必填
-		  "useU": 23,  // 必填
-		  "width": 1452.2 // 必填
-	   },
+	  form: {},
       foremostDataVal: [
         {
           value: 1,
@@ -613,6 +604,8 @@ export default {
 		that.countyName = query.countyName
 		that.roomName = query.name
 		that.countyId = query.countyId
+		that.buildId = query.buildId
+		that.roomId = query.roomNo
 		if (that.sourceType === 1) {
 			// 所属机楼
 			that.buildName = query.buildName
@@ -620,35 +613,231 @@ export default {
 			// 所属接入间
 			that.buildName = query.name
 		}
-		
 		that.buildId = query.rsId
 		that.getFrameTypeList();
 		that.getSubstanceTypeList();
 		that.getTableList(); 
     },
+	otherTypeChange (e) {
+		var that = this
+		that.otherType = e
+		console.log('改变类型：', e)
+		if (e === '列头柜') {
+			that.form = {
+			  "buildId": that.buildId, // 必填
+			  "colNum": "",   // 列号 必填
+			  "convertStation": "",  // 变电站 必填
+			  "height": null,  // 必填
+			  "length": null,  // 必填
+			  "lowSystemSwitch": "", // 必填 低压系统开关
+			  "name": "", // 必填
+			  "outputScreen": "", // 必填 输出屏
+			  "posNum": "",  // 必填 位号
+			  "rectifier": "", // 必填 整流器
+			  "rectifierNumber": null,  // 必填 整流器数量
+			  "roomId": that.roomId,  // 必填
+			  "rsId": "", // 必填 资源系统ID
+			  "transformer": "", // 必填 变压器
+			  "upEquipCode": "", // 必填 上联设备编码
+			  "width": null
+			}
+		} else {
+			that.form = {
+			  "buildId": that.buildId,
+			  "cjId": "",
+			  "code": "",
+			  "creator": "admin",
+			  "height": null, // 必填
+			  "length": null, // 必填
+			  "name": "",     // 必填
+			  "power": null,
+			  "roomId": that.roomId, // 必填
+			  "type": "", // 必填
+			  "width": null // 必填
+			}
+		}
+	},
 	showAddList () {
 		var that = this
 		if (that.radio === '2') {
 			that.addOrUpdateTitle = '新增其他物体'
+			that.cjIdReadonly = false
+			that.otherTypeDisabled = false
+			that.form = {
+			  "buildId": that.buildId,
+			  "cjId": "",
+			  "code": "",
+			  "creator": "admin",
+			  "height": null, // 必填
+			  "length": null, // 必填
+			  "name": "",     // 必填
+			  "power": null,
+			  "roomId": that.roomId, // 必填
+			  "type": "", // 必填
+			  "width": null // 必填
+			}
 		} else {
 			that.addOrUpdateTitle = '新增机架'
+			that.rsIdReadonly = false
+			that.form = {
+			  "buildId": that.buildId,  // 必填
+			  "code": "",
+			  "colNo": "",
+			  "countyId": that.countyId,
+			  "countyName": that.countyName,
+			  "creator": "admin",
+			  "exitDevTotal": null,
+			  "exitDevU": null,
+			  "frameSource": "0",
+			  "height": null, // 必填
+			  "length": null,      // 必填
+			  "name": "",        // 必填
+			  "ratePower": null,  // 必填
+			  "rateVoltage": null,  // 必填
+			  "roomId": that.roomId,            // 必填
+			  "rowNo": "",
+			  "rsId": "",
+			  "standardCabinetTotal": null,       // 必填
+			  "totalU": null, // 必填
+			  "type": "",
+			  "upperNo": "", // 必填
+			  "usePower": null,  // 必填
+			  "useU": null,  // 必填
+			  "width": null // 必填
+			}
 		}
 		that.showList = true
 	},
+	// 展示修改系列
 	showUpdateList () {
+		var that = this
+		if (that.multipleSelection.length < 1) {
+		  that.$message.error("请勾选需要修改的资源");
+		  return;
+		} else if (that.multipleSelection.length > 1) {
+		  that.$message.error("一次只能修改一条资源");
+		  return;
+		}
+		if (that.radio === '2') {
+			that.byIdForDetails(that.multipleSelection[0].rsId);
+		} else {
+			that.byIdForDetails(that.multipleSelection[0].rsId);
+		}
+	},
+	// 修改数据
+	updateData () {
 		var that = this
 		if (that.radio === '2') {
 			that.addOrUpdateTitle = '修改其他物体'
+			that.cjIdReadonly = true
+			that.otherTypeDisabled = true
 		} else {
 			that.addOrUpdateTitle = '修改机架'
+			that.rsIdReadonly = true
 		}
 		that.showList = true
 	},
-	// 新增列表
-	addList (formName) {
+	 // 根据所选行的rsId或者cjId查询机架列详情
+	 byIdForDetails (id) {
+		 var that = this
+		 let param = {}
+		if (that.radio === '2') {
+			param = {
+			  url: api3.getOtherDetailById+'?cjId=' + id,
+			  method: 'GET',
+			}
+			that.sendReq( param, (res) => {
+				// console.log(res)
+				if (res.respHeader.resultCode == 0) {
+					that.form = res.respBody.tbOther
+					that.updateData()
+				} else {
+				  that.$message.error(res.respHeader.message);
+				}
+			})
+		} else {
+			param = {
+			  url: api3.getFrameDetailById+'?frameId=' + id,
+			  method: 'GET',
+			}
+			that.sendReq( param, (res) => {
+				// console.log(res)
+				if (res.respHeader.resultCode == 0) {
+					that.form = res.respBody.tbFrame
+					that.updateData()
+				} else {
+				  that.$message.error(res.respHeader.message);
+				}
+			})
+		}
+		 
+	 },
+	 // 修改所选机架
+	 updateFrameList (formName) {
+		 var that = this
+		 this.$refs[formName].validate((valid) => {
+		   if (valid) {
+		 	// alert('submit!');
+		 	let param = {
+		 	  url: api3.updateFrameSelective,
+		 	  method: 'POST',
+		 	  // contentType : 'application/x-www-form-urlencoded',
+		 	  data: that.form
+		 	}
+		 	that.sendReq( param, (res) => {
+		 		// console.log(res)
+		 		if (res.respHeader.resultCode == 0) {
+		 			that.$message({ type: "success", message: "修改成功" });
+		 			that.showList = false
+		 			that.rsIdReadonly = false
+		 			that.getTableList()
+		 		} else {
+		 		  that.$message.error(res.respHeader.message);
+		 		}
+		 	})
+		   } else {
+		     that.$message.error('必填项不可为空');
+		 	// console.log('error submit!!');
+		 	return false;
+		   }
+		 });
+	 },
+	 // 修改所选其他物体
+	 updateOtherList (formName) {
 		var that = this
-		// console.log(that.form)
 		this.$refs[formName].validate((valid) => {
+		  if (valid) {
+			// alert('submit!');
+			let param = {
+			  url: api3.updateOtherSelective,
+			  method: 'POST',
+			  // contentType : 'application/x-www-form-urlencoded',
+			  data: that.form
+			}
+			that.sendReq( param, (res) => {
+				// console.log(res)
+				if (res.respHeader.resultCode == 0) {
+					that.$message({ type: "success", message: "修改成功" });
+					that.showList = false
+					that.cjIdReadonly = false
+					that.otherTypeDisabled = false
+					that.getTableList()
+				} else {
+				  that.$message.error(res.respHeader.message);
+				}
+			})
+		  } else {
+		    that.$message.error('必填项不可为空');
+			// console.log('error submit!!');
+			return false;
+		  }
+		}); 
+	 },
+	// 新增列表
+	addFrameList (formName) {
+		var that = this
+		console.log(that.form)
+		that.$refs[formName].validate((valid) => {
 		  if (valid) {
 			// alert('submit!');
 			let param = {
@@ -661,7 +850,37 @@ export default {
 				// console.log(res)
 				if (res.respHeader.resultCode == 0) {
 					that.$message({ type: "success", message: "新增成功" });
-					that.addRoom = false
+					that.showList = false
+					that.getTableList()
+				} else {
+				  that.$message.error(res.respHeader.message);
+				}
+			})
+		  } else {
+			that.$message.error('必填项不可为空');
+			// console.log('error submit!!');
+			return false;
+		  }
+		});
+	},
+	// 新增其他物体
+	addOtherList (formName) {
+		var that = this
+		console.log(that.form)
+		that.$refs[formName].validate((valid) => {
+		  if (valid) {
+			// alert('submit!');
+			let param = {
+			  url: api3.insertOtherSelective,
+			  method: 'POST',
+			  // contentType : 'application/x-www-form-urlencoded',
+			  data: that.form
+			}
+			that.sendReq( param, (res) => {
+				// console.log(res)
+				if (res.respHeader.resultCode == 0) {
+					that.$message({ type: "success", message: "新增成功" });
+					that.showList = false
 					that.getTableList()
 				} else {
 				  that.$message.error(res.respHeader.message);
@@ -1119,6 +1338,7 @@ export default {
     flex-direction: column;
     .parinciRepresent {
       padding: 30px 98px;
+	  margin-top: 50px;
       box-sizing: border-box;
       flex: 1;
       overflow-y: auto;

@@ -41,7 +41,7 @@
 		  </el-select>
 		  <div class="fn-mt14 fn-d-i-b">
 			  <el-button type='primary' @click="showAddRoom">新增机房</el-button>
-			  <el-button type='primary' @click="updateRoomSelective">修改</el-button>
+			  <el-button type='primary' @click="showUpdateRoomSelective">修改</el-button>
 			  <el-button type='primary' @click="deleteLists">删除</el-button>
 		  </div>
           <!-- 申请信息table数据 -->
@@ -146,7 +146,7 @@
       @cabinetUpdate="cabinetUpdate"
     >
     </cabinetBar>
-	<el-dialog :title="addOrUpdateTitle" :visible.sync="addRoom" custom-class="dialogClass" width="50%">
+	<el-dialog :title="addOrUpdateTitle" :visible.sync="addRoom" custom-class="dialogClass" width="54%">
 	  <el-form :model="form" ref="form" label-width="100px" class="demo-ruleForm">
 	    <el-form-item class="fn-d-i-b"
 		prop="name"
@@ -170,7 +170,7 @@
 			 prop="rsId"
 			 :rules="[ { required: true, message: '资源系统ID不能为空'},]"
 			 label="资源系统ID:" :label-width="formLabelWidth">
-			  <el-input v-model="form.rsId" readonly="addOrUpdateTitle === '修改机房'?ture:false" placeholder="请输入资源系统ID" autocomplete="off" class="fn-m-220"></el-input>
+			  <el-input v-model="form.rsId" :readonly="rsIdReadonly" placeholder="请输入资源系统ID" autocomplete="off" class="fn-m-220"></el-input>
 			</el-form-item>
 	  		<el-form-item class="fn-d-i-b"
 			prop="length" :rules="[{ required: true, message: '机房长度不能为空'},{ type: 'number', message: '机房长度必须为数字值'}]"
@@ -196,7 +196,7 @@
 	  		  <el-input v-model.number="form.height" placeholder="请输入机房高度" autocomplete="off" class="fn-m-220"></el-input>
 	  		</el-form-item>
 			<el-form-item class="fn-d-i-b" label="所属机楼:" :label-width="formLabelWidth">
-			  <el-input v-model="buildName" readonly="true" autocomplete="off" class="fn-m-220"></el-input>
+			  <el-input v-model="buildName" readonly="true" autocomplete="off" class="fn-m-220 "></el-input>
 			</el-form-item>
 	  		<el-form-item class="fn-d-i-b" label="外电开关容量:" 
 			prop="switchCapacity" :rules="[{ required: true, message: '外电开关容量不能为空'},{ type: 'number', message: '外电开关容量必须为数字值'}]"
@@ -285,6 +285,7 @@ export default {
 	  floorList: [], // 所属机楼所有楼层列表
 	  countyName: '', //所属区域名称
 	  buildName: '',
+	  rsIdReadonly: false,
 	  byRoomIdForDetailsList: {}, //根据roomId查询对应详情列表
 	  addOrUpdateTitle: '新增机房',
       barNames: "可维护资源列表", // 指示栏名称
@@ -414,7 +415,7 @@ export default {
 		})
 	},
 	// 修改
-	updateRoomSelective() {
+	showUpdateRoomSelective() {
 	  var that = this
 	  // console.log("修改所选行");
 	  console.log(that.multipleSelection);
@@ -432,6 +433,7 @@ export default {
 	updateRoomData () {
 		var that = this
 		that.addOrUpdateTitle = '修改机房'
+		that.rsIdReadonly = true
 		that.addRoom = true
 		that.form = that.byRoomIdForDetailsList
 	},
@@ -450,10 +452,9 @@ export default {
 			} else {
 			  that.$message.error(res.respHeader.message);
 			}
-			
 		})
 	},
-	// 更新列表
+	// 修改列表
 	updataList (formName) {
 		var that = this
 		this.$refs[formName].validate((valid) => {
@@ -470,6 +471,7 @@ export default {
 				if (res.respHeader.resultCode == 0) {
 					that.$message({ type: "success", message: "修改成功" });
 					that.addRoom = false
+					that.rsIdReadonly = false
 					that.getRoomListByParamPage()
 				} else {
 				  that.$message.error(res.respHeader.message);
@@ -506,6 +508,7 @@ export default {
 			"frameTotalCount": '' // 可放机架总数
 		}
 		that.addRoom = true
+		that.rsIdReadonly = false
 		that.addOrUpdateTitle = '新增机房'
 	},
 	// 新增列表
@@ -781,6 +784,7 @@ export default {
     flex-direction: column;
     .parinciRepresent {
       padding: 30px 98px;
+	  margin-top: 50px;
       box-sizing: border-box;
       flex: 1;
       overflow-y: auto;

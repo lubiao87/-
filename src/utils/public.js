@@ -119,7 +119,7 @@ function createMesh(geom) {
   return mesh;
 }
 // 创建机房
-export function _NowRoom(arr) {
+export function _NowRoom(arr, h) {
   let listGroup = new THREE.Group();
   if (Array.isArray(arr)) {
     if (arr.length < 2) {
@@ -145,7 +145,7 @@ export function _NowRoom(arr) {
         shape, //二维轮廓
         //拉伸参数
         {
-          amount: 4000, //拉伸长度
+          amount: h, //拉伸长度
           curveSegments: 40, //圆周方向细分数
           bevelEnabled: false //无倒角
         }

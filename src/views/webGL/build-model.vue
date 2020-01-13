@@ -363,6 +363,7 @@ export default {
     this.modelType = this.$route.params.modelType;
     this.buildId = this.$route.params.modelId;
     this.boxTitle = this.$route.params.modelName;
+
     this.getFrameTypeList();
     this.getJieRuJianStatistics();
     if (this.modelType === 2) {
@@ -370,6 +371,7 @@ export default {
       this.cameraY = 40000;
     } else if (this.modelType === 1) {
       this.showCollapse = true;
+      this.floorHeight = this.$route.params.height * 10;
     }
   },
   methods: {
@@ -445,15 +447,6 @@ export default {
         // self.cabinetType = [];
         self.cabinetplaced = [];
         if (res.respHeader.resultCode === 0) {
-          // self.cabinetType.push(...[
-          //   {
-          //     name: "全部",
-          //     size: [0, 0, 0],
-          //     type_index: 0
-          //   }
-          // ]);
-          // let arr1 = res.respBody.cabinetType;
-          // self.cabinetType.push(...arr1);
           let arr2 = res.respBody.cabinetplaced.map(item => {
             let items = item;
             items.position = [item.posX * 10, item.posY * 10];
@@ -474,6 +467,7 @@ export default {
             ];
             self.froomData.push(arr);
           });
+          this.floorHeight = res.respBody.roomheight * 10;
           this.setCabinet(); // 设置机房可视化
         } else {
           Message({
@@ -781,8 +775,6 @@ export default {
       // }
     },
     addMeth(item) {
-      // console.log("this.OBjMethmap ", this.OBjMethmap);
-      // console.log("this.DataMethmap ", this.DataMethmap);
       let geometry = null;
       let material = null;
       let mesh = null;
@@ -832,6 +824,20 @@ export default {
       } else {
         geometry = this.DataMethmap.get(item.type_index).children[0].geometry;
         material = this.DataMethmap.get(item.type_index).children[0].material;
+        switch (item.orientation) {
+          case "东":
+            geometry.rotateZ(Math.PI);
+            break;
+          case "南":
+            geometry.rotateZ(Math.PI / 2);
+            break;
+          case "北":
+            geometry.rotateZ(-Math.PI / 2);
+            break;
+
+          default:
+            break;
+        }
         mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
         const size = this.OBjMethmap.get(item.type_index).size;
         if (item.IsParallelX === "N") {
@@ -856,25 +862,10 @@ export default {
           positionY
         );
       }
-      if (item.type_index === "KONGTIAO") {
-        mesh.rotateZ(Math.PI / 2);
-      }
+
       mesh.TYPE = item.name;
       mesh.name = item.name;
       mesh.dataInfo = item;
-      if (item.parentId) {
-        mesh.parentId = item.parentId;
-        // 创建精灵图标
-        // this.newCSS3DSprite3(
-        //   "子",
-        //   item.position[1] - item.size[0] / 2,
-        //   item.position[0] + item.size[1] / 2,
-        //   positionY + 1600
-        // );
-      }
-      if (item.setId) {
-        mesh.setId = item.setId;
-      }
       return mesh;
     },
     //设置接入间模型位置
@@ -908,7 +899,7 @@ export default {
         this.methNow2 = this.ADSMLHYUR01;
         this.methNow2.position.y = 800;
       } else {
-        this.methNow2 = _NowRoom(this.froomData);
+        this.methNow2 = _NowRoom(this.froomData, this.floorHeight);
         this.methNow2.position.y = -200;
         this.methNow2.rotateX(-Math.PI / 2); //------------旋转
       }
@@ -1094,22 +1085,30 @@ export default {
           const geometry = intersects[0].object.geometry;
           const material = intersects[0].object.material;
           const mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
-          const size = this.OBjMethmap.get(
-            intersects[0].object.dataInfo.type_index
-          ).size;
-          if (intersects[0].object.dataInfo.IsParallelX === "N") {
-            mesh.scale.set(
-              intersects[0].object.dataInfo.size[1] / size[0],
-              intersects[0].object.dataInfo.size[0] / size[1],
-              1
-            );
+          let size = null;
+          if (
+            intersects[0].object.dataInfo.type_index === "QT" ||
+            intersects[0].object.dataInfo.type_index === "ZHUZI"
+          ) {
+            size = intersects[0].object.dataInfo.size;
           } else {
-            mesh.scale.set(
-              intersects[0].object.dataInfo.size[0] / size[0],
-              intersects[0].object.dataInfo.size[1] / size[1],
-              1
-            );
+            size = this.OBjMethmap.get(intersects[0].object.dataInfo.type_index)
+              .size;
+            if (intersects[0].object.dataInfo.IsParallelX === "N") {
+              mesh.scale.set(
+                intersects[0].object.dataInfo.size[1] / size[0],
+                intersects[0].object.dataInfo.size[0] / size[1],
+                1
+              );
+            } else {
+              mesh.scale.set(
+                intersects[0].object.dataInfo.size[0] / size[0],
+                intersects[0].object.dataInfo.size[1] / size[1],
+                1
+              );
+            }
           }
+          mesh.rotateX(-Math.PI / 2); //------------旋转
           this.scene.updateMatrixWorld(true);
           const worldPosition = new THREE.Vector3();
           intersects[0].object.getWorldPosition(worldPosition);
@@ -1118,29 +1117,18 @@ export default {
           this.location = intersects[0].object.dataInfo.location;
           this.occuRate = intersects[0].object.dataInfo.occuRate;
           mesh.position.set(worldPosition.x, worldPosition.y, worldPosition.z); //点光源位置
-          if (intersects[0].object.dataInfo.type === "空调") {
-            mesh.rotateZ(Math.PI / 2);
-          }
-          mesh.rotateX(-Math.PI / 2); //------------旋转
+
           this.border = new THREE.BoxHelper(mesh, "#5b78e7"); //设置边框，这个边框不会旋转
           this.border.name = "高亮显示柜";
           this.scene.add(this.border); //网格模型添加到场景中
           var scrollTop =
             document.documentElement.scrollTop || document.body.scrollTop;
-          if (intersects[0].object.name === "列头柜") {
-            this.$refs.menu2.style.left = event.clientX + 20 + "px";
-            this.$refs.menu2.style.top = event.clientY + scrollTop - 200 + "px";
-            this.showMenu2 = true;
-            this.showMenu3 = false;
-          } else {
-            var scrollTop =
-              document.documentElement.scrollTop || document.body.scrollTop;
-            this.$refs.menu3.style.left = event.clientX - 77 + "px";
-            this.$refs.menu3.style.top = event.clientY + scrollTop - 130 + "px";
-            this.showMenu3 = true;
-            if (!this.freezeShowMenu2) {
-              this.showMenu2 = false;
-            }
+
+          this.$refs.menu3.style.left = event.clientX - 77 + "px";
+          this.$refs.menu3.style.top = event.clientY + scrollTop - 130 + "px";
+          this.showMenu3 = true;
+          if (!this.freezeShowMenu2) {
+            this.showMenu2 = false;
           }
         }
       } else {
@@ -1187,21 +1175,6 @@ export default {
       const intersects = this.raycaster.intersectObjects(
         self.listGroup.children
       );
-      // const intersects2 = this.raycaster.intersectObjects(
-      //   self.roomModel.children
-      // );
-      // if (intersects2.length > 0) {
-      //   // console.log(intersects2[0]);
-      //   if (intersects2[0].object.name.indexOf("右") > -1) {
-      //     this.intersects2 = intersects2[0].object;
-      //     this.animationMenTop = false;
-      //     this.animationZF = !this.animationZF;
-      //   } else if (intersects2[0].object.name.indexOf("左") > -1) {
-      //     this.intersects3 = intersects2[0].object;
-      //     this.animationMenTop2 = false;
-      //     this.animationZF2 = !this.animationZF2;
-      //   }
-      // }
       if (intersects.length && intersects[0].object.name === "列头柜") {
         this.freezeShowMenu2 = true;
         this.intersectsObj = intersects[0].object;

@@ -826,15 +826,9 @@ export default {
         switch (item.orientation) {
           case "东":
             mesh.rotateZ(Math.PI / 2);
-            if (item.type_index === "MEN") {
-              mesh.rotateZ(Math.PI / 2);
-            }
             break;
           case "西":
             mesh.rotateZ(-Math.PI / 2);
-            if (item.type_index === "MEN") {
-              mesh.rotateZ(-Math.PI / 2);
-            }
             break;
           case "北":
             mesh.rotateZ(Math.PI);
@@ -865,20 +859,21 @@ export default {
           positionY
         );
       } else {
-        if (item.type_index === "MEN") {
-          mesh.position.set(
-            item.position[0] + item.size[0] / 2,
-            item.position[1] + item.size[1] / 2 - 220,
-            positionY
-          );
-          // mesh.scale.set(1, 1.2, 1);
-        } else {
-          mesh.position.set(
-            item.position[0] + item.size[0] / 2,
-            item.position[1] + item.size[1] / 2,
-            positionY
-          );
-        }
+        // if (item.type_index === "MEN") {
+        //   mesh.position.set(
+        //     item.position[0] + item.size[0] / 2,
+        //     item.position[1] + item.size[1] / 2 - 220,
+        //     positionY
+        //   );
+        //   // mesh.scale.set(1, 1.2, 1);
+        // } else {
+
+        // }
+        mesh.position.set(
+          item.position[0] + item.size[0] / 2,
+          item.position[1] + item.size[1] / 2,
+          positionY
+        );
       }
 
       mesh.TYPE = item.type;
@@ -1066,12 +1061,6 @@ export default {
         this.$refs.menu2.style.left = x + "px";
         this.$refs.menu2.style.top = y - 200 + "px";
 
-        // var standardVector2 = worldVector.project(this.camera);
-        // var a2 = window.innerWidth / 2;
-        // var b2 = window.innerHeight / 2;
-        // var x2 = Math.round(standardVector.x * a + a); //标准设备坐标转屏幕坐标
-        // var y2 = Math.round(-standardVector.y * b + b); //标准设备坐标转屏幕坐标
-
         this.$refs.menu.style.left = x + "px";
         this.$refs.menu.style.top = y + "px";
         this.$refs.menu3.style.left = x + "px";
@@ -1114,15 +1103,9 @@ export default {
           switch (intersects[0].object.dataInfo.orientation) {
             case "东":
               mesh.rotateY(Math.PI / 2);
-              if (intersects[0].object.dataInfo.type_index === "MEN") {
-                mesh.rotateZ(Math.PI / 2);
-              }
               break;
             case "西":
               mesh.rotateY(-Math.PI / 2);
-              if (intersects[0].object.dataInfo.type_index === "MEN") {
-                mesh.rotateZ(-Math.PI / 2);
-              }
               break;
             case "北":
               mesh.rotateY(Math.PI);

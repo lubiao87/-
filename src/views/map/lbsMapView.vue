@@ -585,7 +585,7 @@ export default {
         spots.push(marker);
         // 绑定事件
         // marker.on("mouseover", that.mapMοuseοutMarker);
-        marker.on("mousemove", that.mapMοuseοutMarker);
+        // marker.on("mousemove", that.mapMοuseοutMarker);
 
         marker.on("click", that.mapClickMarker);
         marker.on("dblclick", that.mapDbllickMarker);

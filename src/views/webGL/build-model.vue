@@ -822,26 +822,6 @@ export default {
         material = this.DataMethmap.get(item.type_index).children[0].material;
         geometry = this.DataMethmap.get(item.type_index).children[0].geometry;
 
-        // switch (item.orientation) {
-        //   case "东":
-        //     geometry.rotateZ(Math.PI / 2);
-        //     if (item.type_index === "MEN") {
-        //       geometry.rotateZ(Math.PI / 2);
-        //     }
-        //     break;
-        //   case "南":
-        //     geometry.rotateZ(Math.PI / 2);
-        //     break;
-        //   case "北":
-        //     geometry.rotateZ(-Math.PI / 2);
-        //     break;
-        //     if (item.type_index === "MEN") {
-        //       geometry.rotateZ(Math.PI / 2);
-        //     }
-        //   default:
-        //     break;
-        // }
-
         mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
         switch (item.orientation) {
           case "东":
@@ -869,7 +849,11 @@ export default {
         // } else {
         //   mesh.scale.set(item.size[0] / size[0], item.size[1] / size[1], 1);
         // }
-        mesh.scale.set(item.size[0] / size[0], item.size[1] / size[1], 1);
+        mesh.scale.set(
+          item.size[0] / size[0],
+          item.size[1] / size[1],
+          item.size[2] / size[2]
+        );
       }
       let positionY = item.size[2] / 2;
       // }
@@ -931,10 +915,10 @@ export default {
       this.methNow2 = null;
       if (this.buildId === "ADSMLHYUR01") {
         this.methNow2 = this.ADSMLHYUR01;
-        this.methNow2.position.y = 800;
+        this.methNow2.position.y = 1200;
       } else {
         this.methNow2 = _NowRoom(this.froomData, this.floorHeight);
-        this.methNow2.position.y = -200;
+        // this.methNow2.position.y = -200;
         this.methNow2.rotateX(-Math.PI / 2); //------------旋转
       }
       this.loading = false;
@@ -1151,7 +1135,7 @@ export default {
           mesh.scale.set(
             intersects[0].object.dataInfo.size[0] / size[0],
             intersects[0].object.dataInfo.size[1] / size[1],
-            1
+            intersects[0].object.dataInfo.size[2] / size[2]
           );
         }
         mesh.rotateX(-Math.PI / 2); //------------旋转

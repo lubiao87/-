@@ -154,7 +154,7 @@ export function _NowRoom(arr, h) {
         shape2, //二维轮廓
         //拉伸参数
         {
-          amount: 200, //拉伸长度
+          amount: -200, //拉伸长度
           curveSegments: 40, //圆周方向细分数
           bevelEnabled: false //无倒角
         }
@@ -167,9 +167,11 @@ export function _NowRoom(arr, h) {
       var objectClone = geometry.clone();
       var getMaxX = Math.max.apply(null, arrX);
       var getMaxY = Math.max.apply(null, arrY);
-      objectClone.scale(1 + 400 / getMaxX, 1 + 400 / getMaxY, 1);
+      geometry2.scale(1 + 450 / getMaxX, 1 + 400 / getMaxY, 1);
+
+      objectClone.scale(1 + 450 / getMaxX, 1 + 400 / getMaxY, 1);
       var cubeBig = createMesh(objectClone);
-      cubeBig.position.x = -100;
+      cubeBig.position.x = -150;
       cubeBig.position.y = -200;
       var sphereSmoll = createMesh(geometry);
       //生成ThreeBSP对象
@@ -188,6 +190,8 @@ export function _NowRoom(arr, h) {
       result.material = material;
       // var mesh = new THREE.Mesh(geometry, material2); //网格模型对象
       var mesh2 = new THREE.Mesh(geometry2, material2); //网格模型对象
+      mesh2.position.x = -150;
+      mesh2.position.y = -200;
       // listGroup.add(mesh).add(mesh2);
       listGroup.add(result).add(mesh2);
     }

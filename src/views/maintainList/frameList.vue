@@ -231,12 +231,6 @@
 		<el-form-item class="fn-d-i-b" label="所属区域:" :label-width="formLabelWidth">
 		  <el-input v-model="countyName" disabled autocomplete="off" class="fn-m-220"></el-input>
 		</el-form-item>
-		<el-form-item class="fn-d-i-b"
-		 prop="rsId"
-		 :rules="[ { required: true, message: '资源系统ID不能为空'},]"
-		 label="资源系统ID:" :label-width="formLabelWidth">
-		  <el-input v-model="form.rsId" :readonly="rsIdReadonly" placeholder="请输入资源系统ID" autocomplete="off" class="fn-m-220"></el-input>
-		</el-form-item>
 		<el-form-item v-if="sourceType === 2" class="fn-d-i-b" label="所属接入间:" :label-width="formLabelWidth">
 		  <el-input v-model="buildName" disabled autocomplete="off" class="fn-m-220"></el-input>
 		</el-form-item>
@@ -246,6 +240,13 @@
 		<el-form-item v-if="sourceType === 1" class="fn-d-i-b" label="所属机房:" :label-width="formLabelWidth">
 		  <el-input v-model="roomName" disabled  autocomplete="off" class="fn-m-220"></el-input>
 		</el-form-item>
+		<el-form-item class="fn-d-i-b"
+		 prop="rsId"
+		 :rules="[ { required: true, message: '资源系统ID不能为空'},]"
+		 label="资源系统ID:" :label-width="formLabelWidth">
+		  <el-input v-model="form.rsId" :readonly="rsIdReadonly" placeholder="请输入资源系统ID" autocomplete="off" class="fn-m-220"></el-input>
+		</el-form-item>
+		
 		<el-form-item class="fn-d-i-b" label="机架类型:" :label-width="formLabelWidth">
 		  <el-select v-model="form.type" placeholder="请选择机架类型" class="fn-m-220">
 		    <el-option v-for="item in frameNameLists" :key="item.name" :label="item.name" :value="item.name"></el-option>
@@ -1380,6 +1381,10 @@ export default {
 }
 .parinciRepreTable .el-button span {
   color: #7187f0;
+}
+.fn-d-i-b .el-input__inner {
+  background-color: transparent;
+  border: 1px solid rgba(186, 205, 229, 0.2);
 }
 </style>
 

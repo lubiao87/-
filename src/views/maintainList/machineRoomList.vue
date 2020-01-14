@@ -148,6 +148,13 @@
     </cabinetBar>
 	<el-dialog :title="addOrUpdateTitle" :visible.sync="addRoom" custom-class="dialogClass" width="54%">
 	  <el-form :model="form" ref="form" label-width="100px" class="demo-ruleForm">
+		<el-form-item class="fn-d-i-b" label="所属区域:" :label-width="formLabelWidth">
+			<!-- <span class="text" value="countyName"></span> -->
+		  <el-input v-model="countyName" disabled autocomplete="off" style="color: #000000;" class="fn-m-220"></el-input>
+		</el-form-item>  
+	    <el-form-item class="fn-d-i-b" label="所属机楼:" :label-width="formLabelWidth">
+	      <el-input v-model="buildName" disabled autocomplete="off" class="fn-m-220 "></el-input>
+	    </el-form-item>
 	    <el-form-item class="fn-d-i-b"
 		prop="name"
 		:rules="[ { required: true, message: '机房名称不能为空'},]"
@@ -170,7 +177,7 @@
 			 prop="rsId"
 			 :rules="[ { required: true, message: '资源系统ID不能为空'},]"
 			 label="资源系统ID:" :label-width="formLabelWidth">
-			  <el-input v-model="form.rsId" :readonly="rsIdReadonly" placeholder="请输入资源系统ID" autocomplete="off" class="fn-m-220"></el-input>
+			  <el-input v-model="form.rsId" :disabled="rsIdReadonly" placeholder="请输入资源系统ID" autocomplete="off" class="fn-m-220"></el-input>
 			</el-form-item>
 	  		<el-form-item class="fn-d-i-b"
 			prop="length" :rules="[{ required: true, message: '机房长度不能为空'},{ type: 'number', message: '机房长度必须为数字值'}]"
@@ -195,17 +202,13 @@
 			 :label-width="formLabelWidth">
 	  		  <el-input v-model.number="form.height" placeholder="请输入机房高度" autocomplete="off" class="fn-m-220"></el-input>
 	  		</el-form-item>
-			<el-form-item class="fn-d-i-b" label="所属机楼:" :label-width="formLabelWidth">
-			  <el-input v-model="buildName" readonly="true" autocomplete="off" class="fn-m-220 "></el-input>
-			</el-form-item>
+			
 	  		<el-form-item class="fn-d-i-b" label="外电开关容量:" 
 			prop="switchCapacity" :rules="[{ required: true, message: '外电开关容量不能为空'},{ type: 'number', message: '外电开关容量必须为数字值'}]"
 			:label-width="formLabelWidth">
 	  		  <el-input v-model.number="form.switchCapacity" placeholder="请输入外电开关容量" autocomplete="off" class="fn-m-220"></el-input>
 	  		</el-form-item>
-	  		<el-form-item class="fn-d-i-b" label="所属区域:" :label-width="formLabelWidth">
-	  		  <el-input v-model="countyName" readonly="true" autocomplete="off" class="fn-m-220"></el-input>
-	  		</el-form-item>
+	  		
 	  		<el-form-item class="fn-d-i-b" label="是否租用:" :label-width="formLabelWidth">
 	  		  <el-select v-model="form.isRent" placeholder="请选择是否租用" class="fn-m-220">
 	  		    <el-option label="是" value="Y"></el-option>
@@ -313,9 +316,9 @@ export default {
 		"roomNo": "",
 		"buildId": '',
 		"floorId": "",
-		"length": '',
-		"width": '',
-		"height": '',
+		"length": null,
+		"width": null,
+		"height": null,
 		"countyId": "",
 		"countyName": "",
 		"measureArea": '',
@@ -363,11 +366,6 @@ export default {
         currentPage4: 1
       },
       tableData: [],
-	  tableHead:[
-		  {sourceType: 1, prop: 'name', label: '所属机房',  key: '1'},
-		  {sourceType: 1, prop: 'moduleRoomName', label: '所在房间号', key: '2' },
-		  {sourceType: 1, prop: 'dCPower', label: '所在楼层', key: '4' },
-	  ],
     };
   },
   created () {},
@@ -388,9 +386,9 @@ export default {
 			"roomNo": "",
 			"buildId": that.buildId,
 			"floorId": "",
-			"length": '',
-			"width": '',
-			"height": '',
+			"length": null,
+			"width": null,
+			"height": null,
 			"countyId": that.countyId,
 			"countyName": that.countyName,
 			"measureArea": '',
@@ -493,12 +491,12 @@ export default {
 			"roomNo": "",
 			"buildId": that.$route.query.buildId,
 			"floorId": "",
-			"length": '',
-			"width": '',
-			"height": '',
+			"length": null,
+			"width": null,
+			"height": null,
 			"countyId": that.$route.query.countyId,
 			"countyName": that.$route.query.countyName,
-			"measureArea": '',
+			"measureArea": null,
 			"importantLevel": "",
 			"examinePower": "",
 			"switchCapacity": '',
@@ -633,19 +631,7 @@ export default {
 	  // }
 	  this.getRoomListByParamPage();
 	},
-    getOrganList() {
-      let _this = this;
-      let param = {
-        url: api.getOrganListNoYingFu
-      };
-      _this.sendReq(param, res => {
-        if (res.respHeader.resultCode == 0) {
-          _this.secondDataVal = res.respBody.data;
-        } else {
-          this.$message.error(res.respHeader.message);
-        }
-      });
-    },
+    
     tableRow(row, event, column) {
       //跳转详情页面
       let _this = this;
@@ -836,5 +822,17 @@ export default {
 .parinciRepreTable .el-button span {
   color: #7187f0;
 }
+.fn-d-i-b .el-input__inner {
+  background-color: transparent;
+  border: 1px solid rgba(186, 205, 229, 0.2);
+}
+.fn-d-i-b .text {
+	    width: 220px;
+        font-size:14px;
+        color: #fff;
+        /* text-align: left; */
+        margin-right:47px;
+        min-height:56px;
+    }
 </style>
 

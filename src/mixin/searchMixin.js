@@ -1,10 +1,10 @@
 /*
  * 列表搜索的 mixin
  */
-import Vue from 'vue'
-import request from './server'
-import {Message} from 'element-ui'
-Vue.component(Message)
+import Vue from "vue";
+import request from "./server";
+import { Message } from "element-ui";
+Vue.component(Message);
 /* eslint-disable */
 export const listSearch = {
   data () {
@@ -74,6 +74,7 @@ export const listSearch = {
      */
     sendReq (params, callback) {
       let self = this
+      this.loading = true;
       request({
         method: params.method || 'POST',
         url: params.url,
@@ -86,6 +87,7 @@ export const listSearch = {
         if (res && res.data) {
           callback && callback(res.data)
         }
+        this.loading = false;
       }, (error) => {
         let res = error.data
         Message({
@@ -94,6 +96,7 @@ export const listSearch = {
           type: 'error',
           duration: 1000
         })
+        this.loading = false;
       })
     },
     /**

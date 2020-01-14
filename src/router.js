@@ -1,14 +1,19 @@
 import Vue from "vue";
 import Router from "vue-router";
 import resourcePlanList from "./views/resourcePlanning/resourcePlanList"; // 资源管理 /资源规划
+
 import maintainList from "./views/maintainList/maintainList"; // 资源管理 /可维护列表
 import machineRoomList from "./views/maintainList/machineRoomList"; // 资源管理 /机房可维护列表
 import frameList from "./views/maintainList/frameList"; // 资源管理 /机架可维护列表
 import lookEquipment from "./views/maintainList/lookEquipment"; // 资源管理 /设备可维护列表
-
 import preemptMessage from "./views/preemptMessage/preemptMessage"; //资源管理 /预占设备信息
-import userManagement from "./views/naturalManagement/application"; // 资源管理 /申请单信息
+import application from "./views/naturalManagement/application"; // 资源管理 /申请单信息
+
 import requestMsg from "./views/naturalManagement/requestMsg"; // 资源管理 /详情
+
+import orgManagement from './views/system/orgManagement' //平台管理/权限管理
+import roleManagement from './views/system/roleManagement' //平台管理/角色管理
+import sysUserManagement from './views/system/sysUserManagement' //平台管理/用户管理
 
 Vue.use(Router);
 
@@ -42,8 +47,37 @@ const routes = [
         name: "lbsMapView",
         component: () => import("./views/map/lbsMapView.vue"),
         meta: {
-          auth: false, // 这里设置，当前路由需要校验
+          auth: true, // 这里设置，当前路由需要校验
           keepAlive: true // 缓存
+        }
+      },
+      //机构管理
+      {
+        path: '/orgManagement',
+        name: 'orgManagement',
+        component: orgManagement,
+        meta: {
+          keepAlive: true,
+        }
+      },
+      //角色管理
+      {
+        path: '/roleManagement',
+        name: 'roleManagement',
+        component: roleManagement,
+        meta: {
+          keepAlive: true,
+          auth: true // 这里设置，当前路由需要校验
+        }
+      },
+      //用户管理
+      {
+        path: '/sysUserManagement',
+        name: 'sysUserManagement',
+        component: sysUserManagement,
+        meta: {
+          keepAlive: true,
+          auth: true // 这里设置，当前路由需要校验
         }
       },
       {
@@ -51,7 +85,7 @@ const routes = [
         name: "resourcePlanList",
         component: resourcePlanList,
         meta: {
-          auth: false, // 这里设置，当前路由需要校验
+          auth: true, // 这里设置，当前路由需要校验
           keepAlive: true
         }
       },
@@ -60,7 +94,7 @@ const routes = [
         name: "maintainList",
         component: maintainList,
         meta: {
-          auth: false, // 这里设置，当前路由需要校验
+          auth: true, // 这里设置，当前路由需要校验
           keepAlive: true
         }
       },
@@ -69,7 +103,7 @@ const routes = [
 	    name: "machineRoomList",
 	    component: machineRoomList,
 	    meta: {
-	      auth: false, // 这里设置，当前路由需要校验
+	      auth: true, // 这里设置，当前路由需要校验
 	      keepAlive: true
 	    }
 	  },{
@@ -77,7 +111,7 @@ const routes = [
 	    name: "frameList",
 	    component: frameList,
 	    meta: {
-	      auth: false, // 这里设置，当前路由需要校验
+	      auth: true, // 这里设置，当前路由需要校验
 	      keepAlive: true
 	    }
 	  },{
@@ -85,7 +119,7 @@ const routes = [
 	    name: "lookEquipment",
 	    component: lookEquipment,
 	    meta: {
-	      auth: false, // 这里设置，当前路由需要校验
+	      auth: true, // 这里设置，当前路由需要校验
 	      keepAlive: true
 	    }
 	  },
@@ -94,7 +128,7 @@ const routes = [
         name: "buildModel",
         component: () => import("./views/webGL/build-model.vue"),
         meta: {
-          auth: false,
+          auth: true,
           keepAlive: false
         }
       },
@@ -102,9 +136,9 @@ const routes = [
       {
         path: "/application",
         name: "application",
-        component: userManagement,
+        component: application,
         meta: {
-          auth: false, // 这里设置，当前路由需要校验
+          auth: true, // 这里设置，当前路由需要校验
           keepAlive: true
         }
       },
@@ -113,7 +147,7 @@ const routes = [
         name: "requestMsg",
         component: requestMsg,
         meta: {
-          auth: false, // 这里设置，当前路由需要校验
+          auth: true, // 这里设置，当前路由需要校验
           keepAlive: false
         }
       },
@@ -123,7 +157,7 @@ const routes = [
         name: "preemptMessage",
         component: preemptMessage,
         meta: {
-          auth: false, // 这里设置，当前路由需要校验
+          auth: true, // 这里设置，当前路由需要校验
           keepAlive: true
         }
       }
@@ -139,8 +173,8 @@ const routes = [
 const router = new Router({
   routes,
   // mode: "history",
-  base:
-    process.env.NODE_ENV === "development" ? process.env.BASE_URL : "/transWeb" //transWeb是生产环境放代码的目录
+  // base:
+  //   process.env.NODE_ENV === "development" ? process.env.BASE_URL : "/transWeb" //transWeb是生产环境放代码的目录
 });
 router.beforeResolve((to, from, next) => {
   // console.log(to.matched, "to.matched");
@@ -156,8 +190,8 @@ router.beforeResolve((to, from, next) => {
           continue;
         }
         if (
-          menuList[i].menuUrl != null &&
-          menuList[i].menuUrl.indexOf(to.fullPath) >= 0
+          menuList[i].url != null &&
+          menuList[i].url.indexOf(to.fullPath) >= 0
         ) {
           //允许访问
           isAccess = true;
@@ -177,6 +211,21 @@ router.beforeResolve((to, from, next) => {
       }
       if (to.fullPath.indexOf("/lbsMapView") >= 0) {
         //主页权限
+        isAccess = true;
+      }
+      if (to.fullPath.indexOf("/resourcePlanList") >= 0) {
+        isAccess = true;
+      }
+      if (to.fullPath.indexOf("/machineRoomList") >= 0) {
+        isAccess = true;
+      }
+      if (to.fullPath.indexOf("/frameList") >= 0) {
+        isAccess = true;
+      }
+      if (to.fullPath.indexOf("/lookEquipment") >= 0) {
+        isAccess = true;
+      }
+      if (to.fullPath.indexOf("/requestMsg") >= 0) {
         isAccess = true;
       }
       if (isAccess) {

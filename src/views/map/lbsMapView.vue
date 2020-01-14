@@ -67,6 +67,9 @@
           <el-radio-group v-model="tabPosition" style="margin-left: 10px;">
             <el-radio-button label="机楼">机楼</el-radio-button>
             <el-radio-button label="接入间">接入间</el-radio-button>
+            <el-radio-button label="综合接入区" disabled
+              >综合接入区</el-radio-button
+            >
           </el-radio-group>
         </h5>
         <div class="clearfix module-statis" style="padding-left: 0;">
@@ -152,7 +155,7 @@
 import { listSearchMixin } from "../../mixin"; //混淆请求
 // 局部组件引用
 import Cesium from "cesium/Cesium";
-import {Message} from 'element-ui';
+import { Message } from "element-ui";
 import { api2 } from "../../api/api"; //api配置请求的路径
 // noinspection ES6UnusedImports
 import widget from "cesium/Widgets/widgets.css";
@@ -311,9 +314,9 @@ export default {
           Message({
             showClose: true,
             message: res.respHeader.message,
-            type: 'error',
+            type: "error",
             duration: 2000
-          })
+          });
         }
       });
     },
@@ -331,13 +334,13 @@ export default {
           Message({
             showClose: true,
             message: res.respHeader.message,
-            type: 'error',
+            type: "error",
             duration: 2000
-          })
+          });
         }
         if (self.tabPosition === "接入间") {
           self.getJieRuJianDataMap();
-        } else {
+        } else if (self.tabPosition === "机楼") {
           self.getJiLouDataMap();
         }
       });
@@ -600,7 +603,7 @@ export default {
       that.map.add(that.object3Dlayer2);
       this.areas.forEach((item, i, arr) => {
         if (item.label !== "广州市") {
-            var text = new AMap.Text({
+          var text = new AMap.Text({
             text: `<div class="infoWindowBox" ref="infoWindowBox">
                     <div class="info-lable">${item.label}</div>
                     <div class="btn">机楼 ${item.buidingNumber}</div>
@@ -1003,7 +1006,7 @@ export default {
       const that = this;
       if (val === "接入间") {
         that.getJieRuJianDataMap();
-      } else {
+      } else if (val === "机楼") {
         that.getJiLouDataMap();
       }
     }

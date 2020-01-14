@@ -128,10 +128,10 @@
               style="width: 100%"
             >
               <!-- <el-table-column prop="auditingStatus" label="操作类型" width="180" :formatter="auditingStatusFormatter"></el-table-column>
-                        <el-table-column prop="operatorUserName"  label="操作人"  width="180"></el-table-column>
-                        <el-table-column prop="operatorTime" label="操作时间" :formatter="dateFormat"></el-table-column>
-                        <el-table-column prop="occupyStatus" label="资源预占状态" :formatter="occupyStatusFormatter"></el-table-column>
-                        <el-table-column prop="remarks" label="备注"></el-table-column> -->
+					<el-table-column prop="operatorUserName"  label="操作人"  width="180"></el-table-column>
+					<el-table-column prop="operatorTime" label="操作时间" :formatter="dateFormat"></el-table-column>
+					<el-table-column prop="occupyStatus" label="资源预占状态" :formatter="occupyStatusFormatter"></el-table-column>
+					<el-table-column prop="remarks" label="备注"></el-table-column> -->
               <el-table-column
                 prop="czlx"
                 label="操作类型"

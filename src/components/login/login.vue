@@ -175,11 +175,9 @@ export default {
             };
             sessionStorage.setItem("headers", JSON.stringify(headers));
             sessionStorage.setItem("logined", true);
-            debugger
             let referrer = this.$router.currentRoute.query.referrer;
             console.log("referrer",referrer);
             if (referrer) {
-              // this.$router.push(referrer);
               this.$router.push({ path: referrer });
             } else {
               this.$router.push({ path:"/lbsMapView"});

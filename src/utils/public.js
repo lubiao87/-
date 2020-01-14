@@ -169,7 +169,7 @@ export function _NowRoom(arr, h) {
       var getMaxY = Math.max.apply(null, arrY);
       objectClone.scale(1 + 400 / getMaxX, 1 + 400 / getMaxY, 1);
       var cubeBig = createMesh(objectClone);
-      cubeBig.position.x = -200;
+      cubeBig.position.x = -100;
       cubeBig.position.y = -200;
       var sphereSmoll = createMesh(geometry);
       //生成ThreeBSP对象

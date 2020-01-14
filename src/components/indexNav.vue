@@ -19,9 +19,7 @@
                 iscur:
                   [
                     '/index',
-                    '/populationTrends',
-                    '/populationPortrait',
-                    '/populationFlow'
+                    '/lbsMapView'
                   ].indexOf(currentPath) > -1
               }"
               >规划使用管理</a
@@ -29,7 +27,7 @@
             <ul class="ui-menu-second">
               <li
                 class="ui-menu-secondli"
-                v-show="isShowPopulationDistribution"
+                v-show="isShowLbsMapView"
               >
                 <a class="ui-menu-seconda" @click="pushPage('/lbsMapView')"
                   >微机楼可视化</a
@@ -37,7 +35,8 @@
               </li>
             </ul>
           </li>
-          <li class="ui-menu-firstli current">
+
+          <li class="ui-menu-firstli current" v-show="isShowResourcesManagement">
             <a
               class="ui-menu-firsta"
               :class="{
@@ -70,10 +69,9 @@
                   >可维护列表</a
                 >
               </li>
-              <!-- <li class="ui-menu-secondli" v-show="isShowResourcePlanList"><a class="ui-menu-seconda" @click="pushPage('/resourcePlanList')">资源规划列表</a></li> -->
             </ul>
           </li>
-          <li class="ui-menu-firstli">
+          <li class="ui-menu-firstli" v-show="isShowSystemManagement">
             <a
               class="ui-menu-firsta"
               :class="{
@@ -86,8 +84,13 @@
               }"
               >系统管理</a
             >
-            <ul class="ui-menu-second"></ul>
+            <ul class="ui-menu-second">
+              <!-- <li class="ui-menu-secondli" v-show="isShowOrgManagement"><a class="ui-menu-seconda"  @click="pushPage('/orgManagement')">机构管理</a></li> -->
+              <li class="ui-menu-secondli" v-show="isShowRoleManagement"><a class="ui-menu-seconda"  @click="pushPage('/roleManagement')">角色管理</a></li>
+              <li class="ui-menu-secondli" v-show="isShowSysUserManagement"><a class="ui-menu-seconda"  @click="pushPage('/sysUserManagement')">用户管理</a></li>
+            </ul>
           </li>
+
         </ul>
       </div>
       <div class="ui-nav-right clearfix">
@@ -117,15 +120,21 @@ export default {
     return {
       logined: false,
       userName: "",
-      isShowPlanManagement: true, //是否展示规划使用管理
-      isShowPopulationDistribution: true,
-      isShowApplicationList: true, //是否展示申请单
-      isShowpreemptMessageList: true, //是否展示预占设备
-      isShowMaintainList: true, // false,//是否展示资源列表
-      isShowResourcePlanList: true // false,//是否显示资源规划
+      isShowSystemManagement:false,//是否展示系统管理
+      isShowOrgManagement:false,//是否展示机构管理
+      isShowRoleManagement:false,//是否展示角色管理
+      isShowSysUserManagement:false,//是否展示用户管理
+
+      isShowPlanManagement:false,//是否展示规划使用管理
+      isShowLbsMapView:false,//是否展示微机楼可视化
+
+      isShowResourcesManagement:false,//是否展示资源管理
+      isShowApplicationList:false,//是否展示申请单
+      isShowpreemptMessageList:false,//是否展示预占设备
+      isShowMaintainList:false, //是否展示可维护列表
     };
   },
-  mounted() {
+  mounted() { 
     let isLogin = sessionStorage.getItem("logined");
     var headers = JSON.parse(sessionStorage.getItem("headers"));
     if (
@@ -146,7 +155,7 @@ export default {
     // console.log(menuList);
     // console.log(buttonList);
     for (var i = 0; i < menuList.length; i++) {
-      if (menuList[i] == null || menuList[i].menuUrl == null) {
+      if (menuList[i] == null || menuList[i].url == null) {
         continue;
       }
       // console.log(menuList[i]);
@@ -155,8 +164,8 @@ export default {
         //二级目录
         for (var j = 0; j < buttonList.length; j++) {
           if (
-            menuList[i].menuId == buttonList[j].parenMenuId &&
-            buttonList[j].buttonName == "查看"
+            menuList[i].id == buttonList[j].parentMenuId &&
+            buttonList[j].name == "查看"
           ) {
             flag = 1;
           }
@@ -164,20 +173,42 @@ export default {
       } else {
         flag = 1;
       }
-      //规划使用管理-二级
-      if (menuList[i].menuUrl.indexOf("/populationDistribution") >= 0) {
-        //这个无须查看
-        this.isShowPopulationDistribution = true;
+
+    //系统管理-二级
+      if(menuList[i].url.indexOf('/orgManagement')>=0 && flag==1){
+          this.isShowOrgManagement = true;
       }
+      if(menuList[i].url.indexOf('/roleManagement')>=0 && flag==1){
+          this.isShowRoleManagement = true;
+      }
+      if(menuList[i].url.indexOf('/sysUserManagement')>=0 && flag==1){
+          this.isShowSysUserManagement = true;
+      }
+      
+      //规划使用管理-二级
+      if(menuList[i].url.indexOf('/lbsMapView')>=0){//这个无须查看
+          this.isShowLbsMapView = true;
+      }
+
+      //资源管理-二级
+      if(menuList[i].url.indexOf('/application')>=0){
+          this.isShowApplicationList = true;
+      }
+      if(menuList[i].url.indexOf('/preemptMessage')>=0){
+        this.isShowpreemptMessageList = true;
+      }
+      if(menuList[i].url.indexOf('/maintainList')>=0){
+          this.isShowMaintainList = true;
+      }
+    }  
+    if(this.isShowOrgManagement || this.isShowRoleManagement || this.isShowSysUserManagement){
+      this.isShowSystemManagement = true;
     }
-    if (this.isShowPopulationDistribution) {
+    if(this.isShowLbsMapView){
       this.isShowPlanManagement = true;
     }
-    if (menuList[i].menuUrl.indexOf("/application") >= 0) {
-      this.isShowApplicationList = true;
-    }
-    if (menuList[i].menuUrl.indexOf("/preemptMessage") >= 0) {
-      this.isShowpreemptMessageList = true;
+    if(this.isShowApplicationList || this.isShowpreemptMessageList || this.isShowMaintainList){
+      this.isShowResourcesManagement = true;
     }
   },
   methods: {

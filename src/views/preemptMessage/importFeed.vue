@@ -4,17 +4,50 @@
       <!-- 第一个输入框 -->
       <el-form-item>
         <el-input
-          v-model="formInline.code"
+          v-model="formInline.name"
           :placeholder="inputPlaceholder"
         ></el-input>
       </el-form-item>
       <!-- 第二个输入框 -->
-      <el-form-item>
+      <!-- <el-form-item>
         <el-input
           v-model="formInline.equipmentName"
           :placeholder="input2Placeholder"
         ></el-input>
-      </el-form-item>
+      </el-form-item> -->
+	  <!-- 申请类型下拉选择框 -->
+	  <el-form-item>
+	      <el-select v-model="formInline.fristStatus" :placeholder="fristPlaceholder">
+	          <el-option
+	                  v-for="item in fristStatusList"
+	                  :key="item.value"
+	                  :label="item.label"
+	                  :value="item.value">
+	          </el-option>
+	      </el-select>
+	  </el-form-item>
+	  <!-- 申请状态下拉选择框 -->
+	  <el-form-item>
+	      <el-select v-model="formInline.secondStatus" :placeholder="secondPlaceholder">
+	          <el-option
+	                  v-for="item in secondStatusList"
+	                  :key="item.value"
+	                  :label="item.label"
+	                  :value="item.value">
+	          </el-option>
+	      </el-select>
+	  </el-form-item>
+	  <!-- 初始时间选择器 -->
+	  <el-form-item class="dateTime">
+	      <!-- <span class="demonstration">默认</span> -->
+	      <el-date-picker
+	        v-model="formInline.initialTime"
+	        type="daterange"
+	        range-separator="至"
+	        start-placeholder="开始日期"
+	        end-placeholder="结束日期">
+	      </el-date-picker>
+	 </el-form-item>
       <!-- 时间选择器 -->
       <el-form-item v-if="IsZoomed === 1" class="dateTime">
         <el-date-picker
@@ -46,8 +79,24 @@ export default {
   props: {
     inputPlaceholder: {
       type: String,
-      default: "请输入申请单号"
+      default: ""
     },
+	fristPlaceholder: {
+	    type: String,
+	    default: ''
+	},
+	fristStatusList: {
+	    type: Array,
+	    default: []
+	},
+	secondPlaceholder: {
+	    type: String,
+	    default: ''
+	},
+	secondStatusList: {
+	    type: Array,
+	    default: []
+	},
     input2Placeholder: {
       type: String,
       default: "请输入申请类型名称"
@@ -65,9 +114,11 @@ export default {
   data() {
     return {
       formInline: {
-        code: "", // 第一个值
-        equipmentName: "", // 第二个值
+        name: "", // 搜索名称
+        fristStatus: "", // 第一个选择
+        secondStatus: "", // 第二个选择
         inputVal: "", // 输入框的值
+        initialTime: "", // 初始时间选择器
         dateVal: "" // 时间选择器
       }
     };

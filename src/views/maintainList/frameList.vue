@@ -27,14 +27,14 @@
 		  <!-- <div class="sub-title">输入后匹配输入建议</div> -->
 		  <el-autocomplete style="width: 20%; "
 			class="fn-d-i-b margin_t10"
-			v-model="searchName"
+			v-model="searchName" clearable
 			:fetch-suggestions="querySearch"
 			:placeholder=placeholder
 			:trigger-on-focus="false"
 			@select="handleSelect"
 		  ></el-autocomplete>
 		  
-		  <el-select v-if="radio === '1'" v-model="frameSource" placeholder="请选择机架来源" @change='frameSourceListChange'>
+		  <el-select v-if="radio == '1'" clearable v-model="frameSource" placeholder="请选择机架来源" @change='frameSourceListChange'>
 		   <el-option 
 			v-for="item in frameSourceList"
 			:key="item.value"
@@ -43,7 +43,7 @@
 		   </el-option>
 		  </el-select>
 		  
-		  <el-select v-if="radio === '1'" class="fn-mr025" v-model="frameType" placeholder="请选择机架类型" @change='frameTypeListChange'>
+		  <el-select v-if="radio == '1'" clearable class="fn-mr025" v-model="frameType" placeholder="请选择机架类型" @change='frameTypeListChange'>
 		   <el-option 
 				v-for="item in frameTypeList"
 				:key="item.name"
@@ -52,7 +52,7 @@
 		   </el-option>
 		  </el-select>
 		  
-		  <el-select v-if="radio === '2'" class="fn-mr025" v-model="substanceType" placeholder="请选择物体类型" @change='substanceTypeListChange'>
+		  <el-select v-if="radio == '2'" class="fn-mr025" v-model="substanceType" placeholder="请选择物体类型" @change='substanceTypeListChange'>
 		   <el-option 
 		  			v-for="item in substanceTypeList"
 		  			:key="item.name"
@@ -61,7 +61,7 @@
 		   </el-option>
 		  </el-select>
 		  <div class="fn-mt14 fn-d-i-b">
-			  <el-button>导入</el-button>
+			  <!-- <el-button>导入</el-button> -->
 			  <el-button v-if="radio === '1'" @click="showAddList">新增机架</el-button>
 			  <el-button v-if="radio === '2'" @click="showAddList">新增其他物体</el-button>
 			  <el-button @click="showUpdateList">修改</el-button>
@@ -557,7 +557,6 @@ export default {
 	    { label: "跑马场机楼", value: 3 }
 	  ],
       frameSourceList: [
-        { label: "机架来源", value: "" },
         { label: "手动录入", value: '0' },
         { label: "资源生成", value: '1' },
       ],

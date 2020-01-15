@@ -40,7 +40,7 @@
             <p class="passText nowPass">功率申请审核结果：<span>通过</span></p>
             <div style="margin-top: 24px">
               <echarts-Bar
-                
+                v-if="hackReset"
                 :charts="chart2"
                 :EchartsId="passEcharts"
                 :formatterText="formatterNumber"
@@ -54,7 +54,7 @@
             <p class="passText nowPass">U位申请审核结果：<span>通过</span></p>
             <div style="margin-top: 24px">
               <echarts-Bar-copy
-				
+				v-if="hackReset"
                 :charts="chart2"
                 :EchartsId="passEcharts2"
                 :formatterText="formatterNumber"
@@ -236,7 +236,7 @@ export default {
 	},
     byIdfindApplyDetail(val) {
       var that = this
-	  that.findApplyDetail()
+	  // that.findApplyDetail()
       let param = {
         url: api3.getApplyAuditDetail + '?applyId=' + val.id,
         method: 'GET',
@@ -280,8 +280,8 @@ export default {
 	   }
 	   	
 	   that.chart2["list2"] = chart2List2;
-	   console.log(that.chart1)
-	   console.log(that.chart2)
+	   // console.log(that.chart1)
+	   // console.log(that.chart2)
 	   that.hackReset = true;
 	   	
 	   that.applyMajor = 1; //申请专业

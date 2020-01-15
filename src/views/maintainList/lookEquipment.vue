@@ -16,14 +16,14 @@
           <!-- form表单组件插入 -->
 		  <!-- <div class="sub-title">输入后匹配输入建议</div> -->
 		  <el-autocomplete style="width: 20%; "
-			class=" fn-d-i-b"
+			class=" fn-d-i-b" clearable
 			v-model="searchName"
 			:fetch-suggestions="querySearch"
 			placeholder="请按设备名称、设备专业查询"
 			:trigger-on-focus="false"
 			@select="handleSelect"
 		  ></el-autocomplete>
-		  <el-select v-model="equipmentStatus" placeholder="设备状态" @change='equipmentStatusListChange'>
+		  <el-select v-model="equipmentStatus" clearable placeholder="设备状态" @change='equipmentStatusListChange'>
 		   <el-option 
 			v-for="item in equipmentStatusList"
 			:key="item.value"

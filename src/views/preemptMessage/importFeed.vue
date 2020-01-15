@@ -3,7 +3,7 @@
     <el-form :inline="true" :model="formInline" class="demo-form-inline">
       <!-- 第一个输入框 -->
       <el-form-item style="margin-right: 8%;">
-        <el-input
+        <el-input clearable
 		  style='width: 140%;'
           v-model="formInline.name"
           :placeholder="inputPlaceholder"
@@ -18,7 +18,7 @@
       </el-form-item> -->
 	  <!-- 申请类型下拉选择框 -->
 	  <el-form-item>
-	      <el-select v-model="formInline.fristStatus" :placeholder="fristPlaceholder">
+	      <el-select v-model="formInline.fristStatus" clearable :placeholder="fristPlaceholder">
 	          <el-option
 	                  v-for="item in fristStatusList"
 	                  :key="item.value"
@@ -29,12 +29,12 @@
 	  </el-form-item>
 	  <!-- 申请状态下拉选择框 -->
 	  <el-form-item>
-	      <el-select v-model="formInline.secondStatus" :placeholder="secondPlaceholder">
+	      <el-select v-model="formInline.secondStatus" clearable :placeholder="secondPlaceholder">
 	          <el-option
-	                  v-for="item in secondStatusList"
-	                  :key="item.value"
-	                  :label="item.label"
-	                  :value="item.value">
+				  v-for="item in secondStatusList"
+				  :key="item.value"
+				  :label="item.label"
+				  :value="item.value">
 	          </el-option>
 	      </el-select>
 	  </el-form-item>

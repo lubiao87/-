@@ -15,7 +15,7 @@
           		:fristStatusList="fristStatusList"
           		secondPlaceholder="请选择申请状态"
           		:secondStatusList="secondStatusList"
-                  @onSubmit = "submitList">
+                @onSubmit = "submitList">
           </import-Feed>
           <div class="parinciRepreTable parinciRepresent">
             <el-table
@@ -24,12 +24,12 @@
 			  height="550"
               @row-click="tableThink"
             >
-              <el-table-column prop="code" label="申请单号" width="180" align="center"></el-table-column>
+              <el-table-column prop="code" label="申请单号" width="150" align="center"></el-table-column>
               <el-table-column prop="applyUser" label="申请人" align="center" ></el-table-column>
               <el-table-column prop="applyPart" label="申请部门" align="center" ></el-table-column>
               <el-table-column prop="applyDate" label="申请时间" width="180" align="center"></el-table-column>
-              <el-table-column prop="type" label="申请类型" width="180" align="center"></el-table-column>
-              <el-table-column prop="applyStatus" label="申请状态" width="180" align="center"></el-table-column>
+              <el-table-column prop="type" label="申请类型" align="center"></el-table-column>
+              <el-table-column prop="applyStatus" label="申请状态"  align="center"></el-table-column>
               
               <el-table-column label="操作" width="190" header-align="center">
                 <template slot-scope="scope">
@@ -178,6 +178,8 @@ export default {
   methods: {
 	init () {
 	   var that = this
+	   that.startTime = ''
+	   that.endTime = ''
 	   that.findApplyList();
 	},
     submitList(val) {
@@ -191,7 +193,10 @@ export default {
         var d2 = new Date(val.initialTime[1])
         that.startTime = d1.getFullYear() + '-' + that.p(d1.getMonth() + 1) + '-' + that.p(d1.getDate())
         that.endTime = d2.getFullYear() + '-' + that.p(d2.getMonth() + 1) + '-' + that.p(d2.getDate())
-      }
+      } else {
+	    that.startTime = ''
+	    that.endTime = ''
+	  }
       that.findApplyList();
     },
 	p(s) {
@@ -248,11 +253,11 @@ export default {
     },
     tableThink(row, column, event) {
       this.$router.push({ path: "/requestMsg", 
-	  query: {
+		query: {
 		  row: row,
 		  column: column,
 		  event: event,
-		  } ,
+		},
 	  });
     },
     handleSizeChange(val) {

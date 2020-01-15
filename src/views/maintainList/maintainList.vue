@@ -14,7 +14,7 @@
       <div class="parinciRepresent">
         <div class="parinci">
           <!-- form表单组件插入 -->
-		  <el-select v-model="sourceType" placeholder="请选择" @change='sourceTypeChange'>
+		  <el-select v-model="sourceType" clearable placeholder="请选择" @change='sourceTypeChange'>
 		   <el-option 
 			v-for="item in foremostDataVal"
 			:key="item.value"
@@ -23,7 +23,7 @@
 			:value="item.value">
 		   </el-option>
 		  </el-select>
-		  <el-select v-model="district" placeholder="所属区域" @change='districtChange'>
+		  <el-select v-model="district" clearable placeholder="所属区域" @change='districtChange'>
 		   <el-option 
 				v-for="item in districtSelectList"
 				:key="item.id"
@@ -35,7 +35,7 @@
 		    
 		    <el-col :span="14">
 		      <!-- <div class="sub-title">输入后匹配输入建议</div> -->
-		      <el-autocomplete
+		      <el-autocomplete clearable
 		        class="inline-input"
 		        v-model="searchName"
 		        :fetch-suggestions="querySearch"

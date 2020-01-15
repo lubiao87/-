@@ -25,8 +25,8 @@
                             <el-table-column prop="applyUser" label="申请人" align="center" ></el-table-column>
                             <el-table-column prop="applyPart" label="申请部门" align="center" ></el-table-column>
                             <el-table-column prop="applyDate" label="申请时间" width="180" align="center"></el-table-column>
-                            <el-table-column prop="type" label="申请类型" width="180" align="center"></el-table-column>
-                            <el-table-column prop="applyStatus" label="申请状态" width="180" align="center"></el-table-column>                            
+                            <el-table-column prop="type" label="申请类型"  align="center"></el-table-column>
+                            <el-table-column prop="applyStatus" label="申请状态"  align="center"></el-table-column>                            
                         </el-table>
                     </div>
                     <!-- 分页 -->
@@ -99,6 +99,8 @@
 		methods: {
 			init () {
 			    var that = this
+				that.startTime = ''
+				that.endTime = ''
 				that.findPreemptList();
 			},
             examineVerify () {
@@ -170,7 +172,11 @@
 				  var d2 = new Date(val.initialTime[1])
 				  that.startTime = d1.getFullYear() + '-' + that.p(d1.getMonth() + 1) + '-' + that.p(d1.getDate())
 				  that.endTime = d2.getFullYear() + '-' + that.p(d2.getMonth() + 1) + '-' + that.p(d2.getDate())
+				} else {
+				  that.startTime = ''
+				  that.endTime = ''
 				}
+				
                 that.findPreemptList();
             },
 			

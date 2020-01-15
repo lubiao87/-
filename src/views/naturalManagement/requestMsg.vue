@@ -12,15 +12,15 @@
           <ul class="examineUl firstChild">
             <li class="examineLi">
               <label class="lable">申请单号</label>
-              <span class="text">20191016002</span>
+              <span class="text">{{tbSysApply.code}}</span>
             </li>
             <li class="examineLi">
               <label class="lable">申请单状态</label>
-              <span class="text">待审核</span>
+              <span class="text">{{tbSysApply.applyStatus}}</span>
             </li>
             <li class="examineLi">
               <label class="lable">申请类型</label>
-              <span class="text">机架申请</span>
+              <span class="text">{{tbSysApply.type}}</span>
             </li>
           </ul>
           <ul class="examineUl">
@@ -30,32 +30,32 @@
             </li>
             <li class="examineLi">
               <label class="lable">设备名称</label>
-              <span class="text">2U服务器机架4</span>
+              <span class="text">{{tbSysApply.equipName}}</span>
             </li>
             <li class="examineLi">
               <label class="lable">申请人</label>
-              <span class="text">李四</span>
+              <span class="text">{{tbSysApply.applyUser}}</span>
             </li>
           </ul>
           <ul class="examineUl">
             <li class="examineLi">
               <label class="lable">申请单位</label>
-              <span class="text">网络部</span>
+              <span class="text">{{tbSysApply.applyPart}}</span>
             </li>
             
             <li class="examineLi">
               <label class="lable">申请备注</label>
-              <span class="text">现有资源不够</span>
+              <span class="text">{{tbSysApply.applyComment}}</span>
             </li>
 			<li class="examineLi">
 			  <label class="lable">申请时间</label>
-			  <span class="text">2019-10-11 17:08:19</span>
+			  <span class="text">{{tbSysApply.applyDate}}</span>
 			</li>
           </ul>
           <ul class="examineUl">
             <li class="examineLi">
               <label class="lable">机房编号</label>
-              <span class="text"> 001DC</span>
+              <span class="text">{{tbSysApply.roomId}}</span>
             </li>
             <li class="examineLi">
               <label class="lable">机架编号</label>
@@ -75,33 +75,33 @@
             <span class="line"></span><span>资源审核信息</span>
           </div>
           <ul class="examineUl firstChild">
-            <li class="examineLi2">
+            <li class="examineLi">
               <label class="lable">申请机架名称</label>
-              <span class="text">2U服务器机架</span>
+              <span class="text">{{tbApplyInfo.equipName}}</span>
             </li>
-            <li class="examineLi2">
+            <li class="examineLi">
               <label class="lable">机房名称</label>
-              <span class="text">天河花山002DC</span>
+              <span class="text">{{tbApplyInfo.roomName}}</span>
             </li>
-            <li class="examineLi2">
+            <li class="examineLi">
               <label class="lable">机柜名称</label>
               <span class="text"> jc-62</span>
             </li>
-            <li class="examineLi2">
+            <!-- <li class="examineLi2">
               <label class="lable">所属区域</label>
-              <span class="text">天河</span>
-            </li>
+              <span class="text">天河区</span>
+            </li> -->
           </ul>
           <ul class="examineUl">
-            <li class="examineLi2">
+            <li class="examineLi">
               <label class="lable">申请机架专业</label>
               <span class="text"> 机柜</span>
             </li>
-            <li class="examineLi2">
+            <li class="examineLi">
               <label class="lable">机柜专业</label>
-              <span class="text">服务器</span>
+              <span class="text">{{contrastInfo.planMajor}}</span>
             </li>
-            <li class="examineLi2">
+            <li class="examineLi">
               <label class="lable">专业审核结果</label>
               <span class="text">待审核</span>
             </li>
@@ -128,11 +128,6 @@
               border
               style="width: 100%"
             >
-              <!-- <el-table-column prop="auditingStatus" label="操作类型" width="180" :formatter="auditingStatusFormatter"></el-table-column>
-					<el-table-column prop="operatorUserName"  label="操作人"  width="180"></el-table-column>
-					<el-table-column prop="operatorTime" label="操作时间" :formatter="dateFormat"></el-table-column>
-					<el-table-column prop="occupyStatus" label="资源预占状态" :formatter="occupyStatusFormatter"></el-table-column>
-					<el-table-column prop="remarks" label="备注"></el-table-column> -->
               <el-table-column
                 prop="czlx"
                 label="操作类型"
@@ -161,15 +156,15 @@
 import statusBar from "../preemptMessage/statusBar";
 import echartsBar from "./echartsBar";
 import imgSrc from "../../assets/common/images";
-// import {api} from '../../api/api' //请求
+import {api3} from '../../api/api' //请求
 import qs from "qs";
-// import {listSearchMixin} from '../../mixin' //请求
+import {listSearchMixin} from '../../mixin' //请求
 import moment from "moment";
 
 export default {
   name: "requestMsg",
   components: { statusBar, echartsBar },
-  // mixins: [listSearchMixin],
+  mixins: [listSearchMixin],
   data() {
     return {
       oaAgent: {
@@ -180,6 +175,8 @@ export default {
         auditingResult: null,
         auditingComment: null
       },
+	  contrastInfo: {},
+	  tbApplyInfo: {},
       orgName: null,
       isShowOaAgent: true,
       recordLogList: [
@@ -223,31 +220,111 @@ export default {
       moduleName: null, //机房名称
       cabinetName: null, //机柜名称
       currentType: null, //电流类型
-      tbSysApply: {
-        code: "",
-        equipmentName: "",
-        applyUser: "",
-        applyEmployer: "",
-        applyDate: "",
-        applyComment: "",
-        moduleCode: "",
-        cabinetCode: "",
-        equipmentCode: ""
-      }
+      tbSysApply: {}
     };
   },
   mounted() {
     console.log(this.$route.query)
-    this.applyId = this.$route.query.applyId;
+    this.applyId = this.$route.query.row.id;
     this.init();
   },
   methods: {
     init() {
-      this.defaultData();
-      let self = this;
-      this.applyDetail();
+	  var that = this;
+	  that.byIdFindDataDetails()
+	  that.byIdFindApplyAuditDetail()
+      // that.defaultData();
+      // that.applyDetail();
       // this.openRecordDialog();
     },
+	byIdFindDataDetails () {
+	  var that = this
+	  let param = {
+	    url: api3.getApplyDetailById + '?applyId=' + that.applyId,
+	    method: 'GET',
+	  }
+	  that.sendReq( param, (res) => {
+	  	console.log(res)
+	  	if (res.respHeader.resultCode == 0) {
+	  			let val = res.respBody.tbApply
+	  			if (val.applyStatus == 1) {
+	  				val.applyStatus = '待审核'
+	  			} else if (val.applyStatus == 2) {
+	  				val.type = '已审核'
+	  			} else if (val.applyStatus == 3) {
+	  				val.type = '已取消'
+	  			} else if (val.applyStatus == 4) {
+	  				val.type = 'OA审核中'
+	  			}
+	  			if (val.type == 1) {
+	  				val.type = '设备申请'
+	  			} else {
+	  				val.type = '机架申请'
+	  			}
+	  			let data = new Date(val.applyDate)
+	  			val.applyDate = data.getFullYear() + '/' + that.p(data.getMonth() + 1) + '/' + that.p(data.getDate()) 
+	  				                 + ' ' + that.p(data.getHours()) + ':' + that.p(data.getMinutes()) + ':' + that.p(data.getSeconds())
+	  		    that.tbSysApply = val
+	  	} else {
+	  	    that.$message.error(res.respHeader.message);
+	  	}
+	  })
+	},
+	byIdFindApplyAuditDetail(val) {
+	  var that = this
+	  // that.findApplyDetail()
+	  let param = {
+		url: api3.getApplyAuditDetail + '?applyId=' + that.applyId,
+		method: 'GET',
+	  }
+	  that.sendReq( param, (res) => {
+		console.log(res)
+		if (res.respHeader.resultCode == 0) {
+			that.contrastInfo = res.respBody.contrastInfo
+			that.tbApplyInfo = res.respBody.tbApplyInfo
+			
+			that.geteChartData()
+		} else {
+			that.$message.error(res.respHeader.message);
+		}
+	  })
+	  
+	},
+	geteChartData(){
+		var that = this
+		console.log('进来')
+		
+	   let chart1List1 = [];
+	   chart1List1.push((that.contrastInfo.unUseArea)*100); //已用u位数量
+	   
+	   that.chart1["list1"] = chart1List1;
+	   let chart1List2 = [];
+	   chart1List2.push((that.contrastInfo.usedArea)*100); //剩余u位数量
+	   that.chart1["list2"] = chart1List2;
+	   if (parseFloat((that.contrastInfo.unUseArea)*100) <= parseFloat((that.contrastInfo.usedArea)*100)) {
+	     that.pass1 = true;
+	   }
+	   	
+	   let chart2List1 = [];
+	   chart2List1.push(that.contrastInfo.usedPower); //已用功率
+	   that.chart2["list1"] = chart2List1;
+	   let chart2List2 = [];
+	   chart2List2.push(that.contrastInfo.unUsePower); //剩余功率
+	   if (parseFloat(that.contrastInfo.usedPower) <= parseFloat(that.contrastInfo.unUsePower)) {
+	     that.pass2 = true;
+	   }
+	   	
+	   that.chart2["list2"] = chart2List2;
+	   // console.log(that.chart1)
+	   // console.log(that.chart2)
+	   that.hackReset = true;
+	   	
+	   that.applyMajor = 1; //申请专业
+	   that.planMajor = 2; //规划专业
+	},
+	p(s) {
+	  return s < 10 ? '0' + s : s
+	},
     defaultData() {
       (this.oaAgent = {
         operatorUserName: null,

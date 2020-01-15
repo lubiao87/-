@@ -16,14 +16,14 @@
           <!-- form表单组件插入 -->
 		  <!-- <div class="sub-title">输入后匹配输入建议</div> -->
 		  <el-autocomplete style="width: 20%; "
-			class="fn-d-i-b"
+			class="fn-d-i-b" clearable
 			v-model="searchName"
 			:fetch-suggestions="querySearch"
 			placeholder="请按机房名称、所属机楼查询"
 			:trigger-on-focus="false"
 			@select="handleSelect"
 		  ></el-autocomplete>
-		  <el-select  v-model="importantLevel" placeholder="重要等级" @change='importantLevelListChange'>
+		  <el-select  v-model="importantLevel" clearable placeholder="重要等级" @change='importantLevelListChange'>
 		   <el-option 
 			v-for="item in importantLevelList"
 			:key="item.value"
@@ -31,7 +31,7 @@
 			:value="item.value">
 		   </el-option>
 		  </el-select>
-		  <el-select class="fn-mr030" v-model="examinePower" placeholder="审核权限" @change='examinePowerListChange'>
+		  <el-select class="fn-mr030" v-model="examinePower" clearable placeholder="审核权限" @change='examinePowerListChange'>
 		   <el-option 
 				v-for="item in examinePowerList"
 				:key="item.value"

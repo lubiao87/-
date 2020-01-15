@@ -4,24 +4,32 @@
       <div class="examineNews">
         <ul class="examineUl">
           <li class="examineLi">
-            <label class="lable">申请机架名称</label>
-            <span class="text">2U服务器机架4</span>
+            <label class="lable">申请类型</label>
+            <span class="text">{{tbApplyInfo.type==1?'设备申请':'机架申请'}}</span>
           </li>
-          <li class="examineLi">
-            <label class="lable">机房名称</label>
-            <span class="text">天河花山002</span>
-          </li>
+		  <li class="examineLi">
+		    <label class="lable">设备名称</label>
+		    <span class="text">{{tbApplyInfo.equipName}}</span>
+		  </li>
+          
         </ul>
         <ul class="examineUl">
-          <li class="examineLi">
-            <label class="lable">机柜名称</label>
-            <span class="text"> jc-62</span>
-          </li>
-          <li class="examineLi">
-            <label class="lable">电流类型</label>
-            <span class="text">直流</span>
-          </li>
+			<li class="examineLi">
+			  <label class="lable">机房名称</label>
+			  <span class="text">{{tbApplyInfo.roomName}}</span>
+			</li>
+            <li class="examineLi">
+              <label class="lable">电流类型</label>
+            			<!-- 0交流 1直流 -->
+              <span class="text">{{tbApplyInfo.currentType==0?'交流':'直流'}}</span>
+            </li>
         </ul>
+		<ul class="examineUl">
+		  <li class="fn-w100" >
+		    <label class="lable">申请备注</label>
+		    <span class="text">{{tbApplyInfo.applyComment}}</span>
+		  </li>
+		</ul>
       </div>
       <!-- 审核过程 -->
       <div class="examineEchart">
@@ -32,7 +40,7 @@
             <p class="passText nowPass">功率申请审核结果：<span>通过</span></p>
             <div style="margin-top: 24px">
               <echarts-Bar
-                v-if="hackReset"
+                
                 :charts="chart2"
                 :EchartsId="passEcharts"
                 :formatterText="formatterNumber"
@@ -46,7 +54,7 @@
             <p class="passText nowPass">U位申请审核结果：<span>通过</span></p>
             <div style="margin-top: 24px">
               <echarts-Bar-copy
-                v-if="hackReset"
+				
                 :charts="chart2"
                 :EchartsId="passEcharts2"
                 :formatterText="formatterNumber"
@@ -87,7 +95,7 @@
                   <div class="left"><img :src="conditionerIco" alt="" /></div>
                   <div class="right">
                     <h2 class="rightH">机柜规划专业</h2>
-                    <p class="rightP">服务器</p>
+                    <p class="rightP">{{contrastInfo.planMajor}}</p>
                   </div>
                 </div>
               </div>
@@ -119,17 +127,19 @@
 import imageSrc from "../../assets/common/images";
 import echartsBar from "./echartsBar";
 import echartsBarCopy from "./echartsBarCopy";
-// import {listSearchMixin} from '../../mixin' //请求
-import { api } from "../../api/api"; //请求
+import {listSearchMixin} from '../../mixin' //请求
+import { api3 } from "../../api/api"; //请求
 import qs from "qs";
 export default {
   name: "examine",
   components: { echartsBar, echartsBarCopy },
-  // mixins: [listSearchMixin],
+  mixins: [listSearchMixin],
   props: {},
   data() {
     return {
       dialogTableVisible: false,
+	  contrastInfo: {},
+	  tbApplyInfo: {},
       cabinetIcon: imageSrc.cabinetIcon,
       conditionerIco: imageSrc.conditionerIco,
       passEcharts: "passEcharts", // 传送通过ID
@@ -182,60 +192,101 @@ export default {
       this.dialogTableVisible = true;
     },
     init(applyId) {
-      // this.islogineiac = false;
-      // this.hackReset =false;
-      // this.pass1 = false;
-      // this.pass2 = false;
-      // this.majorApproval = null;
-      // this.applyIdEsc = applyId;
-      // this.checkeiaclogin();
-      console.log(applyId);
-      if (applyId.sqlx === "机架申请") {
-        this.formatterNumber = 1;
-      } else {
-        this.formatterNumber = 2;
-      }
-      this.findApplyDetail(applyId);
+      var that = this
+      that.byIdfindApplyDetail(applyId);
+	  that.show()
     },
     checkeiaclogin() {},
     eiaclogin() {},
     submitForm1() {
       document.Form1.submit();
     },
-    findApplyDetail(data) {
-      let _this = this;
-      let chart1List1 = [];
-      let applyCount = 88;
-      chart1List1.push(applyCount); //申请u位数量
-      _this.chart1["list1"] = chart1List1;
-
-      let chart1List2 = [];
-      let unUseCount = 120;
-      chart1List2.push(unUseCount); //剩余u位数量
-      _this.chart1["list2"] = chart1List2;
-      if (parseFloat(applyCount) <= parseFloat(unUseCount)) {
-        _this.pass1 = true;
+	findApplyDetail() {
+	  let _this = this;
+	  let chart1List1 = [];
+	  let applyCount = 88;
+	  chart1List1.push(applyCount); //申请u位数量
+	  _this.chart1["list1"] = chart1List1;
+	  let chart1List2 = [];
+	  let unUseCount = 120;
+	  chart1List2.push(unUseCount); //剩余u位数量
+	  _this.chart1["list2"] = chart1List2;
+	  if (parseFloat(applyCount) <= parseFloat(unUseCount)) {
+	    _this.pass1 = true;
+	  }
+	
+	  let chart2List1 = [];
+	  let applyPower = 8;
+	  chart2List1.push(applyPower); //申请功率
+	  _this.chart2["list1"] = chart2List1;
+	  let chart2List2 = [];
+	  let unUsePower = 18;
+	  chart2List2.push(unUsePower); //剩余功率
+	  if (parseFloat(applyPower) <= parseFloat(unUsePower)) {
+	    _this.pass2 = true;
+	  }
+	
+	  _this.chart2["list2"] = chart2List2;
+	  console.log(_this.chart1)
+	  console.log(_this.chart2)
+	  _this.hackReset = true;
+	
+	  _this.applyMajor = 1; //申请专业
+	  _this.planMajor = 2; //规划专业
+	},
+    byIdfindApplyDetail(val) {
+      var that = this
+	  that.findApplyDetail()
+      let param = {
+        url: api3.getApplyAuditDetail + '?applyId=' + val.id,
+        method: 'GET',
       }
-
-      let chart2List1 = [];
-      let applyPower = 8;
-      chart2List1.push(applyPower); //申请功率
-      _this.chart2["list1"] = chart2List1;
-
-      let chart2List2 = [];
-      let unUsePower = 18;
-      chart2List2.push(unUsePower); //剩余功率
-      if (parseFloat(applyPower) <= parseFloat(unUsePower)) {
-        _this.pass2 = true;
-      }
-
-      _this.chart2["list2"] = chart2List2;
-      _this.hackReset = true;
-
-      _this.applyMajor = 1; //申请专业
-      _this.planMajor = 2; //规划专业
-      _this.show();
+      that.sendReq( param, (res) => {
+      	// console.log(res)
+      	if (res.respHeader.resultCode == 0) {
+		    that.contrastInfo = res.respBody.contrastInfo
+		    that.tbApplyInfo = res.respBody.tbApplyInfo
+			
+			that.geteChartData()
+      	} else {
+      	    that.$message.error(res.respHeader.message);
+      	}
+      })
+	  
     },
+	geteChartData(){
+		var that = this
+		console.log('进来')
+		// console.log(that.contrastInfo)
+		// console.log(that.tbApplyInfo)
+	   let chart1List1 = [];
+	   chart1List1.push((that.contrastInfo.unUseArea)*100); //已用u位数量
+	   
+	   that.chart1["list1"] = chart1List1;
+	   let chart1List2 = [];
+	   chart1List2.push((that.contrastInfo.usedArea)*100); //剩余u位数量
+	   that.chart1["list2"] = chart1List2;
+	   if (parseFloat((that.contrastInfo.unUseArea)*100) <= parseFloat((that.contrastInfo.usedArea)*100)) {
+	     that.pass1 = true;
+	   }
+	   	
+	   let chart2List1 = [];
+	   chart2List1.push(that.contrastInfo.usedPower); //已用功率
+	   that.chart2["list1"] = chart2List1;
+	   let chart2List2 = [];
+	   chart2List2.push(that.contrastInfo.unUsePower); //剩余功率
+	   if (parseFloat(that.contrastInfo.usedPower) <= parseFloat(that.contrastInfo.unUsePower)) {
+	     that.pass2 = true;
+	   }
+	   	
+	   that.chart2["list2"] = chart2List2;
+	   console.log(that.chart1)
+	   console.log(that.chart2)
+	   that.hackReset = true;
+	   	
+	   that.applyMajor = 1; //申请专业
+	   that.planMajor = 2; //规划专业
+	},
     applyOccupy() {},
     applyOaAgent() {},
     cancelApply() {},

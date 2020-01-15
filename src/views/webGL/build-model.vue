@@ -115,6 +115,7 @@
       placeholder="请选择机柜类型"
       class="model-select"
       size="large"
+      v-show="showCollapse"
     >
       <el-option
         v-for="item in cabinetType"
@@ -1303,6 +1304,11 @@ export default {
     backShow() {
       this.$router.back(-1);
     }
+  },
+  destroyed: function() {
+    this.removeObjAll();
+    this.removeEventListenerFn();
+    document.getElementById("buildModel").innerHTML = "";
   },
   watch: {
     selectValue(val) {

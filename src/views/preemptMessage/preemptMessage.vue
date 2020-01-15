@@ -48,7 +48,7 @@
     import paging from './paging' // 分页
     import examine from './examine' // 资源审核
     import {listSearchMixin} from '../../mixin' //请求
-    import {api, api3} from '../../api/api' //请求
+    import {api3} from '../../api/api' //请求
     export default {
         name: "preemptMessage",
         components: { StatusBar, importFeed, paging, examine },
@@ -73,8 +73,8 @@
 				secondStatusList: [
 				  { value: 1, label: "待审核"},
 				  {value: 2, label: "已审核"},
-				  {value: 2, label: "已取消"},
-				  {value: 2, label: "OA审核中"},
+				  {value: 3, label: "已取消"},
+				  {value: 4, label: "OA审核中"},
 				  
 				],
                 page : 1,
@@ -127,12 +127,12 @@
 						
 						if (val.applyStatus == 1) {
 							val.applyStatus = '待审核'
-						} else if (val.applyStatus == 1) {
-							val.type = '已审核'
-						} else if (val.applyStatus == 1) {
-							val.type = '已取消'
-						} else if (val.applyStatus == 1) {
-							val.type = 'OA审核中'
+						} else if (val.applyStatus == 2) {
+							val.applyStatus = '已审核'
+						} else if (val.applyStatus == 3) {
+							val.applyStatus = '已取消'
+						} else if (val.applyStatus == 4) {
+							val.applyStatus = 'OA审核中'
 						}
 						if (val.type == 1) {
 							val.type = '设备申请'
@@ -209,7 +209,7 @@
 .principal {
     display: flex;
     flex-direction: column;
-    height:100%;
+    // height:100%;
     width: 100%;
     overflow: hidden;
     .principalHeader{
@@ -224,12 +224,14 @@
             box-sizing: border-box;
             flex: 1;
             overflow-y: auto;
+			height: 100%;
             .parinci {
                 padding: 31px 33px 41px 33px;
                 box-sizing: border-box;
                 background: rgba(29,45,85,0.5);
             }
         }
+		
 
         /* 表格样式 */
         .parinciRepreTable {

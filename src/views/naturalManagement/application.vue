@@ -10,57 +10,27 @@
       <div class="parinciRepresent">
         <div class="parinci">
           <import-Feed
-            :foremost="applicationStatus"
-            :foremostData="foremostDataVal"
-            :second="CampOn"
-            :secondData="secondDataVal"
-            :sqlx="sqlxOn"
-            :sqlxData="sqlxDataVal"
-            :IsZoomed="currentStatus"
-            @onSubmit="submitList"
-          >
+			    inputPlaceholder = '请按申请单号、申请人、申请部门查询'
+          		fristPlaceholder="请选择申请类型"
+          		:fristStatusList="fristStatusList"
+          		secondPlaceholder="请选择申请状态"
+          		:secondStatusList="secondStatusList"
+                  @onSubmit = "submitList">
           </import-Feed>
           <div class="parinciRepreTable parinciRepresent">
             <el-table
               :data="tableData"
               style="width: 100%"
+			  height="550"
               @row-click="tableThink"
             >
-              <el-table-column prop="sqdh" label="申请单号"></el-table-column>
-              <el-table-column
-                prop="sqr"
-                label="申请人"
-                width="70"
-              ></el-table-column>
-              <el-table-column
-                prop="sqdw"
-                label="申请单位"
-                width="80"
-              ></el-table-column>
-              <el-table-column
-                prop="sqsj"
-                label="申请时间"
-                width="180"
-              ></el-table-column>
-              <el-table-column
-                prop="sqlx"
-                label="申请类型"
-                width="85"
-              ></el-table-column>
-              <el-table-column
-                prop="sqlxmc"
-                label="申请类型名称"
-              ></el-table-column>
-              <el-table-column
-                prop="sqzt"
-                label="申请状态"
-                width="80"
-              ></el-table-column>
-              <el-table-column
-                prop="sqyzjg"
-                label="申请预占结果"
-              ></el-table-column>
-
+              <el-table-column prop="code" label="申请单号" width="180" align="center"></el-table-column>
+              <el-table-column prop="applyUser" label="申请人" align="center" ></el-table-column>
+              <el-table-column prop="applyPart" label="申请部门" align="center" ></el-table-column>
+              <el-table-column prop="applyDate" label="申请时间" width="180" align="center"></el-table-column>
+              <el-table-column prop="type" label="申请类型" width="180" align="center"></el-table-column>
+              <el-table-column prop="applyStatus" label="申请状态" width="180" align="center"></el-table-column>
+              
               <el-table-column label="操作" width="190" header-align="center">
                 <template slot-scope="scope">
                   <el-button
@@ -74,7 +44,7 @@
                   >
                   <el-button
                     type="text"
-                    @click.stop="requestApplyInfo()"
+                    @click.stop="requestApplyInfo(scope.row)"
                     :class="'applyButton'"
                     >修改</el-button
                   >
@@ -125,10 +95,12 @@
   </div>
 </template>
 <script>
+import qs from 'qs'
 import StatusBar from "./statusBar"; // 模块指示栏组件
 import imagesSrc from "../../assets/common/images"; // 图片管理文件
-import importFeed from "./importFeed"; // form表单组件注册
+import importFeed from "../preemptMessage/importFeed"; // form表单组件注册
 import paging from "./paging"; // 分页
+import {api3} from '../../api/api' //请求
 import { listSearchMixin } from "../../mixin"; //请求
 import examine from "./examine"; // 资源审核
 import modifyApplyInfo from "./modifyApplyInfo"; // 申请单基本信息
@@ -166,107 +138,122 @@ export default {
       sqlxOn: "请选择申请类型",
       CampOn: "请选择预占结果",
       flowState: null,
-      applyStatus: null,
       occupyStatus: null,
       dateVal: null,
       state: null, //浏览器业务回调参数，当前代表审核单id
       page: 1,
       pageSize: 10,
       currentStatus: 1, // 根据当前判断时间选择器或者输入框那个展示
-      foremostDataVal: [
-        {
-          value: 1,
-          label: "待审核"
-        },
-        {
-          value: 2,
-          label: "已审核"
-        },
-        {
-          value: 3,
-          label: "OA审批中"
-        },
-        {
-          value: 4,
-          label: "已取消"
-        }
-      ], // 申请状态数组
-      secondDataVal: [
-        {
-          value: 1,
-          label: "预占申请中"
-        },
-        {
-          value: 2,
-          label: "已预占"
-        },
-        {
-          value: 3,
-          label: "预占失败"
-        }
-      ], // 预占结果数组
-      sqlxDataVal: [
-        {
-          value: 1,
-          label: "机架申请"
-        },
-        {
-          value: 2,
-          label: "设备申请"
-        }
-      ], // 申请类型
+	  searchName: '',
+	  type: '',
+	  applyStatus: '',
+	  initialTime:"",
+	  startTime: '',
+	  endTime: '',
+	  fristStatusList: [
+	    { value: 1, label: "设备申请"},
+	    {value: 2, label: "机架申请"},
+	    
+	  ],
+	  secondStatusList: [
+	    { value: 1, label: "待审核"},
+	    {value: 2, label: "已审核"},
+	    {value: 3, label: "已取消"},
+	    {value: 4, label: "OA审核中"},
+	    
+	  ],
       tableParams: {
-        total: 3,
+        total: 0,
         size: 10,
         currentPage4: 1
       },
-      tableData: [
-        {
-          sqdh: "20191016001",
-          sqr: "张三",
-          sqdw: "网络部",
-          sqsj: "2019-10-16 14:45:26",
-          sqlx: "机架申请",
-          sqlxmc: "ODF-07-25",
-          sqzt: "待审核",
-          sqyzjg: "已成功"
-        },
-        {
-          sqdh: "20191016002",
-          sqr: "李四",
-          sqdw: "网络部",
-          sqsj: "2019-10-11 17:08:19",
-          sqlx: "设备申请",
-          sqlxmc: "DDF-03-12",
-          sqzt: "待审核",
-          sqyzjg: "已成功"
-        },
-        {
-          sqdh: "20191016003",
-          sqr: "王五",
-          sqdw: "网络部",
-          sqsj: "2019-10-04 09:24:53",
-          sqlx: "机架申请",
-          sqlxmc: "ODF-03-18",
-          sqzt: "待审核",
-          sqyzjg: "已成功"
-        }
-      ]
+      tableData: [],
     };
   },
+  beforeRouteEnter: function(to, from, next) {
+    next(vm => {
+      vm.init();
+    });
+  },
   methods: {
-    submitList(formInline) {
-      //let _this = this;
-      //_this.applyStatus = formInline.applyStatus;
-      //_this.occupyStatus = formInline.occupyStatus;
-      //_this.dateVal = formInline.dateVal;
-      //this.findApplyList();
+	init () {
+	   var that = this
+	   that.findApplyList();
+	},
+    submitList(val) {
+      var that = this
+      that.searchName = val.name;
+      that.type = val.fristStatus;
+      that.applyStatus = val.secondStatus;
+      console.log(val)
+      if (val.initialTime != null && val.initialTime != ''){
+        var d1 = new Date(val.initialTime[0])
+        var d2 = new Date(val.initialTime[1])
+        that.startTime = d1.getFullYear() + '-' + that.p(d1.getMonth() + 1) + '-' + that.p(d1.getDate())
+        that.endTime = d2.getFullYear() + '-' + that.p(d2.getMonth() + 1) + '-' + that.p(d2.getDate())
+      }
+      that.findApplyList();
     },
+	p(s) {
+	  return s < 10 ? '0' + s : s
+	},
+	findApplyList(){
+	  var that = this
+	  let param = {
+	    url: api3.getApplyListByParamPage,
+	    method: 'POST',
+	    contentType : 'application/x-www-form-urlencoded',
+	    data: qs.stringify({
+			'page': that.page,
+			'pageSize': that.pageSize,
+			'name': that.searchName,
+			'type': that.type,
+			'applyStatus': that.applyStatus,
+			'startTime': that.startTime,
+			'endTime': that.endTime,
+		})
+	  }
+	  that.sendReq( param, (res) => {
+	  	console.log(res)
+	  	if (res.respHeader.resultCode == 0) {
+			res.respBody.data.list.forEach((val) => {
+				
+				if (val.applyStatus == 1) {
+					val.applyStatus = '待审核'
+				} else if (val.applyStatus == 2) {
+					val.applyStatus = '已审核'
+				} else if (val.applyStatus == 3) {
+					val.applyStatus = '已取消'
+				} else if (val.applyStatus == 4) {
+					val.applyStatus = 'OA审核中'
+				}
+				if (val.type == 1) {
+					val.type = '设备申请'
+				} else {
+					val.type = '机架申请'
+				}
+				let data = new Date(val.applyDate)
+				val.applyDate = data.getFullYear() + '/' + that.p(data.getMonth() + 1) + '/' + that.p(data.getDate()) 
+				                 + ' ' + that.p(data.getHours()) + ':' + that.p(data.getMinutes()) + ':' + that.p(data.getSeconds())
+			})
+		  that.tableData = res.respBody.data.list
+		  that.tableParams.total = res.respBody.data.totals;
+	  	} else {
+	  	  that.$message.error(res.respHeader.message);
+	  	}
+	  })  
+	},
     refresList() {
-      // this.init();
+      this.init();
     },
     tableThink(row, column, event) {
-      this.$router.push({ path: "/requestMsg", query: {} });
+      this.$router.push({ path: "/requestMsg", 
+	  query: {
+		  row: row,
+		  column: column,
+		  event: event,
+		  } ,
+	  });
     },
     handleSizeChange(val) {
       this.pageSize = val;
@@ -277,15 +264,15 @@ export default {
       this.page = val;
       this.findApplyList();
     },
-    requestApplyInfo() {
-      this.$refs.modifyApplyInfo.init();
+    requestApplyInfo(data) {
+      this.$refs.modifyApplyInfo.init(data);
     },
     examineVerify(data) {
       //alert("hjk");
       // console.log(data);
       this.$refs.examine.init(data);
     },
-    openRecordDialog(val) {
+    openRecordDialog() {
       this.recordDialog = true;
     }
   }

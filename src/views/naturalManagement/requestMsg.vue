@@ -42,14 +42,15 @@
               <label class="lable">申请单位</label>
               <span class="text">网络部</span>
             </li>
-            <li class="examineLi">
-              <label class="lable">申请时间</label>
-              <span class="text">2019-10-11 17:08:19</span>
-            </li>
+            
             <li class="examineLi">
               <label class="lable">申请备注</label>
               <span class="text">现有资源不够</span>
             </li>
+			<li class="examineLi">
+			  <label class="lable">申请时间</label>
+			  <span class="text">2019-10-11 17:08:19</span>
+			</li>
           </ul>
           <ul class="examineUl">
             <li class="examineLi">
@@ -236,7 +237,8 @@ export default {
     };
   },
   mounted() {
-    //this.applyId = this.$route.query.applyId;
+    console.log(this.$route.query)
+    this.applyId = this.$route.query.applyId;
     this.init();
   },
   methods: {

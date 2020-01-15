@@ -19,6 +19,7 @@
 			v-for="item in foremostDataVal"
 			:key="item.value"
 			:label="item.label"
+			:disabled="item.disabled"
 			:value="item.value">
 		   </el-option>
 		  </el-select>
@@ -178,7 +179,12 @@ export default {
         {
           value: 2,
           label: "接入间"
-        }
+        },
+		{
+		  value: 3,
+		  label: "综合接入区",
+		  disabled: true
+		}
       ], // 资源类型
       buildSelectList: [
         { label: "", value: "" },
@@ -848,7 +854,7 @@ export default {
 .principal {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  // height: 100%;
   width: 100%;
   overflow: hidden;
   .principalHeader {
@@ -863,6 +869,7 @@ export default {
       box-sizing: border-box;
       flex: 1;
       overflow-y: auto;
+	  height: 100%;
       .parinci {
         padding: 31px 33px 41px 33px;
         box-sizing: border-box;

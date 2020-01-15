@@ -690,9 +690,7 @@ export default {
       // var object = obj.object;
       // console.log('您在[ '+e.lnglat.getLng()+','+e.lnglat.getLat()+' ]的位置点击了地图！');
       console.log(obj);
-      // if(obj.object && obj.object.type === "lightmesh") {
-      //   that.rountGo(that.item);
-      // }
+      this.autofocu();
     },
     mapMοuseοutMarker(ev) {
       const that = this;
@@ -949,6 +947,13 @@ export default {
         var newCenter = that.map.setFitView(that.polygons); //视口自适应
         newCenter.getCenter();
       });
+    },
+    autofocu() {
+      // this.$parent.autofocusFlag=false
+      const input = document.getElementsByClassName("el-input__inner");
+      for (let i = 0; i < input.length; i++) {
+        input[i].blur();
+      }
     }
   },
   watch: {

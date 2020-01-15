@@ -1897,3 +1897,9 @@ body .lb-back {
 body .el-radio-button__orig-radio:disabled+.el-radio-button__inner {
   background-color: #ddd;
 }
+body .el-scrollbar__thumb{
+  background-color: rgba(225, 225, 225, 0.5);
+}
+body .page-index::-webkit-scrollbar-thumb {
+  background: rgba(225, 225, 225, 0.5);
+}

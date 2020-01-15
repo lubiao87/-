@@ -2,8 +2,9 @@
   <div class="selectInput">
     <el-form :inline="true" :model="formInline" class="demo-form-inline">
       <!-- 第一个输入框 -->
-      <el-form-item>
+      <el-form-item style="margin-right: 8%;">
         <el-input
+		  style='width: 140%;'
           v-model="formInline.name"
           :placeholder="inputPlaceholder"
         ></el-input>

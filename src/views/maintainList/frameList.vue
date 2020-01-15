@@ -16,8 +16,8 @@
           <!-- form表单组件插入 -->
 		  <div class="fn-fs16 fn-lh24">
 			  <el-radio-group v-model="radio" @change="radioChange">
-				<el-radio-button label="1">新增机架</el-radio-button>
-				<el-radio-button label="2">新增其他物体</el-radio-button>
+				<el-radio-button label="1">机架</el-radio-button>
+				<el-radio-button label="2">其他物体</el-radio-button>
 			  </el-radio-group>
 			  <!-- <el-radio-group v-model="radio" @change="radioChange">
 			      <el-radio label="1">新增机架</el-radio>
@@ -62,8 +62,8 @@
 		  </el-select>
 		  <div class="fn-mt14 fn-d-i-b">
 			  <el-button>导入</el-button>
-			  <el-button v-if="radio === '1'" @click="showAddList">新增</el-button>
-			  <el-button v-if="radio === '2'" @click="showAddList">新增</el-button>
+			  <el-button v-if="radio === '1'" @click="showAddList">新增机架</el-button>
+			  <el-button v-if="radio === '2'" @click="showAddList">新增其他物体</el-button>
 			  <el-button @click="showUpdateList">修改</el-button>
 			  <el-button @click='deleteRow'>删除</el-button>
 		  </div>

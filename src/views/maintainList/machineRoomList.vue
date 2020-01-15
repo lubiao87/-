@@ -758,7 +758,7 @@ export default {
 .principal {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  // height: 100%;
   width: 100%;
   overflow: hidden;
   .principalHeader {
@@ -770,7 +770,7 @@ export default {
     flex-direction: column;
     .parinciRepresent {
       padding: 30px 98px;
-	  margin-top: 50px;
+	  height: 100%;
       box-sizing: border-box;
       flex: 1;
       overflow-y: auto;

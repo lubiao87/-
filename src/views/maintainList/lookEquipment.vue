@@ -802,7 +802,7 @@ export default {
 .principal {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  // height: 100%;
   width: 100%;
   overflow: hidden;
   .principalHeader {
@@ -817,6 +817,7 @@ export default {
       box-sizing: border-box;
       flex: 1;
       overflow-y: auto;
+	  height: 100%;
       .parinci {
         padding: 31px 33px 41px 33px;
         box-sizing: border-box;
